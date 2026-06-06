@@ -20,6 +20,7 @@ class Character extends MovableObject {
     './img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_016.png',
     './img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_017.png',
   ];
+  world;
   currentImage = 0;
 
   constructor() {
@@ -32,10 +33,12 @@ class Character extends MovableObject {
 
   animation() {
     setInterval(() => {
-      let i = this.currentImage % this.IDLE_ANIMATION.length;
-      let path = this.IDLE_ANIMATION[i];
-      this.img = this.imgCache[path];
-      this.currentImage++;
+      if (this.world.keyboard.RIGHT) {
+        let i = this.currentImage % this.IDLE_ANIMATION.length;
+        let path = this.IDLE_ANIMATION[i];
+        this.img = this.imgCache[path];
+        this.currentImage++;
+      }
     }, 100);
   }
 
