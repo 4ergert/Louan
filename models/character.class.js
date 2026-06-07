@@ -21,7 +21,7 @@ class Character extends MovableObject {
     './img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_017.png',
   ];
   world;
-  currentImage = 0;
+  speed = 3;
 
   constructor() {
     super();
@@ -32,21 +32,30 @@ class Character extends MovableObject {
   }
 
   animation() {
+
+    //Movement
     setInterval(() => {
       if (this.world.keyboard.RIGHT) {
+        this.x += this.speed;
+        this.imgDirectionChange = false;
+      }
+
+      if (this.world.keyboard.LEFT) {
+        this.x -= this.speed;
+        this.imgDirectionChange = true;
+      }
+
+      this.world.camera_x = -this.x + 100;
+    }, 1000 / 60);
+
+    //Animation for moving
+    setInterval(() => {
+      if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         let i = this.currentImage % this.IDLE_ANIMATION.length;
         let path = this.IDLE_ANIMATION[i];
         this.img = this.imgCache[path];
         this.currentImage++;
       }
-    }, 100);
-  }
-
-  jump() {
-    this.y -= 10;
-  }
-
-  moveLeft() {
-    this.x -= 5;
+    }, 50);
   }
 }

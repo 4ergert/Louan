@@ -13,6 +13,7 @@ class World {
   canvas;
   ctx;
   keyboard;
+  camera_x = 0;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -28,10 +29,14 @@ class World {
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.ctx.translate(this.camera_x, 0);
     
     this.addObjectsToMap(this.backgroundObjects);
     this.addObjectsToMap(this.enemies);
     this.addToMap(this.character);
+
+    this.ctx.translate(-this.camera_x, 0);
 
     
     let self = this;
@@ -47,6 +52,15 @@ class World {
   }
 
   addToMap(movableObject) {
+    if (movableObject.imgDirectionChange) {
+      this.ctx.save();
+      this.ctx.translate(movableObject.x + movableObject.width / 2, 0);
+      this.ctx.scale(-1, 1);
+      this.ctx.translate(-movableObject.x - movableObject.width / 2, 0);
+    }
     this.ctx.drawImage(movableObject.img, movableObject.x, movableObject.y, movableObject.width, movableObject.height);
+    if (movableObject.imgDirectionChange) {
+      this.ctx.restore();
+    }
   }
 }
