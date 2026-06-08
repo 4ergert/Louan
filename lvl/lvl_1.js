@@ -25,6 +25,19 @@ for (let index = 0; index < 5; index++) {
 
 
 
+const platformObjects = [];
+
+for (let index = 0; index < 100; index++) {
+  const x = index * 100 - 200;
+
+  platformObjects.push(
+    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', x, 400, 100, 100)
+  );
+}
+
+
+
+
 const lvl_1 = new LVL(
   [
     new SkeletonWarriorLVL1(),
@@ -32,13 +45,17 @@ const lvl_1 = new LVL(
     new SkeletonWarriorLVL1()
   ],
   [
-    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', -100, 400, 100, 100),
-    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', 0, 400, 100, 100),
-    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', 100, 400, 100, 100),
-    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', 200, 400, 100, 100)
-  ],
-  [
     new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - House.png', -150, 200, 250, 200),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 80, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 140, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 200, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 260, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 320, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 380, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 440, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Signpost 01.png', 530, 333, 70, 70),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Tree 02.png', 200, 55, 350, 350),
   ],
+  platformObjects,
   backgroundObjects,
 );

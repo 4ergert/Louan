@@ -51,7 +51,7 @@ class Character extends MovableObject {
         this.img = this.imgCache[path];
         this.currentImage++;
 
-        this.speed = 1;
+        this.speed = 0.5;
       } else {
         let i = this.currentImage % this.IDLE_ANIMATION.length;
         let path = this.IDLE_ANIMATION[i];
