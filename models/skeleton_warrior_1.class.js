@@ -1,6 +1,9 @@
 class SkeletonWarriorLVL1 extends MovableObject {
 
   y = 280;
+  speed = 0.4;
+  moveDirection = -1;
+  animationFrames = [];
 
   IDLE_ANIMATION = [
     './img/Enemies/Skeleton_Warrior_1/Idle/0_Skeleton_Warrior_Idle_000.png',
@@ -22,24 +25,72 @@ class SkeletonWarriorLVL1 extends MovableObject {
     './img/Enemies/Skeleton_Warrior_1/Idle/0_Skeleton_Warrior_Idle_016.png',
     './img/Enemies/Skeleton_Warrior_1/Idle/0_Skeleton_Warrior_Idle_017.png',
   ];
+  WALKING_ANIMATION = [
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_000.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_001.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_002.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_003.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_004.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_005.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_006.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_007.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_008.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_009.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_010.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_011.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_012.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_013.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_014.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_015.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_016.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_017.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_018.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_019.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_020.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_021.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_022.png',
+    './img/Enemies/Skeleton_Warrior_1/Walking/0_Skeleton_Warrior_Walking_023.png'
+  ];
+
 
   constructor() {
     super();
     this.loadImage('./img/Enemies/Skeleton_Warrior_1/Idle/0_Skeleton_Warrior_Idle_000.png');
     this.loadImages(this.IDLE_ANIMATION);
+    this.loadImages(this.WALKING_ANIMATION);
+    this.animationFrames = this.WALKING_ANIMATION;
 
-    this.x = 100 + Math.random() * 500;
+    this.x = 700 + Math.random() * 500;
 
     this.animation();
+    this.startPatrol();
   }
 
   animation() {
     setInterval(() => {
-      let i = this.currentImage % this.IDLE_ANIMATION.length;
-      let path = this.IDLE_ANIMATION[i];
+      let i = this.currentImage % this.animationFrames.length;
+      let path = this.animationFrames[i];
       this.img = this.imgCache[path];
       this.currentImage++;
     }, 100);
+  }
+
+  startPatrol() {
+    setInterval(() => {
+      this.x += this.moveDirection * this.speed;
+      this.imgDirectionChange = this.moveDirection < 0;
+    }, 1000 / 60);
+
+    this.scheduleDirectionChange();
+  }
+
+  scheduleDirectionChange() {
+    const nextChangeInMs = 2000 + Math.random() * 3000;
+
+    setTimeout(() => {
+      this.moveDirection *= -1;
+      this.scheduleDirectionChange();
+    }, nextChangeInMs);
   }
 
   getCollisionArea() {

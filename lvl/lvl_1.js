@@ -27,18 +27,14 @@ for (let index = 0; index < 5; index++) {
 
 const platformObjects = [];
 
-platformObjects.push(
-  new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', 500, 350, 100, 100)
-);
-
-for (let index = 0; index < 100; index++) {
-  const x = index * 100 - 200;
+for (let index = 0; index < 50; index++) {
+  const x = index * 50 - 200;
 
   platformObjects.push(
-    new PlatformObjects('img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', x, 400, 100, 100)
+    new PlatformObjects('./img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', x, 400, 50, 50),
+    new PlatformObjects('./img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 06.png', x, 450, 50, 50)
   );
 }
-
 
 
 

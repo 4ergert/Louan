@@ -1,6 +1,5 @@
 class Character extends MovableObject {
 
-  y = 80;
   IDLE = CHARACTER_SPRITES.IDLE_ANIMATION;
   WALKING = CHARACTER_SPRITES.WALKING_ANIMATION;
   RUNNING = CHARACTER_SPRITES.RUNNING_ANIMATION;
@@ -8,11 +7,22 @@ class Character extends MovableObject {
   FLYING = CHARACTER_SPRITES.JUMPING_LOOP_ANIMATION;
   FALLING = CHARACTER_SPRITES.FALLING_ANIMATION;
   SLASHING = CHARACTER_SPRITES.SLASHING_ANIMATION;
+  HURT = CHARACTER_SPRITES.HURT_ANIMATION;
+
+  y = 80;
   world;
   speed = 1;
   currentAnimation = null;
   slashAnimationActive = false;
   slashInputLocked = false;
+  isHurtState = false;
+  hurtUntil = 0;
+  knockbackUntil = 0;
+  knockbackDirection = 0;
+  knockbackSpeed = 0;
+
+
+
 
   constructor() {
     super();
@@ -24,6 +34,7 @@ class Character extends MovableObject {
     this.loadImages(this.FLYING);
     this.loadImages(this.FALLING);
     this.loadImages(this.SLASHING);
+    this.loadImages(this.HURT);
 
     this.applyGravity();
     this.animation();
@@ -35,14 +46,22 @@ class Character extends MovableObject {
 
     //Movement
     setInterval(() => {
-      if (this.world.keyboard.RIGHT) {
-        this.x += this.speed;
-        this.imgDirectionChange = false;
-      }
+      if (this.isKnockedBack()) {
+        this.x += this.knockbackDirection * this.knockbackSpeed; 
+        if (this.isAboveGround()) {
+          this.vcY = 1; // Add a slight vertical movement for knockback
+          this.y -= 1; // Knockback effect with slight vertical movement
+        }
+      } else {
+        if (this.world.keyboard.RIGHT && this.isHurtState == false) {
+          this.x += this.speed;
+          this.imgDirectionChange = false;
+        }
 
-      if (this.world.keyboard.LEFT && this.x > 0) {
-        this.x -= this.speed;
-        this.imgDirectionChange = true;
+        if (this.world.keyboard.LEFT && this.x > 0 && this.isHurtState == false) {
+          this.x -= this.speed;
+          this.imgDirectionChange = true;
+        }
       }
 
       if (this.world.keyboard.UP && !this.isAboveGround()) {
@@ -57,25 +76,32 @@ class Character extends MovableObject {
       this.updateSlashState();
 
       switch (true) {
+        case this.isHurt():
+          this.spriteAnimation(this.HURT);
+          break;
         case this.slashAnimationActive:
           this.playSlashAnimation();
           break;
         case this.isAboveGround() && this.vcY > 3:
           this.spriteAnimation(this.JUMPING, false); // Play the jumping animation once
           break;
-        case this.isAboveGround() && this.vcY < -3: // Falling down fast
+        case this.isAboveGround() && this.vcY < -1: // Falling down fast
           this.spriteAnimation(this.FALLING);
           break;
         case this.isAboveGround():
           this.spriteAnimation(this.FLYING); // Play the flying animation while in the air
           break;
         case isRunning():
-          this.spriteAnimation(this.RUNNING);
-          this.speed = 5;
+          if (!this.isHurtState) {
+            this.spriteAnimation(this.RUNNING);
+            this.speed = 4;
+          }
           break;
         case isMoving():
-          this.spriteAnimation(this.WALKING);
-          this.speed = 1;
+          if (!this.isHurtState) {
+            this.spriteAnimation(this.WALKING);
+            this.speed = 1;
+          }
           break;
         default:
           this.spriteAnimation(this.IDLE);
@@ -92,6 +118,42 @@ class Character extends MovableObject {
     if (!this.world.keyboard.D) this.slashInputLocked = false;
   }
 
+  getCollisionArea() {
+    return {
+      x: this.x + 45,
+      y: this.y + 35,
+      width: this.width - 90,
+      height: this.height - 60,
+      offsetY: 30,
+    };
+  }
+
+  // Collision and damage handling
+  isHurt() {
+    return this.hurtUntil > Date.now();
+  }
+
+  hit(duration = 333) {
+    this.hurtUntil = Date.now() + duration;
+    this.isHurtState = true;
+
+    setTimeout(() => {
+      this.isHurtState = false;
+    }, duration + 555); // Ensure the hurt state lasts slightly longer than the animation
+  }
+
+  // Knockback handling
+  isKnockedBack() {
+    return this.knockbackUntil > Date.now();
+  }
+
+  startKnockback(duration = 333, speed = 5) {
+    this.knockbackUntil = Date.now() + duration;
+    this.knockbackSpeed = speed;
+    this.knockbackDirection = this.imgDirectionChange ? 1 : -1;
+  }
+
+  // Slash attack handling
   playSlashAnimation() {
     this.spriteAnimation(this.SLASHING, false);
 
@@ -100,6 +162,7 @@ class Character extends MovableObject {
     }
   }
 
+  // Override the spriteAnimation method to reset the animation when switching states
   spriteAnimation(sprites, loop = true) {
     if (this.currentAnimation !== sprites) {
       this.currentAnimation = sprites;
@@ -117,13 +180,5 @@ class Character extends MovableObject {
     if (loop || this.currentImage < sprites.length - 1) this.currentImage++;
   }
 
-  getCollisionArea() {
-    return {
-      x: this.x + 45,
-      y: this.y + 35,
-      width: this.width - 90,
-      height: this.height - 60,
-      offsetY: 30,
-    };
-  }
+
 }

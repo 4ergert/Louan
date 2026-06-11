@@ -24,7 +24,7 @@ class World {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.drawBackgrounds();
-    
+
     this.ctx.translate(this.camera_x, 0);
 
     this.addObjectsToMap(this.lvl.platformObjects);
@@ -34,7 +34,7 @@ class World {
 
     this.ctx.translate(-this.camera_x, 0);
 
-    
+
     let self = this;
     requestAnimationFrame(function () {
       self.draw();
@@ -82,8 +82,9 @@ class World {
       });
 
       this.lvl.enemies.forEach(enemy => {
-        if (this.character.isColliding(enemy)) {
-          console.log("Collision detected!");
+        if (this.character.isColliding(enemy) && !this.character.isHurt()) {
+          this.character.startKnockback();
+          this.character.hit();
         }
       });
     }, 1000 / 60);

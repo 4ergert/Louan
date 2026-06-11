@@ -33,8 +33,11 @@ class Colliding {
     this.y = platformArea.y - ownCollisionArea.height - ownCollisionArea.offsetY;
     this.vcY = 0;
   }
+
 }
 
 let collidingMethods = Object.getOwnPropertyDescriptors(Colliding.prototype);
 delete collidingMethods.constructor;
 Object.defineProperties(MovableObject.prototype, collidingMethods);
+
+

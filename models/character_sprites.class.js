@@ -96,5 +96,29 @@ const CHARACTER_SPRITES = {
     './img/Character/lvl_1/Run Slashing/0_Dark_Oracle_Run Slashing_009.png',
     './img/Character/lvl_1/Run Slashing/0_Dark_Oracle_Run Slashing_010.png',
     './img/Character/lvl_1/Run Slashing/0_Dark_Oracle_Run Slashing_011.png'
+  ],
+  HURT_ANIMATION: [
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_000.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_001.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_002.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_003.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_004.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_005.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_006.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_007.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_008.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_009.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_010.png',
+    './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_011.png',
+
   ]
 };
