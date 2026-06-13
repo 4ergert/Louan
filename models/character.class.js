@@ -13,6 +13,7 @@ class Character extends MovableObject {
   world;
   speed = 1;
   currentAnimation = null;
+  energy = 100;
   slashAnimationActive = false;
   slashInputLocked = false;
   isHurtState = false;
@@ -134,6 +135,8 @@ class Character extends MovableObject {
   }
 
   hit(duration = 333) {
+    this.energy = Math.max(0, this.energy - 20);
+    this.world?.statusBar.setPercentage(this.energy);
     this.hurtUntil = Date.now() + duration;
     this.isHurtState = true;
 

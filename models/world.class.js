@@ -1,6 +1,6 @@
 class World {
-
   character = new Character();
+  statusBar = new StatusBar();
   lvl = lvl_1;
   canvas;
   ctx;
@@ -26,13 +26,17 @@ class World {
     this.drawBackgrounds();
 
     this.ctx.translate(this.camera_x, 0);
-
+    
     this.addObjectsToMap(this.lvl.platformObjects);
     this.addObjectsToMap(this.lvl.environmentObjects);
     this.addObjectsToMap(this.lvl.enemies);
+    this.ctx.translate(-this.camera_x, 0);
+    this.addToMap(this.statusBar);
+    this.ctx.translate(this.camera_x, 0);
     this.addToMap(this.character);
 
     this.ctx.translate(-this.camera_x, 0);
+
 
 
     let self = this;
