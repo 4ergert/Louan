@@ -119,6 +119,36 @@ const CHARACTER_SPRITES = {
     './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_009.png',
     './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_010.png',
     './img/Character/lvl_1/Hurt/0_Dark_Oracle_Hurt_011.png',
-
+  ],
+  THROWING_ANIMATION: [
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_000.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_001.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_002.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_003.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_004.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_005.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_006.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_007.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_008.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_009.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_010.png',
+    './img/Character/lvl_1/Throwing/0_Dark_Oracle_Throwing_011.png'
+  ],
+  DYING_ANIMATION: [
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_000.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_001.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_002.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_003.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_004.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_005.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_006.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_007.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_008.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_009.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_010.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_011.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_012.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_013.png',
+    './img/Character/lvl_1/Dying/0_Dark_Oracle_Dying_014.png'
   ]
 };

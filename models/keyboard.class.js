@@ -7,4 +7,5 @@ class Keyboard {
   CTRL = false;
   SHIFT = false;
   D = false;
+  X = false;
 }

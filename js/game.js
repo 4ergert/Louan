@@ -36,6 +36,10 @@ window.addEventListener("keydown", (e) => {
     case "Shift":
       keyboard.SHIFT = true;
       break;
+    case "x":
+    case "X":
+      keyboard.X = true;
+      break;
   }
 });
 
@@ -65,6 +69,10 @@ window.addEventListener("keyup", (e) => {
       break;
     case "Shift":
       keyboard.SHIFT = false;
+      break;
+    case "x":
+    case "X":
+      keyboard.X = false;
       break;
   }
 });

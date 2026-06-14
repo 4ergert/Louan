@@ -27,16 +27,16 @@ class DrawableObject {
   drawCollisionArea(ctx) {
     let collisionArea = this.getCollisionArea();
     if (this instanceof Character || this instanceof SkeletonWarriorLVL1 || this instanceof PlatformObjects) {
-      ctx.beginPath();
-      ctx.lineWidth = "2";
-      ctx.strokeStyle = "red";
-      ctx.rect(
-        collisionArea.x,
-        collisionArea.y,
-        collisionArea.width,
-        collisionArea.height
-      );
-      ctx.stroke();
+      // ctx.beginPath();
+      // ctx.lineWidth = "2";
+      // ctx.strokeStyle = "red";
+      // ctx.rect(
+      //   collisionArea.x,
+      //   collisionArea.y,
+      //   collisionArea.width,
+      //   collisionArea.height
+      // );
+      // ctx.stroke();
     }
   }
 

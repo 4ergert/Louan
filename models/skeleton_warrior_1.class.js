@@ -5,9 +5,11 @@ class SkeletonWarriorLVL1 extends MovableObject {
   animationFrames = [];
   isDying = false;
   isDead = false;
+  dyingAnimationSpeed = 50;
   animationInterval = null;
   patrolInterval = null;
   directionTimeout = null;
+
 
   IDLE = skeletonWarriorSprites.IDLE_ANIMATION;
   WALKING = skeletonWarriorSprites.WALKING_ANIMATION;
@@ -39,7 +41,7 @@ class SkeletonWarriorLVL1 extends MovableObject {
       if (!this.isDying || this.currentImage < this.animationFrames.length - 1) {
         this.currentImage++;
       }
-    }, 100);
+    }, this.dyingAnimationSpeed);
   }
 
   startPatrol() {
@@ -62,7 +64,7 @@ class SkeletonWarriorLVL1 extends MovableObject {
   }
 
   die() {
-    if (this.isDying || this.isDead) return this.DYING.length * 75;
+    if (this.isDying || this.isDead) return this.DYING.length * this.dyingAnimationSpeed + 50;
 
     this.isDying = true;
     this.speed = 0;
@@ -74,7 +76,7 @@ class SkeletonWarriorLVL1 extends MovableObject {
     clearInterval(this.patrolInterval);
     clearTimeout(this.directionTimeout);
 
-    const dyingDuration = this.DYING.length *  75;
+    const dyingDuration = this.DYING.length * this.dyingAnimationSpeed + 50;
 
     setTimeout(() => {
       this.isDead = true;

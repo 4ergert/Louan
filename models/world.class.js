@@ -2,12 +2,14 @@ class World {
   character = new Character();
   lifeBar = new LifeBar();
   coinsBar = new CoinsBar();
-  throwableObjects = new ThrowableObject();
+  throwableObjects = new ThrowableObject(16, 111, true);
+  thrownRooks = [];
   lvl = lvl_1;
   canvas;
   ctx;
   keyboard;
   camera_x = 0;
+  throwInputLocked = false;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -32,6 +34,7 @@ class World {
     this.addObjectsToMap(this.lvl.platformObjects);
     this.addObjectsToMap(this.lvl.environmentObjects);
     this.addObjectsToMap(this.lvl.enemies);
+    this.addObjectsToMap(this.thrownRooks);
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.lifeBar);
     this.addToMap(this.coinsBar);
@@ -40,6 +43,10 @@ class World {
     this.addToMap(this.character);
 
     this.ctx.translate(-this.camera_x, 0);
+
+    if (this.character.isDead) {
+      this.drawGameOverOverlay();
+    }
 
 
 
@@ -59,6 +66,21 @@ class World {
       this.addToMap(background);
       this.ctx.restore();
     });
+  }
+
+  drawGameOverOverlay() {
+    this.ctx.save();
+    this.ctx.fillStyle = 'rgba(16, 10, 7, 0.68)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.font = 'bold 56px Georgia';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.lineWidth = 6;
+    this.ctx.strokeStyle = '#100a07';
+    this.ctx.fillStyle = '#d9a441';
+    this.ctx.strokeText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
+    this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
+    this.ctx.restore();
   }
 
   addObjectsToMap(objects) {
@@ -90,6 +112,9 @@ class World {
       });
 
       this.collectCoins();
+      this.collectRooks();
+      this.handleThrowInput();
+      this.updateThrownRooks();
 
       let stompedEnemy = this.lvl.enemies.find(enemy =>
         !enemy.isDying && !enemy.isDead &&
@@ -125,6 +150,76 @@ class World {
     );
 
     this.coinsBar.addCoin(collectedCoins.length);
+  }
+
+  collectRooks() {
+    let collectedRooks = this.lvl.environmentObjects.filter(object =>
+      object instanceof ThrowableObject && this.isCollidingWithCharacter(object)
+    );
+
+    if (collectedRooks.length === 0) return;
+
+    this.lvl.environmentObjects = this.lvl.environmentObjects.filter(object =>
+      !(object instanceof ThrowableObject && this.isCollidingWithCharacter(object))
+    );
+
+    this.throwableObjects.addRook(collectedRooks.length);
+  }
+
+  handleThrowInput() {
+    if (this.keyboard.X && !this.throwInputLocked && this.throwableObjects.rooks > 0) {
+      this.character.startThrowingAnimation();
+      this.throwRook();
+      this.throwInputLocked = true;
+    }
+
+    if (!this.keyboard.X) {
+      this.throwInputLocked = false;
+    }
+  }
+
+  throwRook() {
+    let direction = this.character.imgDirectionChange ? -1 : 1;
+    let rookX = direction > 0 ? this.character.x + this.character.width - 60 : this.character.x + 30
+    let rookY = this.character.y + 80;
+    let rook = new ThrowableObject(rookX, rookY);
+
+    rook.launch(direction);
+    this.thrownRooks.push(rook);
+    this.throwableObjects.removeRook(1);
+  }
+
+  updateThrownRooks() {
+    this.thrownRooks.forEach(rook => rook.updateThrow());
+    this.handleThrownRookHits();
+    this.thrownRooks = this.thrownRooks.filter(rook => !rook.hasHitTarget && !rook.isOffscreen(this.camera_x, this.canvas.width));
+  }
+
+  handleThrownRookHits() {
+    this.thrownRooks.forEach(rook => {
+      let hitEnemy = this.lvl.enemies.find(enemy =>
+        !enemy.isDying &&
+        !enemy.isDead &&
+        this.isCollidingBetween(rook, enemy)
+      );
+
+      if (!hitEnemy) return;
+
+      rook.hasHitTarget = true;
+      this.handleEnemyDefeat(hitEnemy);
+    });
+  }
+
+  isCollidingBetween(firstObject, secondObject) {
+    let firstArea = firstObject.getCollisionArea();
+    let secondArea = secondObject.getCollisionArea();
+
+    return (
+      firstArea.x + firstArea.width > secondArea.x &&
+      firstArea.x < secondArea.x + secondArea.width &&
+      firstArea.y + firstArea.height > secondArea.y &&
+      firstArea.y < secondArea.y + secondArea.height
+    );
   }
 
   isCollidingWithCharacter(object) {
