@@ -58,6 +58,8 @@ class Character extends MovableObject {
 
     //Movement
     setInterval(() => {
+      if (this.world?.isPaused) return;
+
       this.updateSpawnOpacity();
 
       if (this.isSpawning()) {
@@ -97,6 +99,8 @@ class Character extends MovableObject {
 
     //Animation 
     setInterval(() => {
+      if (this.world?.isPaused) return;
+
       this.updateSlashState();
 
       switch (true) {
@@ -133,7 +137,7 @@ class Character extends MovableObject {
         case isMoving():
           if (!this.isHurtState) {
             this.spriteAnimation(this.WALKING);
-            this.speed = 1;
+            this.speed = 2;
           }
           break;
         default:

@@ -10,6 +10,30 @@ class World {
   keyboard;
   camera_x = 0;
   throwInputLocked = false;
+  isPaused = false;
+  introSkipLocked = false;
+  openingIntroTriggered = false;
+  openingIntroCompleted = false;
+  openingIntroStartedAt = 0;
+  openingIntroTimeout = null;
+  openingIntroDuration = 6500;
+  openingIntroTypeSpeed = 45;
+  openingIntroLines = [
+    'Irgendwas stimmt hier nicht!',
+    'Meine Geschwister Alia und Liam',
+    'sind verschwunden.',
+    'Ich sollte sie suchen gehen.'
+  ];
+  bossIntroTriggered = false;
+  bossIntroStartedAt = 0;
+  bossIntroTimeout = null;
+  bossIntroDuration = 5000;
+  bossIntroTypeSpeed = 55;
+  bossIntroLines = [
+    'Arrrrr, ich bin Aliam,',
+    'der Skelett-König,',
+    'arrrrr!'
+  ];
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
@@ -21,22 +45,41 @@ class World {
   }
 
   setWorld() {
-    this.character.world = this;
+    this.assignWorld(this.character);
+    this.assignWorld(this.throwableObjects);
+    this.assignWorldToAll(this.lvl.enemies);
+    this.assignWorldToAll(this.lvl.environmentObjects);
+  }
+
+  get aliaBoss() {
+    return this.lvl.enemies.find(enemy => enemy.isBoss);
+  }
+
+  assignWorld(drawableObject) {
+    if (drawableObject) drawableObject.world = this;
+  }
+
+  assignWorldToAll(drawableObjects) {
+    drawableObjects.forEach(drawableObject => this.assignWorld(drawableObject));
   }
 
   draw() {
+    this.updateOpeningIntro();
+    this.updateBossIntro();
+    this.handleIntroSkip();
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.drawBackgrounds();
 
     this.ctx.translate(this.camera_x, 0);
-    
+
     this.addObjectsToMap(this.lvl.platformObjects);
     this.addObjectsToMap(this.lvl.environmentObjects);
     this.addObjectsToMap(this.lvl.enemies);
     this.addObjectsToMap(this.thrownRooks);
     this.ctx.translate(-this.camera_x, 0);
     this.addToMap(this.lifeBar);
+    if (this.shouldShowBossLifeBar()) this.drawBossLifeBar();
     this.addToMap(this.coinsBar);
     this.addToMap(this.throwableObjects);
     this.ctx.translate(this.camera_x, 0);
@@ -46,6 +89,14 @@ class World {
 
     if (this.character.isDead) {
       this.drawGameOverOverlay();
+    }
+
+    if (this.isOpeningIntroActive()) {
+      this.drawOpeningIntroBubble();
+    }
+
+    if (this.isBossIntroActive()) {
+      this.drawBossIntroBubble();
     }
 
 
@@ -83,6 +134,236 @@ class World {
     this.ctx.restore();
   }
 
+  updateOpeningIntro() {
+    if (this.openingIntroTriggered || this.character.isDead || this.character.isSpawning()) return;
+
+    this.openingIntroTriggered = true;
+    this.isPaused = true;
+    this.openingIntroStartedAt = Date.now();
+    this.resetKeyboard();
+
+    this.openingIntroTimeout = setTimeout(() => {
+      this.finishOpeningIntro();
+    }, this.openingIntroDuration);
+  }
+
+  updateBossIntro() {
+    if (!this.openingIntroCompleted || this.bossIntroTriggered || this.character.isDead) return;
+    if (!this.aliaBoss) return;
+    if (!this.isBossFullyVisible() || !this.isCharacterNearBoss()) return;
+
+    this.bossIntroTriggered = true;
+    this.isPaused = true;
+    this.bossIntroStartedAt = Date.now();
+    this.resetKeyboard();
+
+    this.bossIntroTimeout = setTimeout(() => {
+      this.finishBossIntro();
+    }, this.bossIntroDuration);
+  }
+
+  handleIntroSkip() {
+    if (!this.keyboard.SPACE) {
+      this.introSkipLocked = false;
+      return;
+    }
+
+    if (this.introSkipLocked) return;
+    this.introSkipLocked = true;
+
+    if (this.isOpeningIntroActive()) {
+      this.skipIntroStep(this.openingIntroLines, 'opening');
+      return;
+    }
+
+    if (this.isBossIntroActive()) {
+      this.skipIntroStep(this.bossIntroLines, 'boss');
+    }
+  }
+
+  skipIntroStep(lines, introType) {
+    if (!this.isIntroTextFullyVisible(lines, this.getIntroStartedAt(introType), this.getIntroTypeSpeed(introType))) {
+      this.setIntroToFullText(lines, introType);
+      return;
+    }
+
+    if (introType === 'opening') this.finishOpeningIntro();
+    if (introType === 'boss') this.finishBossIntro();
+  }
+
+  getIntroStartedAt(introType) {
+    return introType === 'opening' ? this.openingIntroStartedAt : this.bossIntroStartedAt;
+  }
+
+  getIntroTypeSpeed(introType) {
+    return introType === 'opening' ? this.openingIntroTypeSpeed : this.bossIntroTypeSpeed;
+  }
+
+  setIntroToFullText(lines, introType) {
+    let fullCharCount = lines.join(' ').length;
+    let typeSpeed = this.getIntroTypeSpeed(introType);
+    let startedAt = Date.now() - fullCharCount * typeSpeed;
+
+    if (introType === 'opening') this.openingIntroStartedAt = startedAt;
+    if (introType === 'boss') this.bossIntroStartedAt = startedAt;
+  }
+
+  isIntroTextFullyVisible(lines, startedAt, typeSpeed) {
+    let elapsedTime = Date.now() - startedAt;
+    let visibleChars = Math.floor(elapsedTime / typeSpeed);
+    return visibleChars >= lines.join(' ').length;
+  }
+
+  finishOpeningIntro() {
+    if (this.openingIntroTimeout) clearTimeout(this.openingIntroTimeout);
+    this.openingIntroTimeout = null;
+    this.isPaused = false;
+    this.openingIntroCompleted = true;
+  }
+
+  finishBossIntro() {
+    if (this.bossIntroTimeout) clearTimeout(this.bossIntroTimeout);
+    this.bossIntroTimeout = null;
+    this.isPaused = false;
+  }
+
+  isBossFullyVisible() {
+    let bossScreenX = this.aliaBoss.x + this.camera_x;
+    return bossScreenX >= 0 && bossScreenX + this.aliaBoss.width <= this.canvas.width + 100;
+  }
+
+  isCharacterNearBoss() {
+    let characterRightEdge = this.character.x + this.character.width;
+    return this.aliaBoss.x - characterRightEdge <= 400;
+  }
+
+  isBossIntroActive() {
+    return this.isPaused && this.bossIntroTriggered;
+  }
+
+  shouldShowBossLifeBar() {
+    return this.bossIntroTriggered && !this.isBossIntroActive() && this.aliaBoss && !this.aliaBoss.isDead;
+  }
+
+  isOpeningIntroActive() {
+    return this.isPaused && this.openingIntroTriggered && !this.openingIntroCompleted;
+  }
+
+  resetKeyboard() {
+    Object.keys(this.keyboard).forEach(key => {
+      this.keyboard[key] = false;
+    });
+  }
+
+  drawBossIntroBubble() {
+    let bossScreenX = this.aliaBoss.x + this.camera_x;
+    let bubbleX = Math.max(20, Math.min(this.canvas.width - 300, bossScreenX + 50));
+    let bubbleY = 35;
+    let textLines = this.getVisibleIntroLines(this.bossIntroLines, this.bossIntroStartedAt, this.bossIntroTypeSpeed);
+
+    this.ctx.save();
+    this.ctx.fillStyle = '#fff8ea';
+    this.ctx.strokeStyle = '#3a2412';
+    this.ctx.lineWidth = 4;
+    this.ctx.fillRect(bubbleX, bubbleY, 333, 110);
+    this.ctx.strokeRect(bubbleX, bubbleY, 333, 110);
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(bubbleX + 56, bubbleY + 110);
+    this.ctx.lineTo(bubbleX + 86, bubbleY + 110);
+    this.ctx.lineTo(bubbleX + 97, bubbleY + 138);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = '#3a2412';
+    this.ctx.font = 'bold 20px Georgia';
+    this.ctx.textBaseline = 'top';
+    textLines.forEach((line, index) => {
+      this.ctx.fillText(line, bubbleX + 18, bubbleY + 16 + index * 28);
+    });
+    this.ctx.restore();
+  }
+
+  drawOpeningIntroBubble() {
+    let bubbleX = 180;
+    let bubbleY = 30;
+    let textLines = this.getVisibleIntroLines(this.openingIntroLines, this.openingIntroStartedAt, this.openingIntroTypeSpeed);
+
+    this.ctx.save();
+    this.ctx.fillStyle = '#fff8ea';
+    this.ctx.strokeStyle = '#3a2412';
+    this.ctx.lineWidth = 4;
+    this.ctx.fillRect(bubbleX, bubbleY, 380, 148);
+    this.ctx.strokeRect(bubbleX, bubbleY, 380, 148);
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(bubbleX + 70, bubbleY + 148);
+    this.ctx.lineTo(bubbleX + 110, bubbleY + 148);
+    this.ctx.lineTo(bubbleX + 60, bubbleY + 180);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = '#3a2412';
+    this.ctx.font = 'bold 20px Georgia';
+    this.ctx.textBaseline = 'top';
+    textLines.forEach((line, index) => {
+      this.ctx.fillText(line, bubbleX + 18, bubbleY + 16 + index * 28);
+    });
+    this.ctx.restore();
+  }
+
+  drawBossLifeBar() {
+    let percentage = this.aliaBoss.energy / this.aliaBoss.maxEnergy;
+    let barWidth = 220;
+    let barHeight = 18;
+    let x = this.canvas.width - barWidth - 18;
+    let y = 30;
+
+    this.ctx.save();
+    this.ctx.fillStyle = '#d9a441';
+    this.ctx.strokeStyle = '#100a07';
+    this.ctx.lineWidth = 4;
+    this.ctx.font = 'bold 18px Georgia';
+    this.ctx.textAlign = 'right';
+    this.ctx.strokeText('AliaBoss', this.canvas.width - 18, y - 6);
+    this.ctx.fillText('AliaBoss', this.canvas.width - 18, y - 6);
+
+    this.ctx.fillStyle = '#2d2118';
+    this.ctx.fillRect(x, y, barWidth, barHeight);
+    this.ctx.strokeStyle = '#100a07';
+    this.ctx.lineWidth = 3;
+    this.ctx.strokeRect(x, y, barWidth, barHeight);
+
+    this.ctx.fillStyle = this.getBossLifeBarColor(percentage);
+    this.ctx.fillRect(x, y, barWidth * percentage, barHeight);
+    this.ctx.restore();
+  }
+
+  getBossLifeBarColor(percentage) {
+    if (percentage > 0.6) return '#b33a3a';
+    if (percentage > 0.3) return '#d97b2b';
+    return '#e2bf4f';
+  }
+
+  getVisibleIntroLines(lines, startedAt, typeSpeed) {
+    let elapsedTime = Date.now() - startedAt;
+    let visibleChars = Math.floor(elapsedTime / typeSpeed);
+    let fullText = lines.join(' ');
+    let visibleText = fullText.slice(0, visibleChars);
+    let visibleLines = [];
+    let currentIndex = 0;
+
+    lines.forEach(line => {
+      let lineText = visibleText.slice(currentIndex, currentIndex + line.length);
+      visibleLines.push(lineText);
+      currentIndex += line.length + 1;
+    });
+
+    return visibleLines;
+  }
+
   addObjectsToMap(objects) {
     objects.forEach(object => {
       this.addToMap(object);
@@ -105,6 +386,8 @@ class World {
 
   checkCollisions() {
     setInterval(() => {
+      if (this.isPaused) return;
+
       this.lvl.platformObjects.forEach(platform => {
         if (this.character.isLandingOn(platform)) {
           this.character.landOn(platform);
@@ -117,6 +400,7 @@ class World {
       this.updateThrownRooks();
 
       let stompedEnemy = this.lvl.enemies.find(enemy =>
+        !enemy.isBoss &&
         !enemy.isDying && !enemy.isDead &&
         this.character.isColliding(enemy) && this.isStompingEnemy(enemy)
       );
@@ -184,6 +468,7 @@ class World {
     let rookY = this.character.y + 80;
     let rook = new ThrowableObject(rookX, rookY);
 
+    this.assignWorld(rook);
     rook.launch(direction);
     this.thrownRooks.push(rook);
     this.throwableObjects.removeRook(1);
@@ -206,6 +491,12 @@ class World {
       if (!hitEnemy) return;
 
       rook.hasHitTarget = true;
+
+      if (hitEnemy.isBoss) {
+        if (hitEnemy.hit()) this.handleEnemyDefeat(hitEnemy);
+        return;
+      }
+
       this.handleEnemyDefeat(hitEnemy);
     });
   }
@@ -255,7 +546,7 @@ class World {
     let dyingDuration = enemy.die();
 
     setTimeout(() => {
-      this.spawnCoinAt(enemy);
+      if (!enemy.isBoss) this.spawnCoinAt(enemy);
       this.removeEnemy(enemy);
     }, dyingDuration);
   }
@@ -265,7 +556,9 @@ class World {
     let coinX = enemyArea.x + enemyArea.width / 2 - 15;
     let coinY = enemyArea.y + enemyArea.height / 2 - 15;
 
-    this.lvl.environmentObjects.push(new Coins(coinX, coinY));
+    let coin = new Coins(coinX, coinY);
+    this.assignWorld(coin);
+    this.lvl.environmentObjects.push(coin);
   }
 
   removeEnemy(enemyToRemove) {

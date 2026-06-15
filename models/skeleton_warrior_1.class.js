@@ -32,6 +32,8 @@ class SkeletonWarriorLVL1 extends MovableObject {
 
   animation() {
     this.animationInterval = setInterval(() => {
+      if (this.world?.isPaused) return;
+
       let i = this.isDying
         ? Math.min(this.currentImage, this.animationFrames.length - 1)
         : this.currentImage % this.animationFrames.length;
@@ -46,6 +48,8 @@ class SkeletonWarriorLVL1 extends MovableObject {
 
   startPatrol() {
     this.patrolInterval = setInterval(() => {
+      if (this.world?.isPaused) return;
+
       this.x += this.moveDirection * this.speed;
       this.imgDirectionChange = this.moveDirection < 0;
     }, 1000 / 60);

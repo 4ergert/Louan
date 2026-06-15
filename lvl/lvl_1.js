@@ -39,7 +39,9 @@ for (let index = 0; index < 100; index++) {
 
 const skeletonWarrior1Array = [];
 
-for (let i = 0; i < 33; i++) {
+skeletonWarrior1Array.push(new AliaBoss());
+
+for (let i = 0; i < 5; i++) {
   const skeletonWarrior = new SkeletonWarriorLVL1();
   skeletonWarrior.x = 500 + Math.random() * 3000;
   skeletonWarrior1Array.push(skeletonWarrior);
@@ -47,7 +49,7 @@ for (let i = 0; i < 33; i++) {
 
 const rookObjects = [];
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 10; i++) {
   const rookX = 650 + Math.random() * 2600;
   rookObjects.push(new ThrowableObject(rookX, 360));
 }
@@ -69,6 +71,7 @@ const lvl_1 = new LVL(
     new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 440, 333, 70, 70),
     new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Signpost 01.png', 530, 333, 70, 70),
     new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Tree 02.png', 200, 55, 350, 350),
+    new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Signpost 04.png', 3700, 333, 70, 70),
   ],
   backgroundObjects,
 );

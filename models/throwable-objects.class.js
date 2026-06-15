@@ -40,6 +40,7 @@ class ThrowableObject extends DrawableObject {
 
   animateFloat() {
     setInterval(() => {
+      if (this.world?.isPaused) return;
       if (this.isFlying) return;
       this.floatPhase += 0.08;
       this.y = this.baseY + Math.sin(this.floatPhase) * 2;
@@ -53,6 +54,7 @@ class ThrowableObject extends DrawableObject {
   }
 
   updateThrow() {
+    if (this.world?.isPaused) return;
     if (!this.isFlying) return;
 
     this.x += this.speedX;

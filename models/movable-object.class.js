@@ -5,6 +5,8 @@ class MovableObject extends DrawableObject {
 
   applyGravity() {
     setInterval(() => {
+      if (this.world?.isPaused) return;
+
       if (this.isAboveGround() || this.vcY > 0) {
         this.y -= this.vcY;
         this.vcY -= this.acY;
