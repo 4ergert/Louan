@@ -10,6 +10,7 @@ class World {
   keyboard;
   camera_x = 0;
   throwInputLocked = false;
+  bloodSplatterParticles = [];
   isPaused = false;
   introSkipLocked = false;
   openingIntroTriggered = false;
@@ -99,6 +100,8 @@ class World {
       this.drawBossIntroBubble();
     }
 
+    //this.drawBloodSplatter();
+
 
 
     let self = this;
@@ -132,6 +135,52 @@ class World {
     this.ctx.strokeText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
     this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
     this.ctx.restore();
+  }
+
+  drawBloodSplatter() {
+    if (this.bloodSplatterParticles.length === 0) return;
+
+    let now = Date.now();
+    this.bloodSplatterParticles = this.bloodSplatterParticles.filter(particle => now < particle.expiresAt);
+
+    this.bloodSplatterParticles.forEach(particle => {
+      let age = now - particle.startedAt;
+      let progress = age / particle.duration;
+
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.vy += particle.gravity;
+
+      this.ctx.save();
+      this.ctx.globalAlpha = Math.max(0, 1 - progress);
+      this.ctx.fillStyle = particle.color;
+      this.ctx.beginPath();
+      this.ctx.arc(particle.x + this.camera_x, particle.y, particle.radius, 0, Math.PI * 2);
+      this.ctx.fill();
+      this.ctx.restore();
+    });
+  }
+
+  spawnBloodSplatter() {
+    let characterArea = this.character.getCollisionArea();
+    let originX = characterArea.x + characterArea.width / 2;
+    let originY = characterArea.y + characterArea.height / 3;
+    let direction = this.aliaBoss.x < this.character.x ? 1 : -1;
+
+    for (let index = 0; index < 24; index++) {
+      this.bloodSplatterParticles.push({
+        x: originX + (Math.random() * 30 - 15),
+        y: originY + (Math.random() * 26 - 13),
+        vx: direction * (3.2 + Math.random() * 5.2),
+        vy: -5.5 + Math.random() * 4,
+        gravity: 0.2 + Math.random() * 0.12,
+        radius: 2 + Math.random() * 5.5,
+        color: Math.random() > 0.45 ? 'rgba(120, 8, 14, 1)' : 'rgba(196, 20, 20, 1)',
+        startedAt: Date.now(),
+        duration: 420 + Math.random() * 260,
+        expiresAt: Date.now() + 720,
+      });
+    }
   }
 
   updateOpeningIntro() {
@@ -453,12 +502,19 @@ class World {
   }
 
   handleBossSlashHit() {
-    if (!this.aliaBoss || this.aliaBoss.isDead || this.character.isDead) return;
-    if (this.character.isHurt()) return;
+    if (!this.aliaBoss || this.aliaBoss.isDead) return;
     if (!this.isCharacterWithinBossSlashRange()) return;
+
+    if (this.character.isDead) {
+      this.spawnBloodSplatter();
+      return;
+    }
+
+    if (this.character.isHurt()) return;
 
     this.character.startKnockback(this.aliaBoss.x + this.aliaBoss.width / 2);
     this.character.hit();
+    this.spawnBloodSplatter();
   }
 
   collectCoins() {
