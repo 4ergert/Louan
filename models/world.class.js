@@ -398,6 +398,7 @@ class World {
       this.collectRooks();
       this.handleThrowInput();
       this.updateThrownRooks();
+      this.updateBossAttackState();
 
       let stompedEnemy = this.lvl.enemies.find(enemy =>
         !enemy.isBoss &&
@@ -413,13 +414,51 @@ class World {
 
       this.lvl.enemies.forEach(enemy => {
         if (enemy.isDying || enemy.isDead) return;
+        if (enemy.isBoss) return;
 
         if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-          this.character.startKnockback();
+          this.character.startKnockback(enemy.x + enemy.width / 2);
           this.character.hit();
         }
       });
     }, 1000 / 60);
+  }
+
+  updateBossAttackState() {
+    if (!this.aliaBoss) return;
+
+    this.aliaBoss.setSlashingState(this.isCharacterWithinBossSlashRange());
+  }
+
+  isCharacterWithinBossSlashRange() {
+    if (this.aliaBoss.isDead || this.aliaBoss.isDying) return false;
+
+    let characterArea = this.character.getCollisionArea();
+    let bossArea = this.aliaBoss.getCollisionArea();
+    let overlapsVertically =
+      characterArea.y < bossArea.y + bossArea.height &&
+      characterArea.y + characterArea.height > bossArea.y;
+
+    if (!overlapsVertically) return false;
+
+    let characterRightEdge = characterArea.x + characterArea.width;
+    let bossRightEdge = bossArea.x + bossArea.width;
+    let horizontalGap = Math.max(
+      bossArea.x - characterRightEdge,
+      characterArea.x - bossRightEdge,
+      0
+    );
+
+    return horizontalGap <= 100;
+  }
+
+  handleBossSlashHit() {
+    if (!this.aliaBoss || this.aliaBoss.isDead || this.character.isDead) return;
+    if (this.character.isHurt()) return;
+    if (!this.isCharacterWithinBossSlashRange()) return;
+
+    this.character.startKnockback(this.aliaBoss.x + this.aliaBoss.width / 2);
+    this.character.hit();
   }
 
   collectCoins() {

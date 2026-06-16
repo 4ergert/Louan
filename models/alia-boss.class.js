@@ -11,6 +11,9 @@ class AliaBoss extends MovableObject {
   isHurt = false;
   isDying = false;
   isDead = false;
+  isSlashing = false;
+  isSlashAnimationActive = false;
+  slashHitTriggered = false;
   dyingAnimationSpeed = 100;
   animationFrames = [];
   hurtTimeout = null;
@@ -66,29 +69,51 @@ class AliaBoss extends MovableObject {
     './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_013.png',
     './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Dying/0_Skeleton_Warrior_Dying_014.png'
   ];
+  SLASHING_ANIMATION = [
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_000.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_001.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_002.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_003.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_004.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_005.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_006.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_007.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_008.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_009.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_010.png',
+    './img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_011.png'
+  ];
 
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.HURT_ANIMATION);
     this.loadImages(this.DYING_ANIMATION);
+    this.loadImages(this.SLASHING_ANIMATION);
     this.animationFrames = this.IMAGES_WALKING;
     this.animate();
   }
 
   playAnimation(images) {
-    let i = this.isDying || this.isHurt
+    let isSingleRunAnimation = this.isDying || this.isHurt || this.isSlashAnimationActive;
+    let i = isSingleRunAnimation
       ? Math.min(this.currentImage, images.length - 1)
       : this.currentImage % images.length;
     let path = images[i];
     this.img = this.imgCache[path];
 
-    if ((this.isDying || this.isHurt) && this.currentImage >= images.length - 1) {
+    if (this.isSlashAnimationActive && !this.slashHitTriggered && i >= 4) {
+      this.slashHitTriggered = true;
+      this.world?.handleBossSlashHit?.();
+    }
+
+    if (isSingleRunAnimation && this.currentImage >= images.length - 1) {
       if (this.isHurt) this.finishHurtAnimation();
+      if (this.isSlashAnimationActive) this.finishSlashAnimation();
       return;
     }
 
-    if (!this.isDying || this.currentImage < images.length - 1) {
+    if (!isSingleRunAnimation || this.currentImage < images.length - 1) {
       this.currentImage++;
     }
   }
@@ -127,10 +152,47 @@ class AliaBoss extends MovableObject {
     if (this.isDying || !this.isHurt) return;
 
     this.isHurt = false;
-    this.animationFrames = this.IMAGES_WALKING;
+    let shouldKeepSlashing = this.isSlashing || this.world?.isCharacterWithinBossSlashRange?.();
+    this.isSlashing = shouldKeepSlashing;
+    this.isSlashAnimationActive = shouldKeepSlashing;
+    this.slashHitTriggered = false;
+    this.animationFrames = shouldKeepSlashing ? this.SLASHING_ANIMATION : this.IMAGES_WALKING;
     this.currentImage = 0;
     if (this.hurtTimeout) clearTimeout(this.hurtTimeout);
     this.hurtTimeout = null;
+  }
+
+  setSlashingState(isSlashing) {
+    if (this.isDying || this.isDead || this.isHurt) return;
+    if (isSlashing) {
+      if (this.isSlashAnimationActive) return;
+
+      this.isSlashing = true;
+      this.isSlashAnimationActive = true;
+      this.slashHitTriggered = false;
+      this.animationFrames = this.SLASHING_ANIMATION;
+      this.currentImage = 0;
+      return;
+    }
+
+    if (this.isSlashAnimationActive) return;
+    if (!this.isSlashing) return;
+
+    this.isSlashing = false;
+    this.slashHitTriggered = false;
+    this.animationFrames = this.IMAGES_WALKING;
+    this.currentImage = 0;
+  }
+
+  finishSlashAnimation() {
+    if (!this.isSlashAnimationActive || this.isDying || this.isDead) return;
+
+    let shouldKeepSlashing = this.world?.isCharacterWithinBossSlashRange?.() || false;
+    this.isSlashAnimationActive = shouldKeepSlashing;
+    this.isSlashing = shouldKeepSlashing;
+    this.slashHitTriggered = false;
+    this.animationFrames = shouldKeepSlashing ? this.SLASHING_ANIMATION : this.IMAGES_WALKING;
+    this.currentImage = 0;
   }
 
   die() {
@@ -138,6 +200,9 @@ class AliaBoss extends MovableObject {
 
     this.isDying = true;
     this.isHurt = false;
+    this.isSlashing = false;
+    this.isSlashAnimationActive = false;
+    this.slashHitTriggered = false;
     this.animationFrames = this.DYING_ANIMATION;
     this.currentImage = 0;
     if (this.hurtTimeout) clearTimeout(this.hurtTimeout);

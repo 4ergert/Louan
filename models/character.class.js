@@ -210,10 +210,16 @@ class Character extends MovableObject {
     return this.knockbackUntil > Date.now();
   }
 
-  startKnockback(duration = 333, speed = 5) {
+  startKnockback(sourceX = null, duration = 333, speed = 5) {
     this.knockbackUntil = Date.now() + duration;
     this.knockbackSpeed = speed;
-    this.knockbackDirection = this.imgDirectionChange ? 1 : -1;
+    if (sourceX === null) {
+      this.knockbackDirection = this.imgDirectionChange ? 1 : -1;
+      return;
+    }
+
+    let characterCenterX = this.x + this.width / 2;
+    this.knockbackDirection = sourceX < characterCenterX ? 1 : -1;
   }
 
   startThrowingAnimation() {
