@@ -31,9 +31,6 @@ class Character extends MovableObject {
   knockbackDirection = 0;
   knockbackSpeed = 0;
 
-
-
-
   constructor() {
     super();
     this.loadImage('./img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_000.png');

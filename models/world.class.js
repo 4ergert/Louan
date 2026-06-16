@@ -18,6 +18,7 @@ class World extends BaseWorld {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.applyLevelWorldSettings();
     this.draw();
     this.setWorld();
     this.checkCollisions();
@@ -78,7 +79,7 @@ class World extends BaseWorld {
       this.drawBossIntroBubble();
     }
 
-    //this.drawBloodSplatter();
+    // this.drawBloodSplatter();
 
 
 

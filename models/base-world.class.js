@@ -6,22 +6,14 @@ class BaseWorld {
   openingIntroTimeout = null;
   openingIntroDuration = 6500;
   openingIntroTypeSpeed = 45;
-  openingIntroLines = [
-    'Irgendwas stimmt hier nicht!',
-    'Meine Geschwister Alia und Liam',
-    'sind verschwunden.',
-    'Ich sollte sie suchen gehen.'
-  ];
+  openingIntroLines = [];
+
   bossIntroTriggered = false;
   bossIntroStartedAt = 0;
   bossIntroTimeout = null;
   bossIntroDuration = 5000;
   bossIntroTypeSpeed = 55;
-  bossIntroLines = [
-    'Arrrrr, ich bin Aliam,',
-    'der Skelett-König,',
-    'arrrrr!'
-  ];
+  bossIntroLines = [];
 
   handleIntroSkip() {
     if (!this.keyboard.SPACE) {

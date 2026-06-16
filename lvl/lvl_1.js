@@ -55,6 +55,21 @@ for (let i = 0; i < 10; i++) {
 }
 
 
+const worldSettings = {
+  openingIntroLines: [
+    'Irgendwas stimmt hier nicht!',
+    'Meine Geschwister Alia und Liam',
+    'sind verschwunden.',
+    'Ich sollte sie suchen gehen.'
+  ],
+  bossIntroLines: [
+    'Arrrrr, ich bin Aliam,',
+    'der Skelett-König,',
+    'arrrrr!'
+  ]
+};
+
+
 
 const lvl_1 = new LVL(
   skeletonWarrior1Array,
@@ -74,4 +89,5 @@ const lvl_1 = new LVL(
     new EnvironmentObject('img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Signpost 04.png', 3700, 333, 70, 70),
   ],
   backgroundObjects,
+  worldSettings,
 );
