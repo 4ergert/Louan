@@ -1,4 +1,7 @@
-class LVL_1_Boss extends MovableObject {
+import { LVL_1_BOSS_SPRITES } from '../../js/sprites-path/lvl-1-boss-sprites.js';
+import { MovableObject } from '../objects/movable-object.class.js';
+
+export class LVL_1_Boss extends MovableObject {
   height = 500;
   width = 500;
   y = -10;

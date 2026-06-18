@@ -1,3 +1,11 @@
+import { LVL_1_Boss } from '../models/enemies/lvl-1-boss.class.js';
+import { SkeletonWarriorLVL1 } from '../models/enemies/skeleton_warrior_1.class.js';
+import { LVL } from '../models/lvl.class.js';
+import { BackgroundObject } from '../models/objects/background-object.class.js';
+import { EnvironmentObject } from '../models/objects/environment-objects.class.js';
+import { PlatformObjects } from '../models/objects/platform-objects.class.js';
+import { ThrowableObject } from '../models/objects/throwable-objects.class.js';
+
 const backgroundObjects = [];
 
 // add an extra background object at the beginning to ensure seamless scrolling
@@ -71,7 +79,7 @@ const worldSettings = {
 
 
 
-const lvl_1 = new LVL(
+export const lvl_1 = new LVL(
   skeletonWarrior1Array,
   platformObjects,
   [

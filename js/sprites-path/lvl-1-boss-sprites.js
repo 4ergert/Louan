@@ -1,4 +1,4 @@
-const LVL_1_BOSS_SPRITES = {
+export const LVL_1_BOSS_SPRITES = {
   WALKING_ANIMATION: [
     'img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_000.png',
     'img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_001.png',

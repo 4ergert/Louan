@@ -1,3 +1,5 @@
+import { MovableObject } from './objects/movable-object.class.js';
+
 class Colliding {
   isColliding(movableObject) {
     let ownCollisionArea = this.getCollisionArea();

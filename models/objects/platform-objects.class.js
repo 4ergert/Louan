@@ -1,4 +1,6 @@
-class PlatformObjects extends MovableObject {
+import { MovableObject } from './movable-object.class.js';
+
+export class PlatformObjects extends MovableObject {
   constructor(imgPath, x, y, width, height) {
     super();
     this.loadImage(imgPath);

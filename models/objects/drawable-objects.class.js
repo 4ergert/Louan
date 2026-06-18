@@ -1,4 +1,4 @@
-class DrawableObject {
+export class DrawableObject {
   img;
   imgCache = {};
   currentImage = 0;
@@ -6,6 +6,7 @@ class DrawableObject {
   y = 0;
   width = 150;
   height = 150;
+  showCollisionArea = false;
 
   loadImage(path) {
     this.img = new Image();
@@ -25,23 +26,20 @@ class DrawableObject {
   }
 
   drawCollisionArea(ctx) {
+    if (!this.showCollisionArea) return;
+
     let collisionArea = this.getCollisionArea();
-    if (this instanceof Character 
-      || this instanceof SkeletonWarriorLVL1 
-      || this instanceof PlatformObjects 
-      || this instanceof LVL_1_Boss
-    ) {
-      // ctx.beginPath();
-      // ctx.lineWidth = "2";
-      // ctx.strokeStyle = "red";
-      // ctx.rect(
-      //   collisionArea.x,
-      //   collisionArea.y,
-      //   collisionArea.width,
-      //   collisionArea.height
-      // );
-      // ctx.stroke();
-    }
+
+    // ctx.beginPath();
+    // ctx.lineWidth = "2";
+    // ctx.strokeStyle = "red";
+    // ctx.rect(
+    //   collisionArea.x,
+    //   collisionArea.y,
+    //   collisionArea.width,
+    //   collisionArea.height
+    // );
+    // ctx.stroke();
   }
 
   getCollisionArea() {
@@ -53,4 +51,4 @@ class DrawableObject {
       offsetY: 0,
     };
   }
-} 
+}

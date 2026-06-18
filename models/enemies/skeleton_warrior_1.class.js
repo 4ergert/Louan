@@ -1,4 +1,7 @@
-class SkeletonWarriorLVL1 extends MovableObject {
+import { SKELETON_WARRIOR_1_SPRITES } from '../../js/sprites-path/skeleton-warrior-1-sprites.js';
+import { MovableObject } from '../objects/movable-object.class.js';
+
+export class SkeletonWarriorLVL1 extends MovableObject {
   y = 280;
   speed = 0.4;
   moveDirection = -1;

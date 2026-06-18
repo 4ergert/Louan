@@ -1,4 +1,15 @@
-class World extends BaseWorld {
+import { createBloodSplatterParticles } from '../js/world-effects.js';
+import { drawBloodSplatter, drawGameOverOverlay } from '../js/world-renderer.js';
+import { WORLD_UI_CONFIG } from '../js/world-ui-config.js';
+import { Character } from './character/character.class.js';
+import { LifeBar } from './character/life-bar.class.js';
+import { CoinsBar } from './lvl-1/coins-bar.class.js';
+import { Coins } from './lvl-1/coins.class.js';
+import { ThrowableObject } from './objects/throwable-objects.class.js';
+import { WorldIntros } from './world-intros.class.js';
+import { lvl_1 } from '../lvl/lvl_1.js';
+
+export class World extends WorldIntros {
   character = new Character();
   lifeBar = new LifeBar();
   coinsBar = new CoinsBar();
@@ -12,6 +23,7 @@ class World extends BaseWorld {
   throwInputLocked = false;
   bloodSplatterParticles = [];
   isPaused = false;
+  gameOverOverlay = WORLD_UI_CONFIG.gameOverOverlay;
 
   constructor(canvas, keyboard) {
     super();
@@ -102,42 +114,18 @@ class World extends BaseWorld {
   }
 
   drawGameOverOverlay() {
-    this.ctx.save();
-    this.ctx.fillStyle = 'rgba(16, 10, 7, 0.68)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.font = 'bold 56px Georgia';
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.lineWidth = 6;
-    this.ctx.strokeStyle = '#100a07';
-    this.ctx.fillStyle = '#d9a441';
-    this.ctx.strokeText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
-    this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
-    this.ctx.restore();
+    drawGameOverOverlay(this.ctx, this.canvas, this.gameOverOverlay);
   }
 
   drawBloodSplatter() {
     if (this.bloodSplatterParticles.length === 0) return;
 
-    let now = Date.now();
-    this.bloodSplatterParticles = this.bloodSplatterParticles.filter(particle => now < particle.expiresAt);
-
-    this.bloodSplatterParticles.forEach(particle => {
-      let age = now - particle.startedAt;
-      let progress = age / particle.duration;
-
-      particle.x += particle.vx;
-      particle.y += particle.vy;
-      particle.vy += particle.gravity;
-
-      this.ctx.save();
-      this.ctx.globalAlpha = Math.max(0, 1 - progress);
-      this.ctx.fillStyle = particle.color;
-      this.ctx.beginPath();
-      this.ctx.arc(particle.x + this.camera_x, particle.y, particle.radius, 0, Math.PI * 2);
-      this.ctx.fill();
-      this.ctx.restore();
-    });
+    this.bloodSplatterParticles = drawBloodSplatter(
+      this.ctx,
+      this.camera_x,
+      this.bloodSplatterParticles,
+      Date.now()
+    );
   }
 
   spawnBloodSplatter() {
@@ -145,21 +133,9 @@ class World extends BaseWorld {
     let originX = characterArea.x + characterArea.width / 2;
     let originY = characterArea.y + characterArea.height / 3;
     let direction = this.bossLVL1.x < this.character.x ? 1 : -1;
+    let particles = createBloodSplatterParticles(originX, originY, direction, Date.now());
 
-    for (let index = 0; index < 24; index++) {
-      this.bloodSplatterParticles.push({
-        x: originX + (Math.random() * 30 - 15),
-        y: originY + (Math.random() * 26 - 13),
-        vx: direction * (3.2 + Math.random() * 5.2),
-        vy: -5.5 + Math.random() * 4,
-        gravity: 0.2 + Math.random() * 0.12,
-        radius: 2 + Math.random() * 5.5,
-        color: Math.random() > 0.45 ? 'rgba(120, 8, 14, 1)' : 'rgba(196, 20, 20, 1)',
-        startedAt: Date.now(),
-        duration: 420 + Math.random() * 260,
-        expiresAt: Date.now() + 720,
-      });
-    }
+    this.bloodSplatterParticles.push(...particles);
   }
 
   updateOpeningIntro() {
@@ -203,6 +179,7 @@ class World extends BaseWorld {
   shouldShowBossLifeBar() {
     return this.bossIntroTriggered && !this.isBossIntroActive() && this.bossLVL1 && !this.bossLVL1.isDead;
   }
+
   drawBossLifeBar() {
     let percentage = this.bossLVL1.energy / this.bossLVL1.maxEnergy;
     let barWidth = 220;

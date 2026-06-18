@@ -1,4 +1,6 @@
-class EnvironmentObject extends MovableObject {
+import { MovableObject } from './movable-object.class.js';
+
+export class EnvironmentObject extends MovableObject {
   constructor(imgPath, x, y, width, height) {
     super();
     this.img = new Image();

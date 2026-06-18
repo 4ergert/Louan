@@ -1,4 +1,6 @@
-class Coins extends DrawableObject {
+import { DrawableObject } from '../objects/drawable-objects.class.js';
+
+export class Coins extends DrawableObject {
   x = 0;
   y = 0;
   width = 40;

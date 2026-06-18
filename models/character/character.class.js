@@ -1,4 +1,7 @@
-class Character extends MovableObject {
+import { CHARACTER_SPRITES } from '../../js/sprites-path/character-sprites.js';
+import { MovableObject } from '../objects/movable-object.class.js';
+
+export class Character extends MovableObject {
 
   IDLE = CHARACTER_SPRITES.IDLE_ANIMATION;
   WALKING = CHARACTER_SPRITES.WALKING_ANIMATION;

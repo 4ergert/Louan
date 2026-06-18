@@ -1,3 +1,7 @@
+import '../models/colliding.class.js';
+import { Keyboard } from '../models/keyboard.class.js';
+import { World } from '../models/world.class.js';
+
 let canvas;
 let world;
 let keyboard = new Keyboard();
@@ -5,7 +9,6 @@ let keyboard = new Keyboard();
 function init() {
   canvas = document.getElementById("gameCanvas");
   world = new World(canvas, keyboard);
-
 }
 
 window.addEventListener("keydown", (e) => {
@@ -76,3 +79,5 @@ window.addEventListener("keyup", (e) => {
       break;
   }
 });
+
+init();

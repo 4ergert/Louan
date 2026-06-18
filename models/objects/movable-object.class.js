@@ -1,4 +1,6 @@
-class MovableObject extends DrawableObject {
+import { DrawableObject } from './drawable-objects.class.js';
+
+export class MovableObject extends DrawableObject {
   imgDirectionChange = false;
   vcY = 0;
   acY = 0.25;

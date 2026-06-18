@@ -1,4 +1,6 @@
-class CoinsBar extends DrawableObject {
+import { DrawableObject } from '../objects/drawable-objects.class.js';
+
+export class CoinsBar extends DrawableObject {
   imgCoins = './img/Collectable Object/Autumn_Forest_2D_Platformer_Tileset_Collectable Object - Coin 01.png';
   coins = 0;
 

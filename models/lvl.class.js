@@ -1,4 +1,4 @@
-class LVL {
+export class LVL {
   enemies;
   platformObjects;
   environmentObjects;

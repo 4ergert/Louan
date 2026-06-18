@@ -1,4 +1,4 @@
-class BaseWorld {
+export class WorldIntros {
   introSkipLocked = false;
   openingIntroTriggered = false;
   openingIntroCompleted = false;

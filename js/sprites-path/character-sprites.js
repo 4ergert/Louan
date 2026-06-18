@@ -1,4 +1,4 @@
-const CHARACTER_SPRITES = {
+export const CHARACTER_SPRITES = {
   IDLE_ANIMATION: [
     './img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_000.png',
     './img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_001.png',

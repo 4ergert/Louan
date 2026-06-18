@@ -1,4 +1,6 @@
-class ThrowableObject extends DrawableObject {
+import { DrawableObject } from './drawable-objects.class.js';
+
+export class ThrowableObject extends DrawableObject {
   img = './img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Rock 04.png';
   throwable = true;
   rooks = 0;

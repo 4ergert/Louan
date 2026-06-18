@@ -1,4 +1,6 @@
-class BackgroundObject extends MovableObject {
+import { MovableObject } from './movable-object.class.js';
+
+export class BackgroundObject extends MovableObject {
 
   constructor(imgPath, parallaxFactor = 1, x = 0, width = 720, height = 480) {
     super();
