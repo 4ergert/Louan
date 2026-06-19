@@ -1,3 +1,5 @@
+import { isColliding } from '../../js/colliding-objects.js';
+
 export class DrawableObject {
   img;
   imgCache = {};
@@ -50,5 +52,9 @@ export class DrawableObject {
       height: this.height,
       offsetY: 0,
     };
+  }
+
+  isColliding(otherObject) {
+    return isColliding.call(this, otherObject);
   }
 }

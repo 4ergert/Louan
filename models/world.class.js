@@ -8,6 +8,7 @@ import { Coins } from './lvl-1/coins.class.js';
 import { ThrowableObject } from './objects/throwable-objects.class.js';
 import { WorldIntros } from './world-intros.class.js';
 import { lvl_1 } from '../lvl/lvl_1.js';
+import { isCollidingWithCharacter, isColliding } from '../js/colliding-objects.js';
 
 export class World extends WorldIntros {
   character = new Character();
@@ -47,10 +48,12 @@ export class World extends WorldIntros {
     return this.lvl.enemies.find(enemy => enemy.isBoss);
   }
 
+  // Helper method to assign world reference to a drawable object and its children (if any)
   assignWorld(drawableObject) {
     if (drawableObject) drawableObject.world = this;
   }
 
+  // Helper method to assign world reference to multiple objects at once
   assignWorldToAll(drawableObjects) {
     drawableObjects.forEach(drawableObject => this.assignWorld(drawableObject));
   }
@@ -282,13 +285,13 @@ export class World extends WorldIntros {
 
   collectCoins() {
     let collectedCoins = this.lvl.environmentObjects.filter(object =>
-      object instanceof Coins && this.isCollidingWithCharacter(object)
+      object instanceof Coins && isCollidingWithCharacter(this.character, object)
     );
 
     if (collectedCoins.length === 0) return;
 
     this.lvl.environmentObjects = this.lvl.environmentObjects.filter(object =>
-      !(object instanceof Coins && this.isCollidingWithCharacter(object))
+      !(object instanceof Coins && isCollidingWithCharacter(this.character, object))
     );
 
     this.coinsBar.addCoin(collectedCoins.length);
@@ -296,13 +299,13 @@ export class World extends WorldIntros {
 
   collectRooks() {
     let collectedRooks = this.lvl.environmentObjects.filter(object =>
-      object instanceof ThrowableObject && this.isCollidingWithCharacter(object)
+      object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object)
     );
 
     if (collectedRooks.length === 0) return;
 
     this.lvl.environmentObjects = this.lvl.environmentObjects.filter(object =>
-      !(object instanceof ThrowableObject && this.isCollidingWithCharacter(object))
+      !(object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object))
     );
 
     this.throwableObjects.addRook(collectedRooks.length);
@@ -343,7 +346,7 @@ export class World extends WorldIntros {
       let hitEnemy = this.lvl.enemies.find(enemy =>
         !enemy.isDying &&
         !enemy.isDead &&
-        this.isCollidingBetween(rook, enemy)
+        rook.isColliding(enemy)
       );
 
       if (!hitEnemy) return;
@@ -357,30 +360,6 @@ export class World extends WorldIntros {
 
       this.handleEnemyDefeat(hitEnemy);
     });
-  }
-
-  isCollidingBetween(firstObject, secondObject) {
-    let firstArea = firstObject.getCollisionArea();
-    let secondArea = secondObject.getCollisionArea();
-
-    return (
-      firstArea.x + firstArea.width > secondArea.x &&
-      firstArea.x < secondArea.x + secondArea.width &&
-      firstArea.y + firstArea.height > secondArea.y &&
-      firstArea.y < secondArea.y + secondArea.height
-    );
-  }
-
-  isCollidingWithCharacter(object) {
-    let characterArea = this.character.getCollisionArea();
-    let objectArea = object.getCollisionArea();
-
-    return (
-      characterArea.x + characterArea.width > objectArea.x &&
-      characterArea.x < objectArea.x + objectArea.width &&
-      characterArea.y + characterArea.height > objectArea.y &&
-      characterArea.y < objectArea.y + objectArea.height
-    );
   }
 
   // Check if the character is stomping on the enemy

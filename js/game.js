@@ -1,4 +1,3 @@
-import '../models/colliding.class.js';
 import { Keyboard } from '../models/keyboard.class.js';
 import { World } from '../models/world.class.js';
 
