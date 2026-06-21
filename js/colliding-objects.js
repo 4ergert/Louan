@@ -78,6 +78,13 @@ export function isColliding(otherObject) {
   );
 }
 
+/**
+ * Checks whether the character is close enough to the level boss for a slash attack.
+ * Requires vertical overlap and a horizontal gap of at most 100 pixels.
+ *
+ * @this {{bossLVL1: {isDead: boolean, isDying: boolean, getCollisionArea: function(): {x: number, y: number, width: number, height: number}}, character: {getCollisionArea: function(): {x: number, y: number, width: number, height: number}}}}
+ * @returns {boolean} True when the character is inside the boss slash range.
+ */
 export function isCharacterWithinBossSlashRange() {
   if (this.bossLVL1.isDead || this.bossLVL1.isDying) return false;
 

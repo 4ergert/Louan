@@ -8,6 +8,7 @@ import { ThrowableObject } from './objects/throwable-objects.class.js';
 import { WorldIntros } from './world-intros.class.js';
 import { lvl_1 } from '../lvl/lvl_1.js';
 import { isCollidingWithCharacter, isColliding, isCharacterWithinBossSlashRange } from '../js/colliding-objects.js';
+import { isSpawning } from './character/char-movements.js';
 
 export class World extends WorldIntros {
   character = new Character();
@@ -141,7 +142,7 @@ export class World extends WorldIntros {
   }
 
   updateOpeningIntro() {
-    if (this.openingIntroTriggered || this.character.isDead || this.character.isSpawning()) return;
+    if (this.openingIntroTriggered || this.character.isDead || isSpawning(this.character)) return;
 
     this.openingIntroTriggered = true;
     this.isPaused = true;

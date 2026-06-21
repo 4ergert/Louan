@@ -1,10 +1,19 @@
+import { isMoving, isRunning, isSpawning, updateSlashState } from './char-movements.js';
+
+/**
+ * Selects and plays the appropriate character animation for the current state.
+ * Prioritizes spawn, damage, attack, air, running, and walking states in that order.
+ *
+ * @param {import('./character.class.js').Character} character - The active character instance.
+ * @returns {void}
+ */
 export function switchCharAnimation(character) {
   if (character.world?.isPaused) return;
 
-  character.updateSlashState();
+  updateSlashState(character);
 
   switch (true) {
-    case character.isSpawning():
+    case isSpawning(character):
       character.spriteAnimation(character.IDLE);
       break;
     case character.isDying:
@@ -28,13 +37,13 @@ export function switchCharAnimation(character) {
     case character.isAboveGround():
       character.spriteAnimation(character.FLYING); // Play the flying animation while in the air
       break;
-    case character.isRunning():
+    case isRunning(character):
       if (!character.isHurtState) {
         character.spriteAnimation(character.RUNNING);
         character.speed = 4;
       }
       break;
-    case character.isMoving():
+    case isMoving(character):
       if (!character.isHurtState) {
         character.spriteAnimation(character.WALKING);
         character.speed = 2;

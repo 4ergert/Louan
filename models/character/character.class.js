@@ -1,36 +1,9 @@
 import { CHARACTER_SPRITES } from '../../js/sprites-path/character-sprites.js';
 import { MovableObject } from '../objects/movable-object.class.js';
 import { switchCharAnimation } from './switch-char-animation.js';
-import {
-  allowsMoveLeft,
-  allowsMoveRight,
-  allowsToJump,
-  charMovement,
-  characterIsInKnockback,
-  freezeMovement,
-  isMoving,
-  isRunning,
-  isSpawning,
-  knockback,
-  moveLeft,
-  moveRight,
-  shouldFreezeMovement,
-  updateSlashState,
-  updateSpawnOpacity,
-} from './char-movements.js';
+import { charMovement } from './char-movements.js';
 
 export class Character extends MovableObject {
-
-  IDLE = CHARACTER_SPRITES.IDLE_ANIMATION;
-  WALKING = CHARACTER_SPRITES.WALKING_ANIMATION;
-  RUNNING = CHARACTER_SPRITES.RUNNING_ANIMATION;
-  JUMPING = CHARACTER_SPRITES.JUMPING_ANIMATION;
-  FLYING = CHARACTER_SPRITES.JUMPING_LOOP_ANIMATION;
-  FALLING = CHARACTER_SPRITES.FALLING_ANIMATION;
-  THROWING = CHARACTER_SPRITES.THROWING_ANIMATION;
-  SLASHING = CHARACTER_SPRITES.SLASHING_ANIMATION;
-  HURT = CHARACTER_SPRITES.HURT_ANIMATION;
-  DYING = CHARACTER_SPRITES.DYING_ANIMATION;
 
   x = -47;
   y = 280;
@@ -51,7 +24,21 @@ export class Character extends MovableObject {
   knockbackUntil = 0;
   knockbackDirection = 0;
   knockbackSpeed = 0;
+  
+  IDLE = CHARACTER_SPRITES.IDLE_ANIMATION;
+  WALKING = CHARACTER_SPRITES.WALKING_ANIMATION;
+  RUNNING = CHARACTER_SPRITES.RUNNING_ANIMATION;
+  JUMPING = CHARACTER_SPRITES.JUMPING_ANIMATION;
+  FLYING = CHARACTER_SPRITES.JUMPING_LOOP_ANIMATION;
+  FALLING = CHARACTER_SPRITES.FALLING_ANIMATION;
+  THROWING = CHARACTER_SPRITES.THROWING_ANIMATION;
+  SLASHING = CHARACTER_SPRITES.SLASHING_ANIMATION;
+  HURT = CHARACTER_SPRITES.HURT_ANIMATION;
+  DYING = CHARACTER_SPRITES.DYING_ANIMATION;
 
+  /**
+   * Creates the character, loads all sprite sets, and starts physics and animation updates.
+   */
   constructor() {
     super();
     this.loadImage('./img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_000.png');
@@ -70,71 +57,25 @@ export class Character extends MovableObject {
     this.animation();
   }
 
+  /**
+   * Starts the character update loops for movement and sprite animation.
+   * Runs movement at 60 FPS and updates the displayed animation frame every 50 ms.
+   *
+   * @returns {void}
+   */
   animation() {
+    // ./models/character/char-movements.js handles all movement logic, including input and knockback
     setInterval(() => charMovement(this), 1000 / 60);
-
+    // ./models/character/switch-char-animation.js selects the correct animation based on the character's current state
     setInterval(() => switchCharAnimation(this), 50);
   }
 
-  updateSpawnOpacity() {
-    updateSpawnOpacity(this);
-  }
-
-  shouldFreezeMovement() {
-    return shouldFreezeMovement(this);
-  }
-
-  freezeMovement() {
-    freezeMovement(this);
-  }
-
-  characterIsInKnockback() {
-    return characterIsInKnockback(this);
-  }
-
-  knockback() {
-    knockback(this);
-  }
-
-  allowsMoveRight() {
-    return allowsMoveRight(this);
-  }
-
-  moveRight() {
-    moveRight(this);
-  }
-
-  allowsMoveLeft() {
-    return allowsMoveLeft(this);
-  }
-
-  moveLeft() {
-    moveLeft(this);
-  }
-
-  allowsToJump() {
-    return allowsToJump(this);
-  }
-
-  isMoving() {
-    return isMoving(this);
-  }
-
-  isRunning() {
-    return isRunning(this);
-  }
-
-  updateSlashState() {
-    updateSlashState(this);
-  }
-
-  isSpawning() {
-    return isSpawning(this);
-  }
-
-  
-
-
+  /**
+   * Draws the character with its current spawn or fade opacity applied.
+   *
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   * @returns {void}
+   */
   draw(ctx) {
     ctx.save();
     ctx.globalAlpha = this.opacity;
@@ -142,6 +83,11 @@ export class Character extends MovableObject {
     ctx.restore();
   }
 
+  /**
+   * Returns the adjusted collision box used for character hit detection.
+   *
+   * @returns {{x: number, y: number, width: number, height: number, offsetY: number}} The active collision area.
+   */
   getCollisionArea() {
     return {
       x: this.x + 45,

@@ -48,7 +48,7 @@ export function updateSpawnOpacity(character) {
  * @returns {boolean} True when the character must stay frozen.
  */
 export function shouldFreezeMovement(character) {
-  return character.isSpawning() || character.isDying || character.isDead;
+  return isSpawning(character) || character.isDying || character.isDead;
 }
 
 /**
@@ -66,10 +66,10 @@ export function freezeMovement(character) {
  * @returns {void}
  */
 export function knckbackOrMove(character) {
-  if (character.characterIsInKnockback()) character.knockback();
+  if (characterIsInKnockback(character)) knockback(character);
   else {
-    if (character.allowsMoveRight()) character.moveRight();
-    if (character.allowsMoveLeft()) character.moveLeft();
+    if (allowsMoveRight(character)) moveRight(character);
+    if (allowsMoveLeft(character)) moveLeft(character);
   }
 }
 
