@@ -1,6 +1,23 @@
 import { CHARACTER_SPRITES } from '../../js/sprites-path/character-sprites.js';
 import { MovableObject } from '../objects/movable-object.class.js';
 import { switchCharAnimation } from './switch-char-animation.js';
+import {
+  allowsMoveLeft,
+  allowsMoveRight,
+  allowsToJump,
+  charMovement,
+  characterIsInKnockback,
+  freezeMovement,
+  isMoving,
+  isRunning,
+  isSpawning,
+  knockback,
+  moveLeft,
+  moveRight,
+  shouldFreezeMovement,
+  updateSlashState,
+  updateSpawnOpacity,
+} from './char-movements.js';
 
 export class Character extends MovableObject {
 
@@ -54,106 +71,69 @@ export class Character extends MovableObject {
   }
 
   animation() {
-    //Movement
-    setInterval(() => this.charMovement(), 1000 / 60);
+    setInterval(() => charMovement(this), 1000 / 60);
 
-    //Animation 
     setInterval(() => switchCharAnimation(this), 50);
   }
 
-  charMovement() {
-    if (this.world?.isPaused) return;
-    this.updateSpawnOpacity();
-
-    if (this.shouldFreezeMovement()) {
-      this.freezeMovement();
-      return;
-    }
-
-    if (this.characterIsInKnockback()) this.knockback();
-    else {
-      if (this.allowsMoveRight()) this.moveRight();
-      if (this.allowsMoveLeft()) this.moveLeft();
-    }
-
-    if (this.allowsToJump()) this.vcY = 6.75;
-
-    this.freezeMovement();
-  }
-
   updateSpawnOpacity() {
-    let elapsedTime = Date.now() - this.spawnStartedAt;
-    this.opacity = Math.min(1, elapsedTime / this.spawnDuration);
+    updateSpawnOpacity(this);
   }
 
   shouldFreezeMovement() {
-    return this.isSpawning() || this.isDying || this.isDead;
+    return shouldFreezeMovement(this);
   }
 
   freezeMovement() {
-    this.world.camera_x = -this.x + 100;
+    freezeMovement(this);
   }
 
   characterIsInKnockback() {
-    return this.knockbackUntil > Date.now();
+    return characterIsInKnockback(this);
   }
 
   knockback() {
-    this.x += this.knockbackDirection * this.knockbackSpeed;
-    if (this.isAboveGround()) {
-      this.vcY = 1;
-      this.y -= 1;
-    }
+    knockback(this);
   }
 
   allowsMoveRight() {
-    return this.world.keyboard.RIGHT && this.isHurtState == false;
+    return allowsMoveRight(this);
   }
 
   moveRight() {
-    this.x += this.speed;
-    this.imgDirectionChange = false;
+    moveRight(this);
   }
 
   allowsMoveLeft() {
-    return this.world.keyboard.LEFT && this.isHurtState == false;
+    return allowsMoveLeft(this);
   }
 
   moveLeft() {
-    this.x -= this.speed;
-    this.imgDirectionChange = true;
+    moveLeft(this);
   }
 
   allowsToJump() {
-    return this.world.keyboard.UP && !this.isAboveGround();
+    return allowsToJump(this);
   }
 
   isMoving() {
-    return this.world.keyboard.RIGHT || this.world.keyboard.LEFT;
+    return isMoving(this);
   }
 
   isRunning() {
-    return this.world.keyboard.SHIFT && this.isMoving();
+    return isRunning(this);
   }
 
   updateSlashState() {
-    if (this.isSpawning()) return;
-
-    if (this.world.keyboard.D && !this.slashInputLocked) {
-      this.slashAnimationActive = true;
-      this.slashInputLocked = true;
-    }
-
-    if (!this.world.keyboard.D) this.slashInputLocked = false;
+    updateSlashState(this);
   }
 
   isSpawning() {
-    return this.opacity < 1;
+    return isSpawning(this);
   }
 
-  switchCharAnimation() {
-    switchCharAnimation(this);
-  }
+  
+
 
   draw(ctx) {
     ctx.save();
