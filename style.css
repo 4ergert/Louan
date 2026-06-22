@@ -3,7 +3,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   height: 100vh;
   margin: 0;
   background-image: url('./assets/img/Background/Background.png');
@@ -39,6 +39,7 @@ h1 {
   font-weight: bold;
   color: white;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 111px;
 }
 
 #gameCanvas {
@@ -50,4 +51,79 @@ h1 {
 
 #startScreenCanvas {
   background-color: transparent;
+}
+
+#startScreenMeta {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(90vw, 720px);
+  z-index: 10;
+}
+
+#startScreenActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.startScreenDetail {
+  position: relative;
+}
+
+.startScreenDetail summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 215, 149, 0.38);
+  border-radius: 999px;
+  background: rgba(38, 28, 5, 0.42);
+  color: rgba(255, 243, 210, 0.88);
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+}
+
+.startScreenDetail summary::-webkit-details-marker {
+  display: none;
+}
+
+.startScreenPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 215, 149, 0.7);
+  border-radius: 14px;
+  background: rgba(17, 11, 6, 0.9);
+  color: #fff3d2;
+  text-align: left;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+  z-index: 5;
+}
+
+.startScreenPanel p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.startScreenPanel p + p {
+  margin-top: 8px;
+}
+
+#startScreenCopyright {
+  margin: 0;
+  color: rgba(255, 243, 210, 0.9);
+  font-size: 13px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }

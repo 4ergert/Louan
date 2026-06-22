@@ -30,10 +30,12 @@ function showGameCanvas() {
 
   const startScreenElement = document.getElementById("startScreen");
   const startScreenCanvas = document.getElementById("startScreenCanvas");
+  const startScreenMeta = document.getElementById("startScreenMeta");
 
   startScreen?.stop();
   startScreenElement?.style.setProperty("display", "none");
   startScreenCanvas?.style.setProperty("display", "none");
+  startScreenMeta?.style.setProperty("display", "none");
   canvas?.style.setProperty("display", "block");
   canvas?.style.setProperty("opacity", "0");
   isStartScreenVisible = false;
