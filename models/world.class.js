@@ -1,6 +1,6 @@
 import { createBloodSplatterParticles } from '../js/world-effects.js';
 import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay } from '../js/world-renderer.js';
-import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createGameOverAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
+import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
 import { Character } from './character/character.class.js';
 import { LifeBar } from './character/life-bar.class.js';
 import { CoinsBar } from './lvl-1/coins-bar.class.js';
@@ -30,10 +30,12 @@ export class World extends WorldIntros {
   coinPickupAudio = createCoinPickupAudio();
   boneBreakAudios = createBoneBreakAudios();
   bossMusicAudio = createBossMusicAudio();
+  evilLaughAudio = createEvilLaughAudio();
   gameOverAudio = createGameOverAudio();
   lastBoneBreakAudioIndex = -1;
   backgroundMusicAudio = null;
   bossMusicTriggered = false;
+  bossIntroLaughPlayed = false;
   gameOverAudioPlayed = false;
 
   constructor(canvas, keyboard, backgroundMusicAudio = null) {
@@ -286,6 +288,13 @@ export class World extends WorldIntros {
     stopBackgroundAudio(this.backgroundMusicAudio);
     stopBackgroundAudio(this.bossMusicAudio);
     playSoundEffect(this.gameOverAudio);
+  }
+
+  onBossIntroFinished() {
+    if (this.bossIntroLaughPlayed) return;
+
+    this.bossIntroLaughPlayed = true;
+    playSoundEffect(this.evilLaughAudio);
   }
 
   updateBossAttackState() {

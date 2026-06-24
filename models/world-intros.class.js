@@ -78,6 +78,7 @@ export class WorldIntros {
     if (this.bossIntroTimeout) clearTimeout(this.bossIntroTimeout);
     this.bossIntroTimeout = null;
     this.isPaused = false;
+    this.onBossIntroFinished?.();
   }
 
   isBossIntroActive() {

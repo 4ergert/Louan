@@ -33,9 +33,16 @@ export function createBossMusicAudio() {
 	return createLoopingAudio('assets/audio/boss_music.mp3', 0.38);
 }
 
+export function createEvilLaughAudio() {
+	const audio = new Audio('assets/audio/evil-laugh.mp3');
+	audio.volume = 0.42;
+	audio.preload = 'auto';
+	return registerManagedAudio(audio, 'effect');
+}
+
 export function createGameOverAudio() {
 	const audio = new Audio('assets/audio/game-over.mp3');
-	audio.volume = 0.8;
+	audio.volume = 0.9;
 	audio.preload = 'auto';
 	return registerManagedAudio(audio, 'effect');
 }
@@ -50,7 +57,7 @@ export function createCoinPickupAudio() {
 export function createRunningFootstepAudios() {
 	return ['05', '06', '07'].map((variant) => {
 		const audio = new Audio(`assets/audio/Footstep_Dirt_${variant}.wav`);
-		audio.volume = 0.32;
+		audio.volume = 0.4;
 		audio.preload = 'auto';
 		return registerManagedAudio(audio, 'effect');
 	});
@@ -59,7 +66,7 @@ export function createRunningFootstepAudios() {
 export function createJumpEffortAudios() {
 	return ['01', '02', '03'].map((variant) => {
 		const audio = new Audio(`assets/audio/${variant}._effort_grunt_male.wav`);
-		audio.volume = 0.1;
+		audio.volume = 0.2;
 		audio.preload = 'auto';
 		return registerManagedAudio(audio, 'effect');
 	});
@@ -68,7 +75,7 @@ export function createJumpEffortAudios() {
 export function createBoneBreakAudios() {
 	return ['01', '02', '03'].map((variant) => {
 		const audio = new Audio(`assets/audio/bonebreak ${variant}.mp3`);
-		audio.volume = 0.35;
+		audio.volume = 0.1;
 		audio.preload = 'auto';
 		return registerManagedAudio(audio, 'effect');
 	});
