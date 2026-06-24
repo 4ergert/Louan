@@ -63,5 +63,18 @@ export const LVL_1_BOSS_SPRITES = {
     './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_009.png',
     './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_010.png',
     './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Slashing/0_Skeleton_Warrior_Slashing_011.png'
+  ],
+  THROWING_ANIMATION: [
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_000.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_001.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_002.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_003.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_004.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_005.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_006.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_007.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_008.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_009.png',
+    './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Throwing/0_Skeleton_Warrior_Throwing_010.png'
   ]
-}
+};

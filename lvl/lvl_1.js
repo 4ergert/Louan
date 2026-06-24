@@ -51,7 +51,8 @@ skeletonWarrior1Array.push(new LVL_1_Boss());
 
 for (let i = 0; i < 11; i++) {
   const skeletonWarrior = new SkeletonWarriorLVL1();
-  skeletonWarrior.x = 500 + Math.random() * 3000;
+  skeletonWarrior.x = 10 + Math.random() * 3000;
+  skeletonWarrior.y = 80;
   skeletonWarrior1Array.push(skeletonWarrior);
 }
 

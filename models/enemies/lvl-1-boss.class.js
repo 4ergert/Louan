@@ -16,15 +16,19 @@ export class LVL_1_Boss extends MovableObject {
   isDead = false;
   isSlashing = false;
   isSlashAnimationActive = false;
+  isThrowingAnimationActive = false;
   slashHitTriggered = false;
+  skeletonThrowTriggered = false;
   dyingAnimationSpeed = 100;
   animationFrames = [];
   hurtTimeout = null;
+  skeletonThrowInterval = null;
 
   WALKING = LVL_1_BOSS_SPRITES.WALKING_ANIMATION;
   HURT = LVL_1_BOSS_SPRITES.HURT_ANIMATION;
   DYING = LVL_1_BOSS_SPRITES.DYING_ANIMATION;
   SLASHING = LVL_1_BOSS_SPRITES.SLASHING_ANIMATION;
+  THROWING = LVL_1_BOSS_SPRITES.THROWING_ANIMATION;
 
   constructor() {
     super().loadImage(this.WALKING[0]);
@@ -32,12 +36,37 @@ export class LVL_1_Boss extends MovableObject {
     this.loadImages(this.HURT);
     this.loadImages(this.DYING);
     this.loadImages(this.SLASHING);
+    this.loadImages(this.THROWING);
     this.animationFrames = this.WALKING;
     this.animate();
+    this.startSkeletonThrowLoop();
+  }
+
+  startSkeletonThrowLoop() {
+    this.skeletonThrowInterval = setInterval(() => {
+      if (!this.canStartSkeletonThrow()) return;
+
+      this.startSkeletonThrowAnimation();
+    }, 5000);
+  }
+
+  canStartSkeletonThrow() {
+    if (!this.world || this.world.isPaused) return false;
+    if (this.isDying || this.isDead || this.isHurt) return false;
+    if (this.isSlashing || this.isSlashAnimationActive || this.isThrowingAnimationActive) return false;
+    if (this.world.isBossIntroActive?.()) return false;
+    return this.world.bossIntroTriggered;
+  }
+
+  startSkeletonThrowAnimation() {
+    this.isThrowingAnimationActive = true;
+    this.skeletonThrowTriggered = false;
+    this.animationFrames = this.THROWING;
+    this.currentImage = 0;
   }
 
   playAnimation(images) {
-    let isSingleRunAnimation = this.isDying || this.isHurt || this.isSlashAnimationActive;
+    let isSingleRunAnimation = this.isDying || this.isHurt || this.isSlashAnimationActive || this.isThrowingAnimationActive;
     let i = isSingleRunAnimation
       ? Math.min(this.currentImage, images.length - 1)
       : this.currentImage % images.length;
@@ -49,9 +78,15 @@ export class LVL_1_Boss extends MovableObject {
       this.world?.handleBossSlashHit?.();
     }
 
+    if (this.isThrowingAnimationActive && !this.skeletonThrowTriggered && i >= 4) {
+      this.skeletonThrowTriggered = true;
+      this.world?.spawnSkeletonWarriorFromBoss?.();
+    }
+
     if (isSingleRunAnimation && this.currentImage >= images.length - 1) {
       if (this.isHurt) this.finishHurtAnimation();
       if (this.isSlashAnimationActive) this.finishSlashAnimation();
+      if (this.isThrowingAnimationActive) this.finishThrowingAnimation();
       return;
     }
 
@@ -137,6 +172,15 @@ export class LVL_1_Boss extends MovableObject {
     this.currentImage = 0;
   }
 
+  finishThrowingAnimation() {
+    if (!this.isThrowingAnimationActive || this.isDying || this.isDead) return;
+
+    this.isThrowingAnimationActive = false;
+    this.skeletonThrowTriggered = false;
+    this.animationFrames = this.WALKING;
+    this.currentImage = 0;
+  }
+
   die() {
     if (this.isDying || this.isDead) return this.DYING.length * this.dyingAnimationSpeed + 50;
 
@@ -144,11 +188,14 @@ export class LVL_1_Boss extends MovableObject {
     this.isHurt = false;
     this.isSlashing = false;
     this.isSlashAnimationActive = false;
+    this.isThrowingAnimationActive = false;
     this.slashHitTriggered = false;
+    this.skeletonThrowTriggered = false;
     this.animationFrames = this.DYING;
     this.currentImage = 0;
     if (this.hurtTimeout) clearTimeout(this.hurtTimeout);
     this.hurtTimeout = null;
+    if (this.skeletonThrowInterval) clearInterval(this.skeletonThrowInterval);
 
     const dyingDuration = this.DYING.length * this.dyingAnimationSpeed + 50;
     setTimeout(() => {

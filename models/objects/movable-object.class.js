@@ -8,6 +8,7 @@ export class MovableObject extends DrawableObject {
 
   applyGravity() {
     setInterval(() => {
+      if (!this.world) return;
       if (this.world?.isPaused) return;
 
       if (this.isAboveGround() || this.vcY > 0) {

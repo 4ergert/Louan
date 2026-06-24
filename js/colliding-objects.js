@@ -17,6 +17,7 @@ export function isLandingOn(movableObject, platform) {
   let ownCollisionArea = movableObject.getCollisionArea();
   let platformArea = platform.getCollisionArea();
   let feet = ownCollisionArea.y + ownCollisionArea.height;
+  let landingTolerance = Math.max(20, Math.abs(movableObject.vcY) + 5);
 
   return (
     movableObject.vcY <= 0 &&
@@ -24,7 +25,7 @@ export function isLandingOn(movableObject, platform) {
     ownCollisionArea.x < platformArea.x + platformArea.width &&
     ownCollisionArea.y < platformArea.y &&
     feet >= platformArea.y &&
-    feet <= platformArea.y + 20
+    feet <= platformArea.y + landingTolerance
   );
 }
 

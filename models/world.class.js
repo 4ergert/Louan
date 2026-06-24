@@ -156,6 +156,19 @@ export class World extends WorldIntros {
     this.bloodSplatterParticles.push(...particles);
   }
 
+  spawnSkeletonWarriorFromBoss() {
+    if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
+
+    const skeletonWarrior = new SkeletonWarriorLVL1();
+    const spawnDirection = this.character.x < this.bossLVL1.x ? -1 : 1;
+    const spawnX = this.bossLVL1.x + (spawnDirection < 0 ? 110 : 190);
+    const spawnY = this.bossLVL1.y + 180;
+
+    this.assignWorld(skeletonWarrior);
+    skeletonWarrior.launchFromBoss(spawnDirection, spawnX, spawnY);
+    this.lvl.enemies.push(skeletonWarrior);
+  }
+
   updateOpeningIntro() {
     if (this.openingIntroTriggered || this.character.isDead || isSpawning(this.character)) return;
 
@@ -226,6 +239,15 @@ export class World extends WorldIntros {
         if (this.character.isLandingOn(platform)) {
           this.character.landOn(platform);
         }
+
+        this.lvl.enemies.forEach(enemy => {
+          if (enemy.isBoss || enemy.isDying || enemy.isDead) return;
+          if (typeof enemy.isLandingOn !== "function" || typeof enemy.landOn !== "function") return;
+
+          if (enemy.isLandingOn(platform)) {
+            enemy.landOn(platform);
+          }
+        });
       });
 
       this.collectCoins();

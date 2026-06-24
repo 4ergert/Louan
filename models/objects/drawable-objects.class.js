@@ -32,16 +32,16 @@ export class DrawableObject {
 
     let collisionArea = this.getCollisionArea();
 
-    // ctx.beginPath();
-    // ctx.lineWidth = "2";
-    // ctx.strokeStyle = "red";
-    // ctx.rect(
-    //   collisionArea.x,
-    //   collisionArea.y,
-    //   collisionArea.width,
-    //   collisionArea.height
-    // );
-    // ctx.stroke();
+    ctx.beginPath();
+    ctx.lineWidth = '2';
+    ctx.strokeStyle = 'red';
+    ctx.rect(
+      collisionArea.x,
+      collisionArea.y,
+      collisionArea.width,
+      collisionArea.height
+    );
+    ctx.stroke();
   }
 
   getCollisionArea() {

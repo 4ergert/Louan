@@ -2,12 +2,16 @@ import { SKELETON_WARRIOR_1_SPRITES } from '../../js/sprites-path/skeleton-warri
 import { MovableObject } from '../objects/movable-object.class.js';
 
 export class SkeletonWarriorLVL1 extends MovableObject {
-  y = 280;
+  x = 200;
+  y = 0;
   speed = 0.4;
+  defaultSpeed = 0.4;
+  throwSpeed = 1.8;
   moveDirection = -1;
   animationFrames = [];
   isDying = false;
   isDead = false;
+  isThrownByBoss = false;
   dyingAnimationSpeed = 50;
   animationInterval = null;
   patrolInterval = null;
@@ -27,8 +31,7 @@ export class SkeletonWarriorLVL1 extends MovableObject {
     
     this.animationFrames = this.WALKING;
 
-    this.x = 700 + Math.random() * 5000;
-
+    this.applyGravity();
     this.animation();
     this.startPatrol();
   }
@@ -51,7 +54,13 @@ export class SkeletonWarriorLVL1 extends MovableObject {
 
   startPatrol() {
     this.patrolInterval = setInterval(() => {
+      if (!this.world) return;
       if (this.world?.isPaused) return;
+
+      if (this.isThrownByBoss && this.vcY <= 0 && this.isStandingOnPlatform()) {
+        this.isThrownByBoss = false;
+        this.speed = this.defaultSpeed;
+      }
 
       this.x += this.moveDirection * this.speed;
       this.imgDirectionChange = this.moveDirection < 0;
@@ -70,12 +79,23 @@ export class SkeletonWarriorLVL1 extends MovableObject {
     }, nextChangeInMs);
   }
 
+  launchFromBoss(direction, startX, startY) {
+    this.x = startX;
+    this.y = startY;
+    this.moveDirection = direction;
+    this.imgDirectionChange = direction < 0;
+    this.speed = this.throwSpeed;
+    this.vcY = 4;
+    this.isThrownByBoss = true;
+  }
+
   die() {
     if (this.isDying || this.isDead) return this.DYING.length * this.dyingAnimationSpeed + 50;
 
     this.isDying = true;
     this.speed = 0;
     this.moveDirection = 0;
+    this.isThrownByBoss = false;
     this.animationFrames = this.DYING;
     this.currentImage = 0;
     this.imgDirectionChange = false;
