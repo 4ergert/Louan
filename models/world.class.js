@@ -1,6 +1,6 @@
 import { createBloodSplatterParticles } from '../js/world-effects.js';
 import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay } from '../js/world-renderer.js';
-import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
+import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, createRookPickupAudio, createThrowingAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
 import { Character } from './character/character.class.js';
 import { LifeBar } from './character/life-bar.class.js';
 import { CoinsBar } from './lvl-1/coins-bar.class.js';
@@ -30,6 +30,8 @@ export class World extends WorldIntros {
   bloodSplatterParticles = [];
   isPaused = false;
   coinPickupAudio = createCoinPickupAudio();
+  rookPickupAudio = createRookPickupAudio();
+  throwingAudio = createThrowingAudio();
   boneBreakAudios = createBoneBreakAudios();
   bossMusicAudio = createBossMusicAudio();
   evilLaughAudio = createEvilLaughAudio();
@@ -173,7 +175,7 @@ export class World extends WorldIntros {
   }
 
   spawnBossSwordBoomerang() {
-    if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
+    if (!this.bossLVL1 || this.bossLVL1.isiDying || this.bossLVL1.isDead) return;
 
     const throwDirection = this.character.x < this.bossLVL1.x ? -1 : 1;
     const swordWidth = 240;
@@ -386,11 +388,13 @@ export class World extends WorldIntros {
     );
 
     this.throwableObjects.addRook(collectedRooks.length);
+    playSoundEffect(this.rookPickupAudio);
   }
 
   handleThrowInput() {
     if (this.keyboard.F && !this.throwInputLocked && this.throwableObjects.rooks > 0) {
       startThrowingAnimation(this.character);
+      playSoundEffect(this.throwingAudio);
       this.throwRook();
       this.throwInputLocked = true;
     }

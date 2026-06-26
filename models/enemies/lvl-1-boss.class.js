@@ -63,7 +63,7 @@ export class LVL_1_Boss extends MovableObject {
     if (!this.world || this.world.isPaused) return false;
     if (!this.world.bossIntroTriggered || this.world.isBossIntroActive?.()) return false;
     if (this.isDead || this.isDying || this.isHurt) return false;
-    if (this.thrownSkeletonCount < 3) return false;
+    if (this.thrownSkeletonCount < 1) return false;
     return !this.isThrowingAnimationActive;
   }
 
@@ -106,9 +106,10 @@ export class LVL_1_Boss extends MovableObject {
     if (this.isThrowingAnimationActive && !this.skeletonThrowTriggered && i >= 4) {
       this.skeletonThrowTriggered = true;
       this.thrownSkeletonCount++;
-      this.world?.spawnSkeletonWarriorFromBoss?.();
       if (this.thrownSkeletonCount % 3 === 0) {
         this.world?.spawnBossSwordBoomerang?.();
+      } else {
+        this.world?.spawnSkeletonWarriorFromBoss?.();
       }
     }
 

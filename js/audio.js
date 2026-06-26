@@ -54,6 +54,20 @@ export function createCoinPickupAudio() {
 	return registerManagedAudio(audio, 'effect');
 }
 
+export function createRookPickupAudio() {
+	const audio = new Audio('assets/audio/pickup-item.mp3');
+	audio.volume = 0.6;
+	audio.preload = 'auto';
+	return registerManagedAudio(audio, 'effect');
+}
+
+export function createThrowingAudio() {
+	const audio = new Audio('assets/audio/throwing.mp3');
+	audio.volume = 0.35;
+	audio.preload = 'auto';
+	return registerManagedAudio(audio, 'effect');
+}
+
 export function createRunningFootstepAudios() {
 	return ['05', '06', '07'].map((variant) => {
 		const audio = new Audio(`assets/audio/Footstep_Dirt_${variant}.wav`);
