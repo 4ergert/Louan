@@ -15,6 +15,13 @@ export class WorldIntros {
   bossIntroTypeSpeed = 55;
   bossIntroLines = [];
 
+  aliaIntroTriggered = false;
+  aliaIntroStartedAt = 0;
+  aliaIntroTimeout = null;
+  aliaIntroDuration = 7000;
+  aliaIntroTypeSpeed = 45;
+  aliaIntroLines = [];
+
   handleIntroSkip() {
     if (!this.keyboard.SPACE) {
       this.introSkipLocked = false;
@@ -31,6 +38,11 @@ export class WorldIntros {
 
     if (this.isBossIntroActive()) {
       this.skipIntroStep(this.bossIntroLines, 'boss');
+      return;
+    }
+
+    if (this.isAliaIntroActive()) {
+      this.skipIntroStep(this.aliaIntroLines, 'alia');
     }
   }
 
@@ -42,14 +54,19 @@ export class WorldIntros {
 
     if (introType === 'opening') this.finishOpeningIntro();
     if (introType === 'boss') this.finishBossIntro();
+    if (introType === 'alia') this.finishAliaIntro();
   }
 
   getIntroStartedAt(introType) {
-    return introType === 'opening' ? this.openingIntroStartedAt : this.bossIntroStartedAt;
+    if (introType === 'opening') return this.openingIntroStartedAt;
+    if (introType === 'boss') return this.bossIntroStartedAt;
+    return this.aliaIntroStartedAt;
   }
 
   getIntroTypeSpeed(introType) {
-    return introType === 'opening' ? this.openingIntroTypeSpeed : this.bossIntroTypeSpeed;
+    if (introType === 'opening') return this.openingIntroTypeSpeed;
+    if (introType === 'boss') return this.bossIntroTypeSpeed;
+    return this.aliaIntroTypeSpeed;
   }
 
   setIntroToFullText(lines, introType) {
@@ -59,6 +76,7 @@ export class WorldIntros {
 
     if (introType === 'opening') this.openingIntroStartedAt = startedAt;
     if (introType === 'boss') this.bossIntroStartedAt = startedAt;
+    if (introType === 'alia') this.aliaIntroStartedAt = startedAt;
   }
 
   isIntroTextFullyVisible(lines, startedAt, typeSpeed) {
@@ -81,12 +99,22 @@ export class WorldIntros {
     this.onBossIntroFinished?.();
   }
 
+  finishAliaIntro() {
+    if (this.aliaIntroTimeout) clearTimeout(this.aliaIntroTimeout);
+    this.aliaIntroTimeout = null;
+    this.isPaused = false;
+  }
+
   isBossIntroActive() {
-    return this.isPaused && this.bossIntroTriggered;
+    return this.isPaused && this.bossIntroTriggered && !!this.bossLVL1;
   }
 
   isOpeningIntroActive() {
     return this.isPaused && this.openingIntroTriggered && !this.openingIntroCompleted;
+  }
+
+  isAliaIntroActive() {
+    return this.isPaused && this.aliaIntroTriggered;
   }
 
   resetKeyboard() {
@@ -164,6 +192,38 @@ export class WorldIntros {
     this.ctx.moveTo(bubbleX + 70, bubbleY + 148);
     this.ctx.lineTo(bubbleX + 110, bubbleY + 148);
     this.ctx.lineTo(bubbleX + 60, bubbleY + 180);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = '#3a2412';
+    this.ctx.font = 'bold 16px Cinzel Decorative';
+    this.ctx.textBaseline = 'top';
+    textLines.forEach((line, index) => {
+      this.ctx.fillText(line, bubbleX + 18, bubbleY + 16 + index * 28);
+    });
+    this.ctx.restore();
+  }
+
+  drawAliaIntroBubble() {
+    if (!this.alia) return;
+
+    let aliaScreenX = this.alia.x + this.camera_x;
+    let bubbleX = Math.max(20, Math.min(this.canvas.width - 430, aliaScreenX - 70));
+    let bubbleY = 35;
+    let textLines = this.getVisibleIntroLines(this.aliaIntroLines, this.aliaIntroStartedAt, this.aliaIntroTypeSpeed);
+
+    this.ctx.save();
+    this.ctx.fillStyle = '#fff8ea';
+    this.ctx.strokeStyle = '#3a2412';
+    this.ctx.lineWidth = 4;
+    this.ctx.fillRect(bubbleX, bubbleY, 430, 140);
+    this.ctx.strokeRect(bubbleX, bubbleY, 430, 140);
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(bubbleX + 80, bubbleY + 140);
+    this.ctx.lineTo(bubbleX + 115, bubbleY + 140);
+    this.ctx.lineTo(bubbleX + 96, bubbleY + 176);
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.stroke();

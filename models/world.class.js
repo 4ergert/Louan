@@ -121,6 +121,10 @@ export class World extends WorldIntros {
       this.drawBossIntroBubble();
     }
 
+    if (this.isAliaIntroActive()) {
+      this.drawAliaIntroBubble();
+    }
+
     // this.drawBloodSplatter();
 
 
@@ -262,6 +266,11 @@ export class World extends WorldIntros {
           this.character.landOn(platform);
         }
 
+        if (this.alia?.isLandingOn(platform)) {
+          this.alia.landOn(platform);
+          this.alia.hasLanded = true;
+        }
+
         this.lvl.enemies.forEach(enemy => {
           if (enemy.isBoss || enemy.isDying || enemy.isDead) return;
           if (typeof enemy.isLandingOn !== "function" || typeof enemy.landOn !== "function") return;
@@ -275,6 +284,7 @@ export class World extends WorldIntros {
       this.collectCoins();
       this.collectRooks();
       this.checkBossMusicTrigger();
+      this.checkAliaIntroTrigger();
 
       if (this.character.isDying || this.character.isDead) {
         return;
@@ -324,6 +334,13 @@ export class World extends WorldIntros {
     this.bossMusicTriggered = true;
     stopBackgroundAudio(this.backgroundMusicAudio);
     playBackgroundAudio(this.bossMusicAudio);
+  }
+
+  checkAliaIntroTrigger() {
+    if (!this.alia || this.aliaIntroTriggered) return;
+    if (!this.alia.isIdleForIntro()) return;
+
+    this.startAliaIntro();
   }
 
   playGameOverAudio() {
@@ -521,5 +538,18 @@ export class World extends WorldIntros {
 
     this.alia = new Alia(aliaX, aliaY);
     this.assignWorld(this.alia);
+  }
+
+  startAliaIntro() {
+    if (!this.alia || this.aliaIntroTriggered) return;
+
+    this.aliaIntroTriggered = true;
+    this.isPaused = true;
+    this.aliaIntroStartedAt = Date.now();
+    this.resetKeyboard();
+
+    this.aliaIntroTimeout = setTimeout(() => {
+      this.finishAliaIntro();
+    }, this.aliaIntroDuration);
   }
 }

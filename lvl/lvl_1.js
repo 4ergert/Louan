@@ -75,6 +75,12 @@ const worldSettings = {
     'Arrrrr, ich bin Aliam,',
     'der Skelett-König,',
     'arrrrr!'
+  ],
+  aliaIntroLines: [
+    'Danke, Bruder Louan.',
+    'Du hast mich gerettet.',
+    'Jetzt muessen wir nur noch',
+    'unseren Bruder Liam finden.'
   ]
 };
 
