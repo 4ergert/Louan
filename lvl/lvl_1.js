@@ -1,6 +1,7 @@
 import { LVL_1_Boss } from '../models/enemies/lvl-1-boss.class.js';
 import { SkeletonWarriorLVL1 } from '../models/enemies/skeleton_warrior_1.class.js';
 import { LVL } from '../models/lvl.class.js';
+import { Coins } from '../models/lvl-1/coins.class.js';
 import { BackgroundObject } from '../models/objects/background-object.class.js';
 import { EnvironmentObject } from '../models/objects/environment-objects.class.js';
 import { PlatformObjects } from '../models/objects/platform-objects.class.js';
@@ -75,10 +76,15 @@ for (let i = 0; i < 0; i++) {
 
 const throwableObjects = [];
 
-// for (let i = 0; i < 10; i++) {
-//   const posX = 650 + Math.random() * 2600;
-//   throwableObjects.push(new ThrowableObject(posX, 360));
-// }
+const coins = [
+  new Coins(800, 350),
+  new Coins(2200, 175),
+  new Coins(2150, 175),
+  new Coins(2200, 175),
+  new Coins(2250, 175),
+  new Coins(2300, 175),
+  new Coins(2350, 175),
+];
 
 
 const worldSettings = {
@@ -145,6 +151,7 @@ export const lvl_1 = new LVL(
   blockingObjects,
   [
     ...blockingObjects,
+    ...coins,
     ...throwableObjects,
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - House.png', -150, 200, 250, 200),
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Fence 02.png', 80, 333, 70, 70),
@@ -159,6 +166,7 @@ export const lvl_1 = new LVL(
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Signpost 04.png', 3700, 333, 70, 70),
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Tree 01.png', 1100, 55, 350, 350),
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Bush 01.png', 900, 304, 100, 100),
+    new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Bush 01.png', 1800, 304, 100, 100),
   ],
   backgroundObjects,
   worldSettings,

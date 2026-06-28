@@ -12,6 +12,7 @@ export class MushroomObject extends EnvironmentObject {
     this.affectedByPlatforms = true;
     this.isChestReward = true;
     this.isCollectible = false;
+    this.maxSegmentBonus = 2;
     this.speedX = DEFAULT_SPEED_X;
     this.launchSpeed = DEFAULT_LAUNCH_SPEED;
   }

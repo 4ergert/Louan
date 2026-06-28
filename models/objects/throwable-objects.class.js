@@ -14,8 +14,8 @@ export class ThrowableObject extends DrawableObject {
   constructor(x = 16, y = 111, showCount = false) {
     super();
     this.loadImage(this.img);
-    this.width = 45;
-    this.height = 45;
+    this.width = 55;
+    this.height = 55;
     this.x = x;
     this.y = y;
     this.baseY = y;
@@ -68,7 +68,7 @@ export class ThrowableObject extends DrawableObject {
     return this.x + this.width < -cameraX - 100 || this.x > -cameraX + canvasWidth + 100 || this.y > 430;
   }
 
-    drawRookCount(ctx) {
+  drawRookCount(ctx) {
     ctx.font = '20px Uncial Antiqua';
     ctx.fillStyle = '#d9a441';
     ctx.strokeStyle = '#100a07';

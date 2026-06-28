@@ -453,7 +453,13 @@ export class World extends WorldIntros {
       !(object instanceof MushroomObject && object.isCollectible && isCollidingWithCharacter(this.character, object))
     );
 
-    this.character.energy = Math.min(100, this.character.energy + collectedRewards.length * 20);
+    let totalSegmentBonus = collectedRewards.reduce(
+      (sum, reward) => sum + (reward.maxSegmentBonus ?? 0),
+      0
+    );
+
+    this.lifeBar.maxSegments += totalSegmentBonus;
+    this.lifeBar.triggerSegmentBlink();
     this.lifeBar.setPercentage(this.character.energy);
   }
 
