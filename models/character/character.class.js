@@ -91,6 +91,25 @@ export class Character extends MovableObject {
     ctx.restore();
   }
 
+  isAboveGround() {
+    if (this.shouldKeepFallingIntoAbyss()) return true;
+
+    return super.isAboveGround();
+  }
+
+  shouldKeepFallingIntoAbyss() {
+    if (!this.world?.isCharacterInDeathFallZone()) return false;
+    if (this.isStandingOnPlatform()) return false;
+
+    let deathY = this.world.getCharacterFallDeathY();
+
+    if (this.isDead) {
+      return this.y < deathY + this.height;
+    }
+
+    return this.y < deathY;
+  }
+
   /**
    * Returns the adjusted collision box used for character hit detection.
    *

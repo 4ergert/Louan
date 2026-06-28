@@ -15,7 +15,7 @@ import { SkeletonWarriorLVL1 } from './enemies/skeleton_warrior_1.class.js';
 import { lvl_1 } from '../lvl/lvl_1.js';
 import { isCollidingWithCharacter, isColliding, isCharacterWithinBossSlashRange } from '../js/colliding-objects.js';
 import { isSpawning } from './character/char-movements.js';
-import { startKnockback, startThrowingAnimation } from './character/char-animation-actions.js';
+import { die, startKnockback, startThrowingAnimation } from './character/char-animation-actions.js';
 
 export class World extends WorldIntros {
   character = new Character();
@@ -301,6 +301,7 @@ export class World extends WorldIntros {
       this.collectRooks();
       this.checkBossMusicTrigger();
       this.checkAliaIntroTrigger();
+      this.handleCharacterFallDeath();
 
       if (this.character.isDying || this.character.isDead) {
         return;
@@ -333,6 +334,27 @@ export class World extends WorldIntros {
         }
       });
     }, 1000 / 60);
+  }
+
+  getCharacterFallDeathY() {
+    return this.canvas.height;
+  }
+
+  isCharacterInDeathFallZone() {
+    let fallDeathStartX = this.lvl.worldSettings?.fallDeathStartX;
+
+    return typeof fallDeathStartX === 'number' && this.character.x >= fallDeathStartX;
+  }
+
+  handleCharacterFallDeath() {
+    if (!this.isCharacterInDeathFallZone()) return;
+    if (this.character.isDead) return;
+    if (this.character.y < this.getCharacterFallDeathY()) return;
+
+    die(this.character);
+    this.character.isDying = false;
+    this.character.isDead = true;
+    this.character.vcY = -6;
   }
 
   getStandableObjects() {

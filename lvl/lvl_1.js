@@ -36,7 +36,7 @@ for (let index = 0; index < 5; index++) {
 
 const platformObjects = [];
 
-for (let index = 0; index < 100; index++) {
+for (let index = 0; index < 70; index++) {
   const x = index * 50 - 200;
 
   platformObjects.push(
@@ -45,7 +45,22 @@ for (let index = 0; index < 100; index++) {
   );
 }
 
+for (let index = 0; index < 40; index++) {
+  const x = index * 50 + 3550;
+
+  platformObjects.push(
+    new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 02.png', x, 400, 50, 50),
+    new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 06.png', x, 450, 50, 50)
+  );
+}
+
 platformObjects.push(
+  new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 08.png', 3300, 400, 50, 50),
+  new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 13.png', 3300, 450, 50, 50),
+
+  new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 04.png', 3500, 400, 50, 50),
+  new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 09.png', 3500, 450, 50, 50),
+
   new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 10.png', 2000, 220, 50, 50),
   new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 11.png', 2050, 220, 50, 50),
   new PlatformObjects('./assets/img/Platformer/Autumn_Forest_2D_Platformer_Tileset_Platformer - Ground 11.png', 2100, 220, 50, 50),
@@ -88,6 +103,7 @@ const coins = [
 
 
 const worldSettings = {
+  fallDeathStartX: 3300,
   openingIntroLines: [
     'Irgendwas stimmt hier nicht!',
     'Meine Geschwister Alia und Liam',
@@ -167,6 +183,7 @@ export const lvl_1 = new LVL(
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Tree 01.png', 1100, 55, 350, 350),
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Bush 01.png', 900, 304, 100, 100),
     new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Bush 01.png', 1800, 304, 100, 100),
+    new EnvironmentObject('assets/img/Environment/Autumn_Forest_2D_Platformer_Tileset_Environment - Tree 02.png', 2700, 55, 350, 350),
   ],
   backgroundObjects,
   worldSettings,
