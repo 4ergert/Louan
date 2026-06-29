@@ -130,6 +130,33 @@ export class SkeletonWarriorLVL1 extends MovableObject {
     };
   }
 
+  isAboveGround() {
+    if (this.shouldKeepFallingIntoAbyss()) return true;
+
+    return super.isAboveGround();
+  }
+
+  shouldKeepFallingIntoAbyss() {
+    if (this.isStandingOnPlatform()) return false;
+    if (!this.world) return false;
+
+    return !this.hasStandableObjectBelow();
+  }
+
+  hasStandableObjectBelow() {
+    let ownCollisionArea = this.getCollisionArea();
+    let feet = ownCollisionArea.y + ownCollisionArea.height;
+
+    return this.getStandableObjects().some((platform) => {
+      let platformArea = platform.getCollisionArea();
+      let overlapsHorizontally =
+        ownCollisionArea.x + ownCollisionArea.width > platformArea.x &&
+        ownCollisionArea.x < platformArea.x + platformArea.width;
+
+      return overlapsHorizontally && platformArea.y >= feet;
+    });
+  }
+
   shouldReverseAtBlockedPlatform() {
     let nextPlatform = this.getNextPlatform();
 

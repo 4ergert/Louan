@@ -1,6 +1,6 @@
 import { DrawableObject } from './drawable-objects.class.js';
 
-export class Bone extends DrawableObject {
+export class Coins extends DrawableObject {
   x = 0;
   y = 0;
   width = 40;

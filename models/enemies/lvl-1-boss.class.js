@@ -5,8 +5,8 @@ export class LVL_1_Boss extends MovableObject {
   height = 500;
   width = 500;
   y = -10;
-  x = 4400;
-  speed = 0.3;
+  x = 4200;
+  speed = 0.4;
   imgDirectionChange = true;
   isBoss = true;
   maxEnergy = 5;
@@ -78,6 +78,7 @@ export class LVL_1_Boss extends MovableObject {
 
   canStartSkeletonThrow() {
     if (!this.world || this.world.isPaused) return false;
+    if (this.world.character?.isDying || this.world.character?.isDead) return false;
     if (this.isDying || this.isDead || this.isHurt) return false;
     if (this.isSlashing || this.isSlashAnimationActive || this.isThrowingAnimationActive) return false;
     if (this.world.isBossIntroActive?.()) return false;
@@ -85,6 +86,8 @@ export class LVL_1_Boss extends MovableObject {
   }
 
   startSkeletonThrowAnimation() {
+    if (this.world?.character?.isDying || this.world?.character?.isDead) return;
+
     this.isThrowingAnimationActive = true;
     this.skeletonThrowTriggered = false;
     this.animationFrames = this.THROWING;
@@ -105,6 +108,11 @@ export class LVL_1_Boss extends MovableObject {
     }
 
     if (this.isThrowingAnimationActive && !this.skeletonThrowTriggered && i >= 4) {
+      if (this.world?.character?.isDying || this.world?.character?.isDead) {
+        this.finishThrowingAnimation();
+        return;
+      }
+
       this.skeletonThrowTriggered = true;
       this.thrownSkeletonCount++;
       if (this.thrownSkeletonCount % 3 === 0) {
@@ -210,6 +218,20 @@ export class LVL_1_Boss extends MovableObject {
     this.skeletonThrowTriggered = false;
     this.animationFrames = this.getDefaultAnimation();
     this.currentImage = 0;
+  }
+
+  setIdleState() {
+    if (this.isDying || this.isDead) return;
+
+    this.isHurt = false;
+    this.isSlashing = false;
+    this.isSlashAnimationActive = false;
+    this.isThrowingAnimationActive = false;
+    this.slashHitTriggered = false;
+    this.skeletonThrowTriggered = false;
+    this.animationFrames = this.IDLE;
+    this.currentImage = 0;
+    this.imgDirectionChange = true;
   }
 
   die() {

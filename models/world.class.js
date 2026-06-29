@@ -1,11 +1,11 @@
 import { createBloodSplatterParticles } from '../js/world-effects.js';
 import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay } from '../js/world-renderer.js';
-import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, createRookPickupAudio, createThrowingAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
+import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, createThrowableObjectPickupAudio, createThrowingAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
 import { Character } from './character/character.class.js';
 import { Alia } from './Alia/alia.class.js';
+import { CoinsBar } from './character/coins-bar.class.js';
 import { LifeBar } from './character/life-bar.class.js';
-import { CoinsBar } from './lvl-1/coins-bar.class.js';
-import { Coins } from './lvl-1/coins.class.js';
+import { Coins } from './objects/coin-object.class.js';
 import { ThrowableObject } from './objects/throwable-objects.class.js';
 import { BossSwordObject } from './objects/boss-sword-object.class.js';
 import { EnvironmentObject } from './objects/environment-objects.class.js';
@@ -22,8 +22,8 @@ export class World extends WorldIntros {
   alia = null;
   lifeBar = new LifeBar();
   coinsBar = new CoinsBar();
-  throwableObjects = new ThrowableObject(16, 111, true);
-  thrownRooks = [];
+  throwableObjects = new ThrowableObject(10, 100, true);
+  thrownBones = [];
   bossThrownSwords = [];
   lvl = lvl_1;
   canvas;
@@ -32,9 +32,11 @@ export class World extends WorldIntros {
   camera_x = 0;
   throwInputLocked = false;
   bloodSplatterParticles = [];
+  flyingCoinPickups = [];
+  flyingBonePickups = [];
   isPaused = false;
   coinPickupAudio = createCoinPickupAudio();
-  rookPickupAudio = createRookPickupAudio();
+  bonePickupAudio = createThrowableObjectPickupAudio();
   throwingAudio = createThrowingAudio();
   boneBreakAudios = createBoneBreakAudios();
   bossMusicAudio = createBossMusicAudio();
@@ -98,7 +100,7 @@ export class World extends WorldIntros {
     this.addObjectsToMap(this.lvl.platformObjects);
     this.addObjectsToMap(this.lvl.environmentObjects);
     this.addObjectsToMap(this.lvl.enemies);
-    this.addObjectsToMap(this.thrownRooks);
+    this.addObjectsToMap(this.thrownBones);
     this.addObjectsToMap(this.bossThrownSwords);
 
     this.ctx.translate(-this.camera_x, 0);
@@ -106,6 +108,8 @@ export class World extends WorldIntros {
     if (this.shouldShowBossLifeBar()) drawBossLifeBar(this.ctx, this.camera_x, this.bossLVL1, this.canvas);
     this.addToMap(this.coinsBar);
     this.addToMap(this.throwableObjects);
+    this.drawFlyingCoinPickups();
+    this.drawFlyingBonePickups();
     this.ctx.translate(this.camera_x, 0);
     this.addToMap(this.character);
     if (this.alia) this.addToMap(this.alia);
@@ -113,6 +117,7 @@ export class World extends WorldIntros {
     this.ctx.translate(-this.camera_x, 0);
 
     if (this.character.isDead) {
+      this.bossLVL1?.setIdleState?.();
       if (!this.gameOverStartedAt) this.gameOverStartedAt = Date.now();
       this.playGameOverAudio();
       drawGameOverOverlay(this.ctx, this.canvas, this.isGameOverRetryReady());
@@ -130,7 +135,7 @@ export class World extends WorldIntros {
       this.drawAliaIntroBubble();
     }
 
-    // this.drawBloodSplatter();
+    this.drawBloodSplatter();
 
 
 
@@ -163,6 +168,74 @@ export class World extends WorldIntros {
     );
   }
 
+  drawFlyingCoinPickups() {
+    if (this.flyingCoinPickups.length === 0) return;
+
+    let now = Date.now();
+    let targetCenterX = this.coinsBar.x + this.coinsBar.width / 2;
+    let targetCenterY = this.coinsBar.y + this.coinsBar.height / 2;
+
+    this.flyingCoinPickups = this.flyingCoinPickups.filter((pickup) => {
+      let progress = Math.min((now - pickup.startedAt) / pickup.duration, 1);
+      let easedProgress = 1 - Math.pow(1 - progress, 3);
+      let drawX = pickup.startX + (targetCenterX - pickup.startX) * easedProgress;
+      let drawY = pickup.startY + (targetCenterY - pickup.startY) * easedProgress;
+
+      this.ctx.drawImage(pickup.img, drawX, drawY, pickup.width, pickup.height);
+
+      if (progress < 1) return true;
+
+      this.coinsBar.addCoin(1);
+      return false;
+    });
+  }
+
+  drawFlyingBonePickups() {
+    if (this.flyingBonePickups.length === 0) return;
+
+    let now = Date.now();
+    let targetCenterX = this.throwableObjects.x + this.throwableObjects.width / 2;
+    let targetCenterY = this.throwableObjects.y + this.throwableObjects.height / 2;
+
+    this.flyingBonePickups = this.flyingBonePickups.filter((pickup) => {
+      let progress = Math.min((now - pickup.startedAt) / pickup.duration, 1);
+      let easedProgress = 1 - Math.pow(1 - progress, 3);
+      let drawX = pickup.startX + (targetCenterX - pickup.startX) * easedProgress;
+      let drawY = pickup.startY + (targetCenterY - pickup.startY) * easedProgress;
+
+      this.ctx.drawImage(pickup.img, drawX, drawY, pickup.width, pickup.height);
+
+      if (progress < 1) return true;
+
+      this.throwableObjects.addBone(1);
+      return false;
+    });
+  }
+
+  queueFlyingBonePickup(bone) {
+    this.flyingBonePickups.push({
+      img: bone.img,
+      startX: bone.x + this.camera_x,
+      startY: bone.y,
+      width: bone.width,
+      height: bone.height,
+      startedAt: Date.now(),
+      duration: 350,
+    });
+  }
+
+  queueFlyingCoinPickup(coin) {
+    this.flyingCoinPickups.push({
+      img: coin.img,
+      startX: coin.x + this.camera_x,
+      startY: coin.y,
+      width: coin.width,
+      height: coin.height,
+      startedAt: Date.now(),
+      duration: 350,
+    });
+  }
+
   spawnBloodSplatter() {
     let characterArea = this.character.getCollisionArea();
     let originX = characterArea.x + characterArea.width / 2;
@@ -178,7 +251,7 @@ export class World extends WorldIntros {
 
     const skeletonWarrior = new SkeletonWarriorLVL1();
     const spawnDirection = this.character.x < this.bossLVL1.x ? -1 : 1;
-    const spawnX = this.bossLVL1.x + (spawnDirection < 0 ? 110 : 190);
+    const spawnX = this.bossLVL1.x + (spawnDirection < 0 ? 70 : 100);
     const spawnY = this.bossLVL1.y + 180;
 
     this.assignWorld(skeletonWarrior);
@@ -301,17 +374,18 @@ export class World extends WorldIntros {
 
       this.collectCoins();
       this.collectChestRewards();
-      this.collectRooks();
+      this.collectBones();
       this.checkBossMusicTrigger();
       this.checkAliaIntroTrigger();
       this.handleCharacterFallDeath();
+      this.handleEnemyFallDeath();
 
       if (this.character.isDying || this.character.isDead) {
         return;
       }
 
       this.handleThrowInput();
-      this.updateThrownRooks();
+      this.updateThrownBones();
       this.updateBossThrownSwords();
       this.updateBossAttackState();
 
@@ -358,6 +432,21 @@ export class World extends WorldIntros {
     this.character.isDying = false;
     this.character.isDead = true;
     this.character.vcY = -6;
+  }
+
+  handleEnemyFallDeath() {
+    this.lvl.enemies.forEach((enemy) => {
+      if (enemy.isBoss || enemy.isDying || enemy.isDead) return;
+      if (typeof enemy.shouldKeepFallingIntoAbyss !== 'function') return;
+      if (!enemy.shouldKeepFallingIntoAbyss()) return;
+      if (enemy.y < this.getCharacterFallDeathY()) return;
+
+      let dyingDuration = enemy.die();
+
+      setTimeout(() => {
+        this.removeEnemy(enemy);
+      }, dyingDuration);
+    });
   }
 
   getStandableObjects() {
@@ -587,30 +676,30 @@ export class World extends WorldIntros {
       !(object instanceof Coins && isCollidingWithCharacter(this.character, object))
     );
 
-    this.coinsBar.addCoin(collectedCoins.length);
+    collectedCoins.forEach((coin) => this.queueFlyingCoinPickup(coin));
     playSoundEffect(this.coinPickupAudio);
   }
 
-  collectRooks() {
-    let collectedRooks = this.lvl.environmentObjects.filter(object =>
+  collectBones() {
+    let collectedBones = this.lvl.environmentObjects.filter(object =>
       object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object)
     );
 
-    if (collectedRooks.length === 0) return;
+    if (collectedBones.length === 0) return;
 
     this.lvl.environmentObjects = this.lvl.environmentObjects.filter(object =>
       !(object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object))
     );
 
-    this.throwableObjects.addRook(collectedRooks.length);
-    playSoundEffect(this.rookPickupAudio);
+    collectedBones.forEach((bone) => this.queueFlyingBonePickup(bone));
+    playSoundEffect(this.bonePickupAudio);
   }
 
   handleThrowInput() {
-    if (this.keyboard.F && !this.throwInputLocked && this.throwableObjects.rooks > 0) {
+    if (this.keyboard.F && !this.throwInputLocked && this.throwableObjects.bones > 0) {
       startThrowingAnimation(this.character);
       playSoundEffect(this.throwingAudio);
-      this.throwRook();
+      this.throwBone();
       this.throwInputLocked = true;
     }
 
@@ -619,22 +708,22 @@ export class World extends WorldIntros {
     }
   }
 
-  throwRook() {
+  throwBone() {
     let direction = this.character.imgDirectionChange ? -1 : 1;
-    let rookX = direction > 0 ? this.character.x + this.character.width - 60 : this.character.x + 30
-    let rookY = this.character.y + 80;
-    let rook = new ThrowableObject(rookX, rookY);
+    let boneX = direction > 0 ? this.character.x + this.character.width - 60 : this.character.x + 30
+    let boneY = this.character.y + 80;
+    let bone = new ThrowableObject(boneX, boneY);
 
-    this.assignWorld(rook);
-    rook.launch(direction);
-    this.thrownRooks.push(rook);
-    this.throwableObjects.removeRook(1);
+    this.assignWorld(bone);
+    bone.launch(direction);
+    this.thrownBones.push(bone);
+    this.throwableObjects.removeBone(1);
   }
 
-  updateThrownRooks() {
-    this.thrownRooks.forEach(rook => rook.updateThrow());
-    this.handleThrownRookHits();
-    this.thrownRooks = this.thrownRooks.filter(rook => !rook.hasHitTarget && !rook.isOffscreen(this.camera_x, this.canvas.width));
+  updateThrownBones() {
+    this.thrownBones.forEach(bone => bone.updateThrow());
+    this.handleThrownBoneHits();
+    this.thrownBones = this.thrownBones.filter(bone => !bone.hasHitTarget && !bone.isOffscreen(this.camera_x, this.canvas.width));
   }
 
   updateBossThrownSwords() {
@@ -643,17 +732,17 @@ export class World extends WorldIntros {
     this.bossThrownSwords = this.bossThrownSwords.filter((sword) => !sword.hasReturned());
   }
 
-  handleThrownRookHits() {
-    this.thrownRooks.forEach(rook => {
+  handleThrownBoneHits() {
+    this.thrownBones.forEach(bone => {
       let hitEnemy = this.lvl.enemies.find(enemy =>
         !enemy.isDying &&
         !enemy.isDead &&
-        rook.isColliding(enemy)
+        bone.isColliding(enemy)
       );
 
       if (!hitEnemy) return;
 
-      rook.hasHitTarget = true;
+      bone.hasHitTarget = true;
 
       if (hitEnemy.isBoss) {
         if (hitEnemy.hit()) this.handleEnemyDefeat(hitEnemy);
@@ -711,13 +800,13 @@ export class World extends WorldIntros {
 
   spawnThrowableObjectAt(enemy) {
     let enemyArea = enemy.getCollisionArea();
-    let rook = new ThrowableObject();
+    let bone = new ThrowableObject();
 
-    rook.x = enemyArea.x + enemyArea.width / 2 - rook.width / 2;
-    rook.y = enemyArea.y + enemyArea.height / 2 - rook.height / 2;
-    rook.baseY = rook.y;
-    this.assignWorld(rook);
-    this.lvl.environmentObjects.push(rook);
+    bone.x = enemyArea.x + enemyArea.width / 2 - bone.width / 2;
+    bone.y = enemyArea.y + enemyArea.height / 2 - bone.height / 2;
+    bone.baseY = bone.y;
+    this.assignWorld(bone);
+    this.lvl.environmentObjects.push(bone);
   }
 
   removeEnemy(enemyToRemove) {

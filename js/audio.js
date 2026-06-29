@@ -54,7 +54,7 @@ export function createCoinPickupAudio() {
 	return registerManagedAudio(audio, 'effect');
 }
 
-export function createRookPickupAudio() {
+export function createThrowableObjectPickupAudio() {
 	const audio = new Audio('assets/audio/pickup-item.mp3');
 	audio.volume = 0.6;
 	audio.preload = 'auto';

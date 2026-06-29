@@ -3,7 +3,7 @@ import { DrawableObject } from './drawable-objects.class.js';
 export class ThrowableObject extends DrawableObject {
   img = './assets/img/Enemies/Skeleton_Warrior_3/PNG/Vector Parts/Left Arm.png';
   throwable = true;
-  rooks = 0;
+  bones = 0;
   showCount = false;
   baseY = 0;
   floatPhase = 0;
@@ -11,7 +11,7 @@ export class ThrowableObject extends DrawableObject {
   speedX = 0;
   speedY = 0;
 
-  constructor(x = 16, y = 111, showCount = false) {
+  constructor(x = 12, y = 100, showCount = false) {
     super();
     this.loadImage(this.img);
     this.width = 55;
@@ -28,16 +28,16 @@ export class ThrowableObject extends DrawableObject {
   draw(ctx) {
     super.draw(ctx);
     if (this.showCount) {
-      this.drawRookCount(ctx);
+      this.drawBoneCount(ctx);
     }
   }
 
-  addRook(amount = 1) {
-    this.rooks += amount;
+  addBone(amount = 1) {
+    this.bones += amount;
   }
 
-  removeRook(amount = 1) {
-    this.rooks = Math.max(0, this.rooks - amount);
+  removeBone(amount = 1) {
+    this.bones = Math.max(0, this.bones - amount);
   }
 
   animateFloat() {
@@ -68,12 +68,12 @@ export class ThrowableObject extends DrawableObject {
     return this.x + this.width < -cameraX - 100 || this.x > -cameraX + canvasWidth + 100 || this.y > 430;
   }
 
-  drawRookCount(ctx) {
+  drawBoneCount(ctx) {
     ctx.font = '20px Uncial Antiqua';
     ctx.fillStyle = '#d9a441';
     ctx.strokeStyle = '#100a07';
     ctx.lineWidth = 5;
-    ctx.strokeText(`${this.rooks} Rooks`, this.x + this.width + 12, this.y + this.height / 2 + 8);
-    ctx.fillText(`${this.rooks} Rooks`, this.x + this.width + 12, this.y + this.height / 2 + 8);
+    ctx.strokeText(`${this.bones} Bones`, this.x + this.width + 10, this.y + this.height / 2 + 8);
+    ctx.fillText(`${this.bones} Bones`, this.x + this.width + 10, this.y + this.height / 2 + 8);
   }
 }
