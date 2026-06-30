@@ -57,6 +57,11 @@ export function shouldFreezeMovement(character) {
  * @returns {void}
  */
 export function freezeMovement(character) {
+  if (character.world?.endingEscortActive) {
+    character.world.camera_x = character.world.endingEscortCameraX;
+    return;
+  }
+
   character.world.camera_x = -character.x + 100;
 }
 
@@ -101,7 +106,7 @@ export function knockback(character) {
  * @returns {boolean} True when right movement is allowed.
  */
 export function allowsMoveRight(character) {
-  return character.world.keyboard.RIGHT && character.isHurtState == false;
+  return (character.world.keyboard.RIGHT || character.world.endingEscortActive) && character.isHurtState == false;
 }
 
 /**
@@ -148,7 +153,7 @@ export function allowsToJump(character) {
  * @returns {boolean} True when left or right input is pressed.
  */
 export function isMoving(character) {
-  return character.world.keyboard.RIGHT || character.world.keyboard.LEFT;
+  return character.world.keyboard.RIGHT || character.world.keyboard.LEFT || character.world.endingEscortActive;
 }
 
 /**
@@ -157,7 +162,7 @@ export function isMoving(character) {
  * @returns {boolean} True when sprint input and movement input are both active.
  */
 export function isRunning(character) {
-  return character.world.keyboard.A && isMoving(character);
+  return character.world.endingEscortActive || (character.world.keyboard.A && isMoving(character));
 }
 
 /**

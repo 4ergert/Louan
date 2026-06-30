@@ -62,6 +62,29 @@ export function drawGameOverOverlay(ctx, canvas, showRetryPrompt = false) {
 }
 
 /**
+ * Draws the full-screen victory overlay text and background.
+ * @param {CanvasRenderingContext2D} ctx - The drawing context.
+ * @param {HTMLCanvasElement} canvas - The canvas used for layout.
+ * @returns {void}
+ */
+export function drawVictoryOverlay(ctx, canvas) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(16, 10, 7, 0.68)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.font = 'bold 40px Georgia';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = '#100a07';
+  ctx.fillStyle = '#d9a441';
+  ctx.strokeText('Herzlichen Glückwunsch,', canvas.width / 2, canvas.height / 2 - 24);
+  ctx.fillText('Herzlichen Glückwunsch,', canvas.width / 2, canvas.height / 2 - 24);
+  ctx.strokeText('du hast Alia wieder gefunden!', canvas.width / 2, canvas.height / 2 + 28);
+  ctx.fillText('du hast Alia wieder gefunden!', canvas.width / 2, canvas.height / 2 + 28);
+  ctx.restore();
+}
+
+/**
  * Updates and renders the currently active blood particles.
  * @param {CanvasRenderingContext2D} ctx - The drawing context.
  * @param {number} cameraX - Horizontal camera offset.

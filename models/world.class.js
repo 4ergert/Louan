@@ -1,5 +1,5 @@
 import { createBloodSplatterParticles } from '../js/world-effects.js';
-import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay } from '../js/world-renderer.js';
+import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOverlay } from '../js/world-renderer.js';
 import { createBoneBreakAudios, createBossMusicAudio, createCoinPickupAudio, createEvilLaughAudio, createGameOverAudio, createThrowableObjectPickupAudio, createThrowingAudio, playBackgroundAudio, playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../js/audio.js';
 import { Character } from './character/character.class.js';
 import { Alia } from './Alia/alia.class.js';
@@ -49,6 +49,9 @@ export class World extends WorldIntros {
   gameOverAudioPlayed = false;
   gameOverStartedAt = 0;
   gameOverRetryDelay = 3000;
+  endingEscortActive = false;
+  endingEscortCameraX = 0;
+  victoryOverlayVisible = false;
 
   constructor(canvas, keyboard, backgroundMusicAudio = null) {
     super();
@@ -123,6 +126,10 @@ export class World extends WorldIntros {
       drawGameOverOverlay(this.ctx, this.canvas, this.isGameOverRetryReady());
     }
 
+    if (this.victoryOverlayVisible) {
+      drawVictoryOverlay(this.ctx, this.canvas);
+    }
+
     if (this.isOpeningIntroActive()) {
       this.drawOpeningIntroBubble();
     }
@@ -133,6 +140,10 @@ export class World extends WorldIntros {
 
     if (this.isAliaIntroActive()) {
       this.drawAliaIntroBubble();
+    }
+
+    if (this.isCharacterResponseIntroActive()) {
+      this.drawCharacterResponseIntroBubble();
     }
 
     this.drawBloodSplatter();
@@ -338,6 +349,8 @@ export class World extends WorldIntros {
   checkCollisions() {
     setInterval(() => {
       if (this.isPaused) return;
+
+      this.updateEndingEscort();
 
       this.getStandableObjects().forEach(platform => {
         if (this.character.isLandingOn(platform)) {
@@ -595,10 +608,35 @@ export class World extends WorldIntros {
   }
 
   checkAliaIntroTrigger() {
-    if (!this.alia || this.aliaIntroTriggered) return;
+    if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
     if (!this.alia.isIdleForIntro()) return;
 
     this.startAliaIntro();
+  }
+
+  startEndingEscort() {
+    if (!this.alia || this.endingEscortActive) return;
+
+    this.endingEscortActive = true;
+    this.endingEscortCameraX = this.camera_x;
+    this.resetKeyboard();
+  }
+
+  updateEndingEscort() {
+    if (!this.endingEscortActive || !this.alia) return;
+
+    this.camera_x = this.endingEscortCameraX;
+    this.character.imgDirectionChange = false;
+
+    let characterScreenX = this.character.x + this.camera_x;
+    let aliaScreenX = this.alia.x + this.camera_x;
+
+    if (characterScreenX <= this.canvas.width + 80 || aliaScreenX <= this.canvas.width + 80) return;
+
+    this.endingEscortActive = false;
+    this.isPaused = true;
+    this.victoryOverlayVisible = true;
+    this.resetKeyboard();
   }
 
   playGameOverAudio() {
@@ -826,9 +864,10 @@ export class World extends WorldIntros {
   }
 
   startAliaIntro() {
-    if (!this.alia || this.aliaIntroTriggered) return;
+    if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
 
     this.aliaIntroTriggered = true;
+    this.aliaIntroCompleted = true;
     this.isPaused = true;
     this.aliaIntroStartedAt = Date.now();
     this.resetKeyboard();

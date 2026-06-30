@@ -121,6 +121,10 @@ const worldSettings = {
     'Du hast mich gerettet.',
     'Jetzt müssen wir nur noch',
     'unseren Bruder Liam finden.'
+  ],
+  characterResponseIntroLines: [
+    'Du hast vollkommen recht!',
+    'Folge mir, Schwesterherz.'
   ]
 };
 

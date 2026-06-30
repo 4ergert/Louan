@@ -16,11 +16,19 @@ export class WorldIntros {
   bossIntroLines = [];
 
   aliaIntroTriggered = false;
+  aliaIntroCompleted = false;
   aliaIntroStartedAt = 0;
   aliaIntroTimeout = null;
   aliaIntroDuration = 7000;
   aliaIntroTypeSpeed = 45;
   aliaIntroLines = [];
+
+  characterResponseIntroTriggered = false;
+  characterResponseIntroStartedAt = 0;
+  characterResponseIntroTimeout = null;
+  characterResponseIntroDuration = 5000;
+  characterResponseIntroTypeSpeed = 45;
+  characterResponseIntroLines = [];
 
   handleIntroSkip() {
     if (!this.keyboard.SPACE) {
@@ -43,6 +51,11 @@ export class WorldIntros {
 
     if (this.isAliaIntroActive()) {
       this.skipIntroStep(this.aliaIntroLines, 'alia');
+      return;
+    }
+
+    if (this.isCharacterResponseIntroActive()) {
+      this.skipIntroStep(this.characterResponseIntroLines, 'characterResponse');
     }
   }
 
@@ -55,18 +68,21 @@ export class WorldIntros {
     if (introType === 'opening') this.finishOpeningIntro();
     if (introType === 'boss') this.finishBossIntro();
     if (introType === 'alia') this.finishAliaIntro();
+    if (introType === 'characterResponse') this.finishCharacterResponseIntro();
   }
 
   getIntroStartedAt(introType) {
     if (introType === 'opening') return this.openingIntroStartedAt;
     if (introType === 'boss') return this.bossIntroStartedAt;
-    return this.aliaIntroStartedAt;
+    if (introType === 'alia') return this.aliaIntroStartedAt;
+    return this.characterResponseIntroStartedAt;
   }
 
   getIntroTypeSpeed(introType) {
     if (introType === 'opening') return this.openingIntroTypeSpeed;
     if (introType === 'boss') return this.bossIntroTypeSpeed;
-    return this.aliaIntroTypeSpeed;
+    if (introType === 'alia') return this.aliaIntroTypeSpeed;
+    return this.characterResponseIntroTypeSpeed;
   }
 
   setIntroToFullText(lines, introType) {
@@ -77,6 +93,7 @@ export class WorldIntros {
     if (introType === 'opening') this.openingIntroStartedAt = startedAt;
     if (introType === 'boss') this.bossIntroStartedAt = startedAt;
     if (introType === 'alia') this.aliaIntroStartedAt = startedAt;
+    if (introType === 'characterResponse') this.characterResponseIntroStartedAt = startedAt;
   }
 
   isIntroTextFullyVisible(lines, startedAt, typeSpeed) {
@@ -102,7 +119,35 @@ export class WorldIntros {
   finishAliaIntro() {
     if (this.aliaIntroTimeout) clearTimeout(this.aliaIntroTimeout);
     this.aliaIntroTimeout = null;
+    this.aliaIntroTriggered = false;
+
+    if (this.characterResponseIntroLines.length) {
+      this.startCharacterResponseIntro();
+      return;
+    }
+
     this.isPaused = false;
+  }
+
+  startCharacterResponseIntro() {
+    if (this.characterResponseIntroTriggered) return;
+
+    this.characterResponseIntroTriggered = true;
+    this.isPaused = true;
+    this.characterResponseIntroStartedAt = Date.now();
+    this.resetKeyboard();
+
+    this.characterResponseIntroTimeout = setTimeout(() => {
+      this.finishCharacterResponseIntro();
+    }, this.characterResponseIntroDuration);
+  }
+
+  finishCharacterResponseIntro() {
+    if (this.characterResponseIntroTimeout) clearTimeout(this.characterResponseIntroTimeout);
+    this.characterResponseIntroTimeout = null;
+    this.characterResponseIntroTriggered = false;
+    this.isPaused = false;
+    this.startEndingEscort?.();
   }
 
   isBossIntroActive() {
@@ -115,6 +160,10 @@ export class WorldIntros {
 
   isAliaIntroActive() {
     return this.isPaused && this.aliaIntroTriggered;
+  }
+
+  isCharacterResponseIntroActive() {
+    return this.isPaused && this.characterResponseIntroTriggered;
   }
 
   resetKeyboard() {
@@ -224,6 +273,40 @@ export class WorldIntros {
     this.ctx.moveTo(bubbleX + 80, bubbleY + 140);
     this.ctx.lineTo(bubbleX + 115, bubbleY + 140);
     this.ctx.lineTo(bubbleX + 96, bubbleY + 176);
+    this.ctx.closePath();
+    this.ctx.fill();
+    this.ctx.stroke();
+
+    this.ctx.fillStyle = '#3a2412';
+    this.ctx.font = 'bold 16px Cinzel Decorative';
+    this.ctx.textBaseline = 'top';
+    textLines.forEach((line, index) => {
+      this.ctx.fillText(line, bubbleX + 18, bubbleY + 16 + index * 28);
+    });
+    this.ctx.restore();
+  }
+
+  drawCharacterResponseIntroBubble() {
+    let characterScreenX = this.character.x + this.camera_x;
+    let bubbleX = Math.max(20, Math.min(this.canvas.width - 430, characterScreenX - 70));
+    let bubbleY = 35;
+    let textLines = this.getVisibleIntroLines(
+      this.characterResponseIntroLines,
+      this.characterResponseIntroStartedAt,
+      this.characterResponseIntroTypeSpeed
+    );
+
+    this.ctx.save();
+    this.ctx.fillStyle = '#fff8ea';
+    this.ctx.strokeStyle = '#3a2412';
+    this.ctx.lineWidth = 4;
+    this.ctx.fillRect(bubbleX, bubbleY, 430, 110);
+    this.ctx.strokeRect(bubbleX, bubbleY, 430, 110);
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(bubbleX + 70, bubbleY + 110);
+    this.ctx.lineTo(bubbleX + 105, bubbleY + 110);
+    this.ctx.lineTo(bubbleX + 74, bubbleY + 146);
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.stroke();
