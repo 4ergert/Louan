@@ -73,7 +73,7 @@ export class ThrowableObject extends DrawableObject {
     ctx.fillStyle = '#d9a441';
     ctx.strokeStyle = '#100a07';
     ctx.lineWidth = 5;
-    ctx.strokeText(`${this.bones} Bones`, this.x + this.width + 10, this.y + this.height / 2 + 8);
-    ctx.fillText(`${this.bones} Bones`, this.x + this.width + 10, this.y + this.height / 2 + 8);
+    ctx.strokeText(`${this.bones} Bones`, this.x + this.width + 4, this.y + this.height / 2 + 8);
+    ctx.fillText(`${this.bones} Bones`, this.x + this.width + 4, this.y + this.height / 2 + 8);
   }
 }
