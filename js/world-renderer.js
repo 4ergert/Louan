@@ -65,9 +65,10 @@ export function drawGameOverOverlay(ctx, canvas, showRetryPrompt = false) {
  * Draws the full-screen victory overlay text and background.
  * @param {CanvasRenderingContext2D} ctx - The drawing context.
  * @param {HTMLCanvasElement} canvas - The canvas used for layout.
+ * @param {boolean} showNextLevelPrompt - Whether the next-level prompt should be visible.
  * @returns {void}
  */
-export function drawVictoryOverlay(ctx, canvas) {
+export function drawVictoryOverlay(ctx, canvas, showNextLevelPrompt = false) {
   ctx.save();
   ctx.fillStyle = 'rgba(16, 10, 7, 0.68)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -81,6 +82,13 @@ export function drawVictoryOverlay(ctx, canvas) {
   ctx.fillText('Herzlichen Glückwunsch,', canvas.width / 2, canvas.height / 2 - 24);
   ctx.strokeText('du hast Alia wieder gefunden!', canvas.width / 2, canvas.height / 2 + 28);
   ctx.fillText('du hast Alia wieder gefunden!', canvas.width / 2, canvas.height / 2 + 28);
+
+  if (showNextLevelPrompt) {
+    ctx.font = '24px Georgia';
+    ctx.strokeText('press any key to find Liam', canvas.width / 2, canvas.height / 2 + 112);
+    ctx.fillText('press any key to find Liam', canvas.width / 2, canvas.height / 2 + 112);
+  }
+
   ctx.restore();
 }
 

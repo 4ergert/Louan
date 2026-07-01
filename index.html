@@ -20,6 +20,14 @@
 
 <body class="intro-mode">
 
+  <script>
+    if (sessionStorage.getItem('loco.skipStartScreen') === 'true' || sessionStorage.getItem('loco.currentLevel') === 'lvl_2') {
+      document.body.classList.remove('intro-mode');
+      document.body.classList.add('game-active');
+      document.body.classList.add('skip-start-screen');
+    }
+  </script>
+
   <div id="transitionOverlay"></div>
 
   <h1>Louan der Krieger</h1>

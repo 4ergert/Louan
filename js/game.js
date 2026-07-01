@@ -2,6 +2,8 @@ import { Keyboard } from '../models/keyboard.class.js';
 import { createGameBackgroundAudio, getMusicMuted, playBackgroundAudio, setMusicMuted } from './audio.js';
 import { StartScreen } from '../models/start-screen-class.js';
 import { World } from '../models/world.class.js';
+import { lvl_1 } from '../lvl/lvl_1.js';
+import { lvl_2 } from '../lvl/lvl-2.js';
 
 let canvas;
 let world;
@@ -16,6 +18,33 @@ const baseCanvasWidth = 720;
 const baseCanvasHeight = 480;
 const introTransitionDuration = 700;
 const gameMenuDialogIds = ["gameMenuDialog", "settingsDialog", "instructionsDialog", "impressumDialog", "datenschutzDialog", "creditsDialog"];
+const currentLevelStorageKey = "loco.currentLevel";
+const skipStartScreenStorageKey = "loco.skipStartScreen";
+
+function getSelectedLevelId() {
+  return sessionStorage.getItem(currentLevelStorageKey) ?? "lvl_1";
+}
+
+function setSelectedLevelId(levelId) {
+  sessionStorage.setItem(currentLevelStorageKey, levelId);
+}
+
+function getSelectedLevel() {
+  return getSelectedLevelId() === "lvl_2" ? lvl_2 : lvl_1;
+}
+
+function shouldSkipStartScreen() {
+  return sessionStorage.getItem(skipStartScreenStorageKey) === "true";
+}
+
+function setSkipStartScreen(shouldSkip) {
+  if (shouldSkip) {
+    sessionStorage.setItem(skipStartScreenStorageKey, "true");
+    return;
+  }
+
+  sessionStorage.removeItem(skipStartScreenStorageKey);
+}
 
 function init() {
   canvas = document.getElementById("gameCanvas");
@@ -25,6 +54,21 @@ function init() {
   initStartScreenDialogs();
   initMusicToggle();
   initGameCanvasResizeHandling();
+  startSavedLevelIfNeeded();
+}
+
+function startSavedLevelIfNeeded() {
+  const shouldBootIntoGame = shouldSkipStartScreen() || getSelectedLevelId() !== "lvl_1";
+
+  if (!shouldBootIntoGame) return;
+
+  setSkipStartScreen(false);
+  document.body?.classList.remove("intro-mode", "intro-transition");
+  document.body?.classList.add("game-active");
+  document.body?.classList.add("skip-start-screen");
+  isIntroVisible = false;
+  showGameCanvas();
+  fadeIntoGame();
 }
 
 function getGameCanvasShell() {
@@ -276,10 +320,17 @@ function showStartScreen() {
 function initWorld() {
   if (!canvas || world) return;
 
-  world = new World(canvas, keyboard, gameBackgroundAudio);
+  world = new World(canvas, keyboard, gameBackgroundAudio, getSelectedLevel());
 }
 
 function restartGame() {
+  setSkipStartScreen(true);
+  window.location.reload();
+}
+
+function startLevel(levelId) {
+  setSelectedLevelId(levelId);
+  setSkipStartScreen(true);
   window.location.reload();
 }
 
@@ -294,6 +345,7 @@ function showGameCanvas() {
   const gameCanvasShell = document.getElementById("gameCanvasShell");
 
   startScreen?.stop();
+  body?.classList.add("game-active");
   body?.classList.add("game-transitioning");
   startScreenElement?.style.setProperty("display", "none");
   startScreenCanvas?.style.setProperty("display", "none");
@@ -381,6 +433,11 @@ window.addEventListener("keydown", (e) => {
 
   if (world?.character?.isDead && world.isGameOverRetryReady?.()) {
     restartGame();
+    return;
+  }
+
+  if (world?.victoryOverlayVisible && world.isVictoryPromptReady?.()) {
+    startLevel("lvl_2");
     return;
   }
 

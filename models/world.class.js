@@ -52,13 +52,16 @@ export class World extends WorldIntros {
   endingEscortActive = false;
   endingEscortCameraX = 0;
   victoryOverlayVisible = false;
+  victoryOverlayStartedAt = 0;
+  victoryPromptDelay = 3000;
 
-  constructor(canvas, keyboard, backgroundMusicAudio = null) {
+  constructor(canvas, keyboard, backgroundMusicAudio = null, lvl = lvl_1) {
     super();
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.backgroundMusicAudio = backgroundMusicAudio;
+    this.lvl = lvl;
     this.applyLevelWorldSettings();
     this.draw();
     this.setWorld();
@@ -127,7 +130,7 @@ export class World extends WorldIntros {
     }
 
     if (this.victoryOverlayVisible) {
-      drawVictoryOverlay(this.ctx, this.canvas);
+      drawVictoryOverlay(this.ctx, this.canvas, this.isVictoryPromptReady());
     }
 
     if (this.isOpeningIntroActive()) {
@@ -271,7 +274,7 @@ export class World extends WorldIntros {
   }
 
   spawnBossSwordBoomerang() {
-    if (!this.bossLVL1 || this.bossLVL1.isiDying || this.bossLVL1.isDead) return;
+    if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
 
     const throwDirection = this.character.x < this.bossLVL1.x ? -1 : 1;
     const swordWidth = 240;
@@ -285,6 +288,11 @@ export class World extends WorldIntros {
   }
 
   updateOpeningIntro() {
+    if (!this.openingIntroLines.length) {
+      this.openingIntroCompleted = true;
+      return;
+    }
+
     if (this.openingIntroTriggered || this.character.isDead || isSpawning(this.character)) return;
 
     this.openingIntroTriggered = true;
@@ -636,6 +644,7 @@ export class World extends WorldIntros {
     this.endingEscortActive = false;
     this.isPaused = true;
     this.victoryOverlayVisible = true;
+    this.victoryOverlayStartedAt = Date.now();
     this.resetKeyboard();
   }
 
@@ -650,6 +659,10 @@ export class World extends WorldIntros {
 
   isGameOverRetryReady() {
     return this.gameOverStartedAt > 0 && Date.now() - this.gameOverStartedAt >= this.gameOverRetryDelay;
+  }
+
+  isVictoryPromptReady() {
+    return this.victoryOverlayStartedAt > 0 && Date.now() - this.victoryOverlayStartedAt >= this.victoryPromptDelay;
   }
 
   onBossIntroFinished() {
