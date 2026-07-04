@@ -167,6 +167,18 @@ export function createSwordSlashingAudio() {
 }
 
 /**
+ * Creates the boss sword slashing sound effect.
+ *
+ * @returns {HTMLAudioElement} The configured boss slash sound effect.
+ */
+export function createBossSlashingSwordAudio() {
+	return createManagedAudio('assets/audio/boss-shlashing-sword.mp3', 'effect', {
+		volume: 0.4,
+		preload: 'none',
+	});
+}
+
+/**
  * Creates the set of running footstep variations.
  *
  * @returns {HTMLAudioElement[]} The registered footstep sound variants.

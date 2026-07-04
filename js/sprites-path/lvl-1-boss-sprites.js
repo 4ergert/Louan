@@ -1,3 +1,14 @@
+/**
+ * @typedef {object} Level1BossSprites
+ * @property {string[]} IDLE_ANIMATION - Sprite frames for the idle animation.
+ * @property {string[]} HURT_ANIMATION - Sprite frames for the hurt animation.
+ * @property {string[]} DYING_ANIMATION - Sprite frames for the dying animation.
+ * @property {string[]} SLASHING_ANIMATION - Sprite frames for the slashing animation.
+ * @property {string[]} THROWING_ANIMATION - Sprite frames for the throwing animation.
+ * @property {string[]} WALKING_ANIMATION - Sprite frames for the walking animation.
+ */
+
+/** @type {Level1BossSprites} */
 export const LVL_1_BOSS_SPRITES = {
   IDLE_ANIMATION: [
     './assets/img/Enemies/Skeleton_Warrior_3/PNG/PNG Sequences/Idle Blinking/0_Skeleton_Warrior_Idle Blinking_000.png',

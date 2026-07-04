@@ -83,9 +83,7 @@ export function createDialogController({ gameMenuDialogIds, getWorld, isGameCanv
       startScreen.focus({ preventScroll: true });
     }
 
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
   }
 
   /**

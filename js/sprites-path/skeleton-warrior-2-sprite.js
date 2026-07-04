@@ -1,3 +1,12 @@
+/**
+ * @typedef {object} SkeletonWarrior2Sprites
+ * @property {string[]} IDLE_ANIMATION - Sprite frames for the idle animation.
+ * @property {string[]} WALKING_ANIMATION - Sprite frames for the walking animation.
+ * @property {string[]} DYING_ANIMATION - Sprite frames for the dying animation.
+ * @property {string[]} SLASHING_ANIMATION - Sprite frames for the slashing animation.
+ */
+
+/** @type {SkeletonWarrior2Sprites} */
 export const SKELETON_WARRIOR_2_SPRITES = {
   IDLE_ANIMATION: [
     './assets/img/Enemies/Skeleton_Warrior_2/PNG Sequences/Idle/0_Skeleton_Warrior_Idle_000.png',

@@ -1,10 +1,25 @@
 /**
+ * @typedef {object} CollisionArea
+ * @property {number} x - Left edge of the collision box.
+ * @property {number} y - Top edge of the collision box.
+ * @property {number} width - Width of the collision box.
+ * @property {number} height - Height of the collision box.
+ * @property {number} [offsetY] - Optional vertical offset used when snapping to surfaces.
+ */
+
+/**
  * @typedef {object} CollidableObject
- * @property {function(): {x: number, y: number, width: number, height: number, offsetY?: number}} getCollisionArea
+ * @property {function(): CollisionArea} getCollisionArea - Returns the collision box used for overlap checks.
  */
 
 /**
  * @typedef {CollidableObject & {vcY: number, y: number}} LandingMovableObject
+ */
+
+/**
+ * @typedef {object} BossSlashRangeContext
+ * @property {{isDead: boolean, isDying: boolean, getCollisionArea: function(): CollisionArea}} bossLVL1 - Boss entity to test against.
+ * @property {{getCollisionArea: function(): CollisionArea}} character - Active player character.
  */
 
 /**
@@ -83,27 +98,47 @@ export function isColliding(otherObject) {
  * Checks whether the character is close enough to the level boss for a slash attack.
  * Requires vertical overlap and a horizontal gap of at most 100 pixels.
  *
- * @this {{bossLVL1: {isDead: boolean, isDying: boolean, getCollisionArea: function(): {x: number, y: number, width: number, height: number}}, character: {getCollisionArea: function(): {x: number, y: number, width: number, height: number}}}}
+ * @this {BossSlashRangeContext}
  * @returns {boolean} True when the character is inside the boss slash range.
  */
 export function isCharacterWithinBossSlashRange() {
   if (this.bossLVL1.isDead || this.bossLVL1.isDying) return false;
-
+  
   let characterArea = this.character.getCollisionArea();
   let bossArea = this.bossLVL1.getCollisionArea();
-  let overlapsVertically =
-    characterArea.y < bossArea.y + bossArea.height &&
-    characterArea.y + characterArea.height > bossArea.y;
 
-  if (!overlapsVertically) return false;
+  if (!overlapsVertically(characterArea, bossArea)) return false;
+  let horizontalGap = getHorizontalGap(characterArea, bossArea);
+  return horizontalGap <= 100;
+}
 
-  let characterRightEdge = characterArea.x + characterArea.width;
-  let bossRightEdge = bossArea.x + bossArea.width;
-  let horizontalGap = Math.max(
-    bossArea.x - characterRightEdge,
-    characterArea.x - bossRightEdge,
+/**
+ * Checks whether two collision areas overlap vertically.
+ * @param {CollisionArea} firstArea - The first collision box.
+ * @param {CollisionArea} secondArea - The second collision box.
+ * @returns {boolean} True when both collision areas share vertical space.
+ */
+function overlapsVertically(firstArea, secondArea) {
+  return (
+    firstArea.y < secondArea.y + secondArea.height &&
+    firstArea.y + firstArea.height > secondArea.y
+  );
+}
+
+/**
+ * Calculates the horizontal distance between two collision areas.
+ * Returns `0` when they already overlap horizontally.
+ * @param {CollisionArea} firstArea - The first collision box.
+ * @param {CollisionArea} secondArea - The second collision box.
+ * @returns {number} The empty horizontal space between both collision areas.
+ */
+function getHorizontalGap(firstArea, secondArea) {
+  let firstRightEdge = firstArea.x + firstArea.width;
+  let secondRightEdge = secondArea.x + secondArea.width;
+
+  return Math.max(
+    secondArea.x - firstRightEdge,
+    firstArea.x - secondRightEdge,
     0
   );
-
-  return horizontalGap <= 100;
 }

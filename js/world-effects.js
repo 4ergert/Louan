@@ -1,3 +1,26 @@
+/**
+ * @typedef {object} BloodSplatterParticle
+ * @property {number} x - Current horizontal particle position.
+ * @property {number} y - Current vertical particle position.
+ * @property {number} vx - Horizontal particle velocity.
+ * @property {number} vy - Vertical particle velocity.
+ * @property {number} gravity - Downward acceleration applied each frame.
+ * @property {number} radius - Render radius of the particle.
+ * @property {string} color - Fill color used when drawing the particle.
+ * @property {number} startedAt - Timestamp when the particle effect started.
+ * @property {number} duration - Lifespan contribution used for fading.
+ * @property {number} expiresAt - Timestamp when the particle should be discarded.
+ */
+
+/**
+ * Creates a burst of blood splatter particles for hit and death effects.
+ *
+ * @param {number} originX - World x-position where the effect starts.
+ * @param {number} originY - World y-position where the effect starts.
+ * @param {number} direction - Horizontal direction multiplier for the splatter force.
+ * @param {number} now - Current timestamp used for particle lifetime tracking.
+ * @returns {BloodSplatterParticle[]} The generated particle burst.
+ */
 export function createBloodSplatterParticles(originX, originY, direction, now) {
   let particles = [];
 

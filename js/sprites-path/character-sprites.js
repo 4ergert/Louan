@@ -1,3 +1,19 @@
+/**
+ * @typedef {object} CharacterSprites
+ * @property {string[]} IDLE_ANIMATION - Sprite frames for the idle animation.
+ * @property {string[]} IDLE_BLINKING_ANIMATION - Sprite frames for the idle blinking animation.
+ * @property {string[]} WALKING_ANIMATION - Sprite frames for the walking animation.
+ * @property {string[]} RUNNING_ANIMATION - Sprite frames for the running animation.
+ * @property {string[]} JUMPING_ANIMATION - Sprite frames for the jump start animation.
+ * @property {string[]} JUMPING_LOOP_ANIMATION - Sprite frames for the jump loop animation.
+ * @property {string[]} FALLING_ANIMATION - Sprite frames for the falling animation.
+ * @property {string[]} SLASHING_ANIMATION - Sprite frames for the slashing animation.
+ * @property {string[]} HURT_ANIMATION - Sprite frames for the hurt animation.
+ * @property {string[]} THROWING_ANIMATION - Sprite frames for the throwing animation.
+ * @property {string[]} DYING_ANIMATION - Sprite frames for the dying animation.
+ */
+
+/** @type {CharacterSprites} */
 export const CHARACTER_SPRITES = {
   IDLE_ANIMATION: [
     './assets/img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_000.png',

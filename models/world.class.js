@@ -1,5 +1,6 @@
 import {
   createBoneBreakAudios,
+  createBossSlashingSwordAudio,
   createBossMusicAudio,
   createCoinPickupAudio,
   createEvilLaughAudio,
@@ -49,6 +50,7 @@ export class World extends WorldIntros {
   mushroomPickupAudio = createMushroomPickupAudio();
   throwingAudio = createThrowingAudio();
   swordSlashingAudio = createSwordSlashingAudio();
+  bossSlashingSwordAudio = createBossSlashingSwordAudio();
   boneBreakAudios = createBoneBreakAudios();
   bossMusicAudio = createBossMusicAudio();
   evilLaughAudio = createEvilLaughAudio();
