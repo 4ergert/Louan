@@ -1,7 +1,15 @@
 import { die, startKnockback } from '../character/char-animation-actions.js';
 import { SkeletonWarrior2 } from '../enemies/skeleton_warrior_2.class.js';
 
+/**
+ * Collision and combat resolution methods for the world.
+ */
 export const worldCollisionMethods = {
+  /**
+   * Runs the collision/update pipeline for the current fixed step.
+   *
+   * @returns {void}
+   */
   updateCollisions() {
     if (this.isPaused) return;
 
@@ -16,18 +24,41 @@ export const worldCollisionMethods = {
     this.updateCombatInteractions();
   },
 
+  /**
+   * Resolves platform landings for all platform-aware object groups.
+   *
+   * @param {Array<*>} standableObjects
+   * @returns {void}
+   */
   updatePlatformLandings(standableObjects) {
     this.landOnNearbyPlatforms(this.character, standableObjects);
-    this.landOnNearbyPlatforms(this.alia, standableObjects, (alia) => {
-      alia.hasLanded = true;
-    });
+    this.landOnNearbyPlatforms(this.alia, standableObjects, (alia) => alia.hasLanded = true);
+    this.updateEnemyPlatformLandings(standableObjects);
 
+    this.updateEnvironmentPlatformLandings(standableObjects);
+  },
+
+  /**
+   * Applies platform landing logic to non-boss living enemies.
+   *
+   * @param {Array<*>} standableObjects
+   * @returns {void}
+   */
+  updateEnemyPlatformLandings(standableObjects) {
     this.lvl.enemies.forEach((enemy) => {
-      if (enemy.isBoss || enemy.isDying || enemy.isDead) return;
+      if (!this.canEnemyLandOnPlatforms(enemy)) return;
 
       this.landOnNearbyPlatforms(enemy, standableObjects);
     });
+  },
 
+  /**
+   * Applies platform landing logic to environment objects affected by platforms.
+   *
+   * @param {Array<*>} standableObjects
+   * @returns {void}
+   */
+  updateEnvironmentPlatformLandings(standableObjects) {
     this.lvl.environmentObjects.forEach((object) => {
       if (!object.affectedByPlatforms) return;
 
@@ -38,31 +69,56 @@ export const worldCollisionMethods = {
     });
   },
 
+  /**
+   * @param {*} enemy
+   * @returns {boolean}
+   */
+  canEnemyLandOnPlatforms(enemy) {
+    return !enemy.isBoss && !enemy.isDying && !enemy.isDead;
+  },
+
+  /**
+   * Resolves combat interactions for the current fixed update.
+   *
+   * @returns {void}
+   */
   updateCombatInteractions() {
     this.handleThrowInput();
     this.updateThrownBones();
     this.updateBossThrownSwords();
     this.updateBossAttackState();
-
     if (this.resolveStompedEnemy()) return;
-
     this.resolveEnemyContactHits();
   },
 
+  /**
+   * Resolves the first enemy stomped by the character.
+   *
+   * @returns {boolean}
+   */
   resolveStompedEnemy() {
-    let stompedEnemy = this.lvl.enemies.find((enemy) =>
-      !enemy.isBoss &&
-      !enemy.isDying && !enemy.isDead &&
-      this.character.isColliding(enemy) && this.isStompingEnemy(enemy)
-    );
+    let stompedEnemy = this.lvl.enemies.find((enemy) => this.isStompableEnemy(enemy));
 
     if (!stompedEnemy) return false;
-
     this.bounceOffEnemy(stompedEnemy);
     this.handleEnemyDefeat(stompedEnemy);
     return true;
   },
 
+  /**
+   * @param {*} enemy
+   * @returns {boolean}
+   */
+  isStompableEnemy(enemy) {
+    return !enemy.isBoss && !enemy.isDying && !enemy.isDead &&
+      this.character.isColliding(enemy) && this.isStompingEnemy(enemy);
+  },
+
+  /**
+   * Resolves direct character damage from colliding with non-stomped melee enemies.
+   *
+   * @returns {void}
+   */
   resolveEnemyContactHits() {
     this.lvl.enemies.forEach((enemy) => {
       if (enemy.isDying || enemy.isDead) return;
@@ -76,16 +132,27 @@ export const worldCollisionMethods = {
     });
   },
 
+  /**
+   * @returns {number}
+   */
   getCharacterFallDeathY() {
     return this.canvas.height;
   },
 
+  /**
+   * @returns {boolean}
+   */
   isCharacterInDeathFallZone() {
     let fallDeathStartX = this.lvl.worldSettings?.fallDeathStartX;
 
     return typeof fallDeathStartX === 'number' && this.character.x >= fallDeathStartX;
   },
 
+  /**
+   * Kills the character after a fatal fall into the abyss.
+   *
+   * @returns {void}
+   */
   handleCharacterFallDeath() {
     if (this.character.isDead) return;
     if (!this.character.shouldKeepFallingIntoAbyss()) return;
@@ -97,6 +164,11 @@ export const worldCollisionMethods = {
     this.character.vcY = -6;
   },
 
+  /**
+   * Removes non-boss enemies that fall out of the playable area.
+   *
+   * @returns {void}
+   */
   handleEnemyFallDeath() {
     this.lvl.enemies.forEach((enemy) => {
       if (enemy.isBoss || enemy.isDying || enemy.isDead) return;
@@ -106,16 +178,22 @@ export const worldCollisionMethods = {
 
       let dyingDuration = enemy.die();
 
-      setTimeout(() => {
-        this.removeEnemy(enemy);
-      }, dyingDuration);
+      setTimeout(() => this.removeEnemy(enemy), dyingDuration);
     });
   },
 
+  /**
+   * @returns {Array<*>}
+   */
   getStandableObjects() {
     return this.standableObjectsCache;
   },
 
+  /**
+   * Rebuilds the cached list of objects that can be stood on.
+   *
+   * @returns {void}
+   */
   refreshStandableObjectsCache() {
     this.standableObjectsCache = [
       ...(this.lvl.platformObjects ?? []),
@@ -123,6 +201,14 @@ export const worldCollisionMethods = {
     ];
   },
 
+  /**
+   * Returns standable objects near the provided target.
+   *
+   * @param {* | null | undefined} target
+   * @param {Array<*>} standableObjects
+   * @param {number} [margin=120]
+   * @returns {Array<*>}
+   */
   getNearbyStandableObjects(target, standableObjects, margin = 120) {
     if (!target) return [];
 
@@ -137,6 +223,14 @@ export const worldCollisionMethods = {
     });
   },
 
+  /**
+   * Lands a target on all nearby matching platforms.
+   *
+   * @param {* | null | undefined} target
+   * @param {Array<*>} standableObjects
+   * @param {((target: *, platform: *) => void) | null} [onLand=null]
+   * @returns {void}
+   */
   landOnNearbyPlatforms(target, standableObjects, onLand = null) {
     if (!target) return;
     if (typeof target.isLandingOn !== 'function' || typeof target.landOn !== 'function') return;
@@ -149,6 +243,11 @@ export const worldCollisionMethods = {
     });
   },
 
+  /**
+   * Resolves solid-object blocking collisions against the character.
+   *
+   * @returns {void}
+   */
   blockCharacterBySolidObjects() {
     (this.lvl.solidObjects ?? []).forEach((solidObject) => {
       if (!this.character.isColliding(solidObject)) return;
@@ -159,6 +258,12 @@ export const worldCollisionMethods = {
     });
   },
 
+  /**
+   * Resolves a character collision against one solid object.
+   *
+   * @param {*} solidObject
+   * @returns {void}
+   */
   resolveCharacterSolidCollision(solidObject) {
     let characterArea = this.character.getCollisionArea();
     let solidArea = solidObject.getCollisionArea();
@@ -172,6 +277,13 @@ export const worldCollisionMethods = {
     this.resolveCharacterHorizontalSolidCollision(solidArea, characterArea, overlaps);
   },
 
+  /**
+   * Computes overlap distances between the character and a solid object.
+   *
+   * @param {{ x: number, y: number, width: number, height: number }} characterArea
+   * @param {{ x: number, y: number, width: number, height: number }} solidArea
+   * @returns {{ left: number, right: number, top: number, bottom: number }}
+   */
   getCharacterSolidOverlaps(characterArea, solidArea) {
     return {
       left: characterArea.x + characterArea.width - solidArea.x,
@@ -181,6 +293,14 @@ export const worldCollisionMethods = {
     };
   },
 
+  /**
+   * Resolves a vertical collision between the character and a solid object.
+   *
+   * @param {{ y: number, height: number }} solidArea
+   * @param {{ y: number, height: number }} characterArea
+   * @param {{ top: number, bottom: number }} overlaps
+   * @returns {void}
+   */
   resolveCharacterVerticalSolidCollision(solidArea, characterArea, overlaps) {
     let characterOffsetY = characterArea.y - this.character.y;
 
@@ -194,6 +314,14 @@ export const worldCollisionMethods = {
     if (this.character.vcY > 0) this.character.vcY = 0;
   },
 
+  /**
+   * Resolves a horizontal collision between the character and a solid object.
+   *
+   * @param {{ x: number, width: number }} solidArea
+   * @param {{ x: number, width: number }} characterArea
+   * @param {{ left: number, right: number }} overlaps
+   * @returns {void}
+   */
   resolveCharacterHorizontalSolidCollision(solidArea, characterArea, overlaps) {
     let characterOffsetX = characterArea.x - this.character.x;
 
@@ -205,6 +333,10 @@ export const worldCollisionMethods = {
     this.character.x = solidArea.x + solidArea.width - characterOffsetX;
   },
 
+  /**
+   * @param {*} solidObject
+   * @returns {boolean}
+   */
   shouldIgnoreSolidCollisionFromBelow(solidObject) {
     if (!solidObject.ignoreCollisionFromBelow) return false;
 
@@ -216,6 +348,10 @@ export const worldCollisionMethods = {
     return characterCenterY >= solidCenterY;
   },
 
+  /**
+   * @param {*} enemy
+   * @returns {boolean}
+   */
   isStompingEnemy(enemy) {
     let characterArea = this.character.getCollisionArea();
     let enemyArea = enemy.getCollisionArea();
@@ -224,6 +360,12 @@ export const worldCollisionMethods = {
     return this.character.vcY < 0 && characterFeet <= enemyArea.y + 25;
   },
 
+  /**
+   * Applies the bounce response after stomping an enemy.
+   *
+   * @param {*} enemy
+   * @returns {void}
+   */
   bounceOffEnemy(enemy) {
     let characterArea = this.character.getCollisionArea();
     let enemyArea = enemy.getCollisionArea();

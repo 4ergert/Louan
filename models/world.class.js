@@ -22,6 +22,10 @@ import { worldInteractionMethods } from './world/world-interactions.js';
 import { worldLoopMethods } from './world/world-loop.js';
 import { worldRenderingMethods } from './world/world-rendering.js';
 
+/**
+ * Central gameplay runtime that owns the active level state, rendering loop,
+ * audio handles, combat state, pickups, and world-specific transitions.
+ */
 export class World extends WorldIntros {
   character = new Character();
   alia = null;
@@ -68,6 +72,14 @@ export class World extends WorldIntros {
   victoryOverlayStartedAt = 0;
   victoryPromptDelay = 3000;
 
+  /**
+   * Creates a world instance for the provided canvas, keyboard state, and level.
+   *
+   * @param {HTMLCanvasElement} canvas - Canvas used for drawing the world.
+   * @param {import('./keyboard.class.js').Keyboard} keyboard - Shared keyboard input state.
+   * @param {HTMLAudioElement | null} [backgroundMusicAudio=null] - Background music used during gameplay.
+   * @param {import('./lvl.class.js').LVL} [lvl=lvl_1] - Initial level configuration.
+   */
   constructor(canvas, keyboard, backgroundMusicAudio = null, lvl = lvl_1) {
     super();
     this.ctx = canvas.getContext('2d');
@@ -81,6 +93,11 @@ export class World extends WorldIntros {
     this.startLoop();
   }
 
+  /**
+   * Returns the current boss enemy for the active level.
+   *
+   * @returns {any} The boss enemy when present.
+   */
   get bossLVL1() {
     return this.lvl.enemies.find((enemy) => enemy.isBoss);
   }

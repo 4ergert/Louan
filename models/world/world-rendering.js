@@ -1,6 +1,16 @@
 import { createBloodSplatterParticles } from '../../js/world-effects.js';
 import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOverlay } from '../../js/world-renderer.js';
 
+/**
+ * @typedef {Object} FlyingPickupFrame
+ * @property {number} progress
+ * @property {number} drawX
+ * @property {number} drawY
+ */
+
+/**
+ * Rendering-related world mixin methods.
+ */
 export const worldRenderingMethods = {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -41,33 +51,33 @@ export const worldRenderingMethods = {
       this.playGameOverAudio();
       drawGameOverOverlay(this.ctx, this.canvas, this.isGameOverRetryReady());
     }
-
-    if (this.victoryOverlayVisible) {
-      drawVictoryOverlay(this.ctx, this.canvas, this.isVictoryPromptReady());
-    }
-
+    if (this.victoryOverlayVisible) drawVictoryOverlay(this.ctx, this.canvas, this.isVictoryPromptReady());
     this.drawActiveIntroBubble();
   },
 
+  /**
+   * Draws the highest-priority active intro bubble.
+   *
+   * @returns {void}
+   */
   drawActiveIntroBubble() {
-    if (this.isOpeningIntroActive()) {
-      this.drawOpeningIntroBubble();
-      return;
-    }
+    const activeIntroBubble = this.getActiveIntroBubble();
+    if (!activeIntroBubble) return;
 
-    if (this.isBossIntroActive()) {
-      this.drawBossIntroBubble();
-      return;
-    }
+    activeIntroBubble();
+  },
 
-    if (this.isAliaIntroActive()) {
-      this.drawAliaIntroBubble();
-      return;
-    }
+  /**
+   * Returns the draw function for the currently active intro bubble.
+   *
+   * @returns {(() => void) | null}
+   */
+  getActiveIntroBubble() {
+    const activeIntroType = this.getActiveIntroType?.();
+    if (!activeIntroType) return null;
 
-    if (this.isCharacterResponseIntroActive()) {
-      this.drawCharacterResponseIntroBubble();
-    }
+    const methodName = `draw${activeIntroType.charAt(0).toUpperCase()}${activeIntroType.slice(1)}IntroBubble`;
+    return this[methodName]?.bind(this) ?? null;
   },
 
   drawBackgrounds() {
@@ -110,16 +120,27 @@ export const worldRenderingMethods = {
     );
   },
 
+  /**
+   * Animates and draws pickups flying toward a HUD target.
+   *
+   * @param {Array<*>} pickups
+   * @param {number} targetCenterX
+   * @param {number} targetCenterY
+   * @param {() => void} onPickupComplete
+   * @returns {Array<*>}
+   */
   drawFlyingPickups(pickups, targetCenterX, targetCenterY, onPickupComplete) {
     if (pickups.length === 0) return pickups;
 
-    let now = Date.now();
+    const now = Date.now();
 
     return pickups.filter((pickup) => {
-      let progress = Math.min((now - pickup.startedAt) / pickup.duration, 1);
-      let easedProgress = 1 - Math.pow(1 - progress, 3);
-      let drawX = pickup.startX + (targetCenterX - pickup.startX) * easedProgress;
-      let drawY = pickup.startY + (targetCenterY - pickup.startY) * easedProgress;
+      const { progress, drawX, drawY } = this.getFlyingPickupFrame(
+        pickup,
+        targetCenterX,
+        targetCenterY,
+        now
+      );
 
       this.ctx.drawImage(pickup.img, drawX, drawY, pickup.width, pickup.height);
 
@@ -130,6 +151,26 @@ export const worldRenderingMethods = {
     });
   },
 
+  /**
+   * Computes the draw position and progress for a flying pickup frame.
+   *
+   * @param {{ startX: number, startY: number, startedAt: number, duration: number }} pickup
+   * @param {number} targetCenterX
+   * @param {number} targetCenterY
+   * @param {number} now
+   * @returns {FlyingPickupFrame}
+   */
+  getFlyingPickupFrame(pickup, targetCenterX, targetCenterY, now) {
+    const progress = Math.min((now - pickup.startedAt) / pickup.duration, 1);
+    const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+    return {
+      progress,
+      drawX: pickup.startX + (targetCenterX - pickup.startX) * easedProgress,
+      drawY: pickup.startY + (targetCenterY - pickup.startY) * easedProgress,
+    };
+  },
+
   queueFlyingBonePickup(bone) {
     this.flyingBonePickups.push(this.createFlyingPickup(bone));
   },
@@ -138,6 +179,12 @@ export const worldRenderingMethods = {
     this.flyingCoinPickups.push(this.createFlyingPickup(coin));
   },
 
+  /**
+   * Creates the animation payload for a pickup flying into the HUD.
+   *
+   * @param {{ img: CanvasImageSource, x: number, y: number, width: number, height: number }} object
+   * @returns {{ img: CanvasImageSource, startX: number, startY: number, width: number, height: number, startedAt: number, duration: number }}
+   */
   createFlyingPickup(object) {
     return {
       img: object.img,

@@ -5,7 +5,15 @@ import { Coins } from '../objects/coin-object.class.js';
 import { MushroomObject } from '../objects/mushroom-object.class.js';
 import { ThrowableObject } from '../objects/throwable-objects.class.js';
 
+/**
+ * World interaction methods for pickups, rewards, throws, and encounter triggers.
+ */
 export const worldInteractionMethods = {
+  /**
+   * Runs the interaction pipeline for the current fixed update.
+   *
+   * @returns {void}
+   */
   updateWorldInteractions() {
     this.updateChestRewards();
     this.unlockTouchedObjects();
@@ -19,6 +27,11 @@ export const worldInteractionMethods = {
     this.handleEnemyFallDeath();
   },
 
+  /**
+   * Unlocks touched solid objects and spawns their rewards when applicable.
+   *
+   * @returns {void}
+   */
   unlockTouchedObjects() {
     (this.lvl.solidObjects ?? []).forEach((solidObject) => {
       if (!solidObject.unlockImagePath || solidObject.isUnlocked) return;
@@ -29,6 +42,12 @@ export const worldInteractionMethods = {
     });
   },
 
+  /**
+   * Spawns the reward released by an unlocked solid object.
+   *
+   * @param {*} solidObject
+   * @returns {void}
+   */
   spawnUnlockReward(solidObject) {
     let rewardWidth = solidObject.rewardWidth ?? 60;
     let rewardHeight = solidObject.rewardHeight ?? 60;
@@ -43,6 +62,11 @@ export const worldInteractionMethods = {
     this.lvl.environmentObjects.push(reward);
   },
 
+  /**
+   * Advances spawned chest rewards until they become collectible.
+   *
+   * @returns {void}
+   */
   updateChestRewards() {
     this.lvl.environmentObjects.forEach((object) => {
       if (!(object instanceof MushroomObject)) return;
@@ -52,6 +76,11 @@ export const worldInteractionMethods = {
     });
   },
 
+  /**
+   * Collects all touched chest rewards and applies their bonuses.
+   *
+   * @returns {void}
+   */
   collectChestRewards() {
     let collectedRewards = this.lvl.environmentObjects.filter((object) =>
       object instanceof MushroomObject && object.isCollectible && isCollidingWithCharacter(this.character, object)
@@ -74,6 +103,11 @@ export const worldInteractionMethods = {
     playSoundEffect(this.mushroomPickupAudio);
   },
 
+  /**
+   * Starts boss music once the character reaches the trigger object.
+   *
+   * @returns {void}
+   */
   checkBossMusicTrigger() {
     if (this.bossMusicTriggered) return;
 
@@ -91,6 +125,11 @@ export const worldInteractionMethods = {
     playBackgroundAudio(this.bossMusicAudio);
   },
 
+  /**
+   * Starts the Alia intro when Alia is present and idle.
+   *
+   * @returns {void}
+   */
   checkAliaIntroTrigger() {
     if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
     if (!this.alia.isIdleForIntro()) return;
@@ -98,6 +137,11 @@ export const worldInteractionMethods = {
     this.startAliaIntro();
   },
 
+  /**
+   * Collects coins currently colliding with the character.
+   *
+   * @returns {void}
+   */
   collectCoins() {
     let collectedCoins = this.lvl.environmentObjects.filter((object) =>
       object instanceof Coins && isCollidingWithCharacter(this.character, object)
@@ -113,6 +157,11 @@ export const worldInteractionMethods = {
     playSoundEffect(this.coinPickupAudio);
   },
 
+  /**
+   * Collects throwable bones currently colliding with the character.
+   *
+   * @returns {void}
+   */
   collectBones() {
     let collectedBones = this.lvl.environmentObjects.filter((object) =>
       object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object)
@@ -128,6 +177,11 @@ export const worldInteractionMethods = {
     playSoundEffect(this.bonePickupAudio);
   },
 
+  /**
+   * Handles bone throw input and locking.
+   *
+   * @returns {void}
+   */
   handleThrowInput() {
     if (this.keyboard.F && !this.throwInputLocked && this.throwableObjects.bones > 0) {
       startThrowingAnimation(this.character);
@@ -141,6 +195,11 @@ export const worldInteractionMethods = {
     }
   },
 
+  /**
+   * Spawns and launches a throwable bone from the character.
+   *
+   * @returns {void}
+   */
   throwBone() {
     let direction = this.character.imgDirectionChange ? -1 : 1;
     let boneX = direction > 0 ? this.character.x + this.character.width - 60 : this.character.x + 30;
@@ -153,37 +212,82 @@ export const worldInteractionMethods = {
     this.throwableObjects.removeBone(1);
   },
 
+  /**
+   * Updates thrown bones and removes those that hit or left the screen.
+   *
+   * @returns {void}
+   */
   updateThrownBones() {
     this.handleThrownBoneHits();
     this.thrownBones = this.thrownBones.filter((bone) => !bone.hasHitTarget && !bone.isOffscreen(this.camera_x, this.canvas.width));
   },
 
+  /**
+   * Updates boss swords and removes those that returned.
+   *
+   * @returns {void}
+   */
   updateBossThrownSwords() {
     this.handleBossSwordHits();
     this.bossThrownSwords = this.bossThrownSwords.filter((sword) => !sword.hasReturned());
   },
 
+  /**
+   * Resolves thrown-bone collisions against living enemies.
+   *
+   * @returns {void}
+   */
   handleThrownBoneHits() {
     this.thrownBones.forEach((bone) => {
-      let hitEnemy = this.lvl.enemies.find((enemy) =>
-        !enemy.isDying &&
-        !enemy.isDead &&
-        bone.isColliding(enemy)
-      );
-
+      const hitEnemy = this.getHitEnemyForBone(bone);
       if (!hitEnemy) return;
 
-      bone.hasHitTarget = true;
-
-      if (hitEnemy.isBoss) {
-        if (hitEnemy.hit()) this.handleEnemyDefeat(hitEnemy);
-        return;
-      }
-
-      this.handleEnemyDefeat(hitEnemy);
+      this.handleThrownBoneHit(bone, hitEnemy);
     });
   },
 
+  /**
+   * Returns the first enemy hit by the provided bone.
+   *
+   * @param {ThrowableObject} bone
+   * @returns {* | undefined}
+   */
+  getHitEnemyForBone(bone) {
+    return this.lvl.enemies.find((enemy) => this.canBoneHitEnemy(bone, enemy));
+  },
+
+  /**
+   * @param {ThrowableObject} bone
+   * @param {*} enemy
+   * @returns {boolean}
+   */
+  canBoneHitEnemy(bone, enemy) {
+    return !enemy.isDying && !enemy.isDead && bone.isColliding(enemy);
+  },
+
+  /**
+   * Applies the hit result of a thrown bone to the matched enemy.
+   *
+   * @param {ThrowableObject} bone
+   * @param {*} hitEnemy
+   * @returns {void}
+   */
+  handleThrownBoneHit(bone, hitEnemy) {
+    bone.hasHitTarget = true;
+
+    if (!hitEnemy.isBoss) {
+      this.handleEnemyDefeat(hitEnemy);
+      return;
+    }
+
+    if (hitEnemy.hit()) this.handleEnemyDefeat(hitEnemy);
+  },
+
+  /**
+   * Resolves collisions between boss swords and the character.
+   *
+   * @returns {void}
+   */
   handleBossSwordHits() {
     this.bossThrownSwords.forEach((sword) => {
       if (sword.hasHitCharacter) return;
@@ -196,6 +300,12 @@ export const worldInteractionMethods = {
     });
   },
 
+  /**
+   * Spawns a throwable bone pickup at the defeated enemy's position.
+   *
+   * @param {{ getCollisionArea: () => { x: number, y: number, width: number, height: number } }} enemy
+   * @returns {void}
+   */
   spawnThrowableObjectAt(enemy) {
     let enemyArea = enemy.getCollisionArea();
     let bone = new ThrowableObject();

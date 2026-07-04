@@ -6,7 +6,16 @@ import { SkeletonWarriorLVL1 } from '../enemies/skeleton_warrior_1.class.js';
 import { SkeletonWarrior2 } from '../enemies/skeleton_warrior_2.class.js';
 import { BossSwordObject } from '../objects/boss-sword-object.class.js';
 
+/**
+ * @typedef {'opening' | 'boss' | 'alia' | 'characterResponse'} IntroType
+ */
+
 export const worldEventMethods = {
+  /**
+   * Spawns a skeleton warrior from the boss position.
+   *
+   * @returns {void}
+   */
   spawnSkeletonWarriorFromBoss() {
     if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
 
@@ -20,6 +29,11 @@ export const worldEventMethods = {
     this.lvl.enemies.push(skeletonWarrior);
   },
 
+  /**
+   * Spawns the boss sword boomerang aimed toward the character.
+   *
+   * @returns {void}
+   */
   spawnBossSwordBoomerang() {
     if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
 
@@ -34,24 +48,39 @@ export const worldEventMethods = {
     this.bossThrownSwords.push(sword);
   },
 
+  /**
+   * Starts the opening intro once the character is ready.
+   *
+   * @returns {void}
+   */
   updateOpeningIntro() {
-    if (!this.openingIntroLines.length) {
-      this.openingIntroCompleted = true;
-      return;
-    }
-
+    if (this.finishOpeningIntroWithoutLines()) return;
     if (this.openingIntroTriggered || this.character.isDead || isSpawning(this.character)) return;
 
     this.openingIntroTriggered = true;
     this.isPaused = true;
     this.openingIntroStartedAt = Date.now();
     this.resetKeyboard();
-
-    this.openingIntroTimeout = setTimeout(() => {
-      this.finishOpeningIntro();
-    }, this.openingIntroDuration);
+    this.startIntroTimeout('opening', () => this.finishOpeningIntro());
   },
 
+  /**
+   * Completes the opening intro immediately when no intro lines exist.
+   *
+   * @returns {boolean}
+   */
+  finishOpeningIntroWithoutLines() {
+    if (this.openingIntroLines.length) return false;
+
+    this.openingIntroCompleted = true;
+    return true;
+  },
+
+  /**
+   * Starts the boss intro when the encounter conditions are met.
+   *
+   * @returns {void}
+   */
   updateBossIntro() {
     if (!this.openingIntroCompleted || this.bossIntroTriggered || this.character.isDead) return;
     if (!this.bossLVL1) return;
@@ -61,22 +90,43 @@ export const worldEventMethods = {
     this.isPaused = true;
     this.bossIntroStartedAt = Date.now();
     this.resetKeyboard();
-
-    this.bossIntroTimeout = setTimeout(() => {
-      this.finishBossIntro();
-    }, this.bossIntroDuration);
+    this.startIntroTimeout('boss', () => this.finishBossIntro());
   },
 
+  /**
+   * Starts and stores the timeout for a specific intro.
+   *
+   * @param {IntroType} introType
+   * @param {() => void} onTimeout
+   * @returns {void}
+   */
+  startIntroTimeout(introType, onTimeout) {
+    this[`${introType}IntroTimeout`] = setTimeout(() => {
+      onTimeout();
+    }, this[`${introType}IntroDuration`]);
+  },
+
+  /**
+   * @returns {boolean}
+   */
   isBossFullyVisible() {
     let bossScreenX = this.bossLVL1.x + this.camera_x;
     return bossScreenX >= 0 && bossScreenX + this.bossLVL1.width <= this.canvas.width + 100;
   },
 
+  /**
+   * @returns {boolean}
+   */
   isCharacterNearBoss() {
     let characterRightEdge = this.character.x + this.character.width;
     return this.bossLVL1.x - characterRightEdge <= 400;
   },
 
+  /**
+   * Starts the post-boss ending escort sequence.
+   *
+   * @returns {void}
+   */
   startEndingEscort() {
     if (!this.alia || this.endingEscortActive) return;
 
@@ -85,6 +135,11 @@ export const worldEventMethods = {
     this.resetKeyboard();
   },
 
+  /**
+   * Advances the ending escort and shows victory once both characters leave the screen.
+   *
+   * @returns {void}
+   */
   updateEndingEscort() {
     if (!this.endingEscortActive || !this.alia) return;
 
@@ -103,6 +158,11 @@ export const worldEventMethods = {
     this.resetKeyboard();
   },
 
+  /**
+   * Plays the game-over audio once and stops any background music.
+   *
+   * @returns {void}
+   */
   playGameOverAudio() {
     if (this.gameOverAudioPlayed) return;
 
@@ -112,14 +172,25 @@ export const worldEventMethods = {
     playSoundEffect(this.gameOverAudio);
   },
 
+  /**
+   * @returns {boolean}
+   */
   isGameOverRetryReady() {
     return this.gameOverStartedAt > 0 && Date.now() - this.gameOverStartedAt >= this.gameOverRetryDelay;
   },
 
+  /**
+   * @returns {boolean}
+   */
   isVictoryPromptReady() {
     return this.victoryOverlayStartedAt > 0 && Date.now() - this.victoryOverlayStartedAt >= this.victoryPromptDelay;
   },
 
+  /**
+   * Runs the one-time boss intro completion side effects.
+   *
+   * @returns {void}
+   */
   onBossIntroFinished() {
     this.removeObjectsBeforeBossArena();
 
@@ -129,6 +200,11 @@ export const worldEventMethods = {
     playSoundEffect(this.evilLaughAudio);
   },
 
+  /**
+   * Removes objects positioned before the boss arena gate.
+   *
+   * @returns {void}
+   */
   removeObjectsBeforeBossArena() {
     let bossArenaStartX = this.lvl.worldSettings?.bossArenaStartX;
 
@@ -141,6 +217,14 @@ export const worldEventMethods = {
     this.refreshStandableObjectsCache();
   },
 
+  /**
+   * Filters objects by minimum x-position while allowing selected objects to remain.
+   *
+   * @param {Array<*> | null | undefined} objects
+   * @param {number} minX
+   * @param {(object: *) => boolean} [keepObject=() => false]
+   * @returns {Array<*>}
+   */
   filterObjectsBeforeX(objects, minX, keepObject = () => false) {
     return (objects ?? []).filter((object) => {
       if (keepObject(object)) return true;
@@ -150,12 +234,22 @@ export const worldEventMethods = {
     });
   },
 
+  /**
+   * Updates the boss slashing state based on character range.
+   *
+   * @returns {void}
+   */
   updateBossAttackState() {
     if (!this.bossLVL1) return;
 
     this.bossLVL1.setSlashingState(this.isCharacterWithinBossSlashRange());
   },
 
+  /**
+   * Applies boss slash damage and knockback when the character is hit.
+   *
+   * @returns {void}
+   */
   handleBossSlashHit() {
     if (!this.bossLVL1 || this.bossLVL1.isDead) return;
     if (!this.isCharacterWithinBossSlashRange()) return;
@@ -172,6 +266,12 @@ export const worldEventMethods = {
     this.spawnBloodSplatter();
   },
 
+  /**
+   * Handles an enemy defeat, including sound, death animation, and cleanup.
+   *
+   * @param {*} enemy
+   * @returns {void}
+   */
   handleEnemyDefeat(enemy) {
     this.playEnemyDefeatSound(enemy);
     let dyingDuration = enemy.die();
@@ -182,12 +282,24 @@ export const worldEventMethods = {
     }, dyingDuration);
   },
 
+  /**
+   * Plays the appropriate defeat sound for supported enemy types.
+   *
+   * @param {*} enemy
+   * @returns {void}
+   */
   playEnemyDefeatSound(enemy) {
     if (!(enemy instanceof SkeletonWarriorLVL1) && !(enemy instanceof SkeletonWarrior2)) return;
 
     this.lastBoneBreakAudioIndex = playRandomVariantSound(this.boneBreakAudios, this.lastBoneBreakAudioIndex);
   },
 
+  /**
+   * Removes an enemy from the level and spawns Alia if the boss was defeated.
+   *
+   * @param {*} enemyToRemove
+   * @returns {void}
+   */
   removeEnemy(enemyToRemove) {
     if (enemyToRemove.isBoss && !this.alia) {
       this.spawnAliaAtBoss(enemyToRemove);
@@ -196,6 +308,12 @@ export const worldEventMethods = {
     this.lvl.enemies = this.lvl.enemies.filter((enemy) => enemy !== enemyToRemove);
   },
 
+  /**
+   * Spawns Alia near the defeated boss.
+   *
+   * @param {{ x: number, y: number, width: number, height: number }} boss
+   * @returns {void}
+   */
   spawnAliaAtBoss(boss) {
     let aliaX = boss.x + boss.width / 2 - 130;
     let aliaY = boss.y + boss.height - 260;
@@ -204,6 +322,11 @@ export const worldEventMethods = {
     this.assignWorld(this.alia);
   },
 
+  /**
+   * Starts the Alia intro sequence.
+   *
+   * @returns {void}
+   */
   startAliaIntro() {
     if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
 
@@ -212,9 +335,6 @@ export const worldEventMethods = {
     this.isPaused = true;
     this.aliaIntroStartedAt = Date.now();
     this.resetKeyboard();
-
-    this.aliaIntroTimeout = setTimeout(() => {
-      this.finishAliaIntro();
-    }, this.aliaIntroDuration);
+    this.startIntroTimeout('alia', () => this.finishAliaIntro());
   },
 };
