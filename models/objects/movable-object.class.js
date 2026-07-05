@@ -29,6 +29,21 @@ export class MovableObject extends DrawableObject {
   }
 
   /**
+   * Advances an animation on a timed cadence and returns the displayed frame index.
+   *
+   * @param {string} elapsedPropertyName Instance property used to accumulate elapsed time.
+   * @param {number} animationSpeed Milliseconds between animation frame changes.
+   * @param {string[]} animationFrames Frames to render.
+   * @param {boolean} [isLooping=true] Whether the animation should loop.
+   * @returns {number|null} Displayed frame index, or `null` when no frame advanced.
+   */
+  updateTimedAnimationStep(elapsedPropertyName, animationSpeed, animationFrames, isLooping = true) {
+    if (!this.shouldAdvanceTimedStep(elapsedPropertyName, animationSpeed)) return null;
+
+    return this.showAnimationFrame(animationFrames, isLooping);
+  }
+
+  /**
    * Applies vertical movement while the object is airborne.
    *
    * @returns {void}
