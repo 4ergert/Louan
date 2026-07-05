@@ -7,20 +7,9 @@ import { SKELETON_WARRIOR_2_SPRITES } from '../../js/sprites-path/skeleton-warri
  * Skeleton enemy variant with the shared patrol behavior plus a close-range slash attack.
  */
 export class SkeletonWarrior2 extends SkeletonEnemyBase {
-  x = 200;
-  y = 0;
   speed = 0.6;
   defaultSpeed = 0.6;
-  throwSpeed = 1.8;
-  moveDirection = -1;
-  animationFrames = [];
-  isDying = false;
-  isDead = false;
-  isThrownByBoss = false;
-  dyingAnimationSpeed = 50;
   slashAnimationSpeed = 50;
-  animationElapsed = 0;
-  directionChangeRemainingMs = 0;
   isSlashing = false;
   slashHitTriggered = false;
 

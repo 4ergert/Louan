@@ -6,21 +6,8 @@ import { SkeletonEnemyBase } from './skeleton-enemy-base.class.js';
  * and transitions through a timed death animation.
  */
 export class SkeletonWarriorLVL1 extends SkeletonEnemyBase {
-  x = 200;
-  y = 0;
   speed = 0.4;
   defaultSpeed = 0.4;
-  throwSpeed = 1.8;
-  moveDirection = -1;
-  animationFrames = [];
-  isDying = false;
-  isDead = false;
-  isThrownByBoss = false;
-  dyingAnimationSpeed = 50;
-  animationElapsed = 0;
-  directionChangeRemainingMs = 0;
-
-
   IDLE = SKELETON_WARRIOR_1_SPRITES.IDLE_ANIMATION;
   WALKING = SKELETON_WARRIOR_1_SPRITES.WALKING_ANIMATION;
   DYING = SKELETON_WARRIOR_1_SPRITES.DYING_ANIMATION;

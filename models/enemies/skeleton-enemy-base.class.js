@@ -5,6 +5,18 @@ import { MovableObject } from '../objects/movable-object.class.js';
  * and use a timed death animation.
  */
 export class SkeletonEnemyBase extends MovableObject {
+  x = 200;
+  y = 0;
+  throwSpeed = 1.8;
+  moveDirection = -1;
+  animationFrames = [];
+  isDying = false;
+  isDead = false;
+  isThrownByBoss = false;
+  dyingAnimationSpeed = 50;
+  animationElapsed = 0;
+  directionChangeRemainingMs = 0;
+
   /**
    * Applies the shared constructor setup for patrolling skeleton enemies.
    *
@@ -110,11 +122,11 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-   * Repositions the enemy and gives it an initial upward and horizontal throw impulse.
-   *
-    * @param {number} direction Horizontal throw direction, usually `-1` or `1`.
-    * @param {number} startX Spawn x-position for the throw.
-    * @param {number} startY Spawn y-position for the throw.
+  * Repositions the enemy and gives it an initial upward and horizontal throw impulse.
+  *
+  * @param {number} direction Horizontal throw direction, usually `-1` or `1`.
+  * @param {number} startX Spawn x-position for the throw.
+  * @param {number} startY Spawn y-position for the throw.
    * @returns {void}
    */
   launchFromBoss(direction, startX, startY) {
@@ -136,10 +148,10 @@ export class SkeletonEnemyBase extends MovableObject {
   onLaunchFromBoss() {}
 
   /**
-    * Repeated calls while dying or after death return the same duration.
    * Starts the death sequence and returns how long the animation will last.
-    * @returns {number} Duration of the death animation in milliseconds.
-   * @returns {number}
+   * Repeated calls while dying or after death return the same duration.
+   *
+   * @returns {number} Duration of the death animation in milliseconds.
    */
   die() {
     let dyingDuration = this.DYING.length * this.dyingAnimationSpeed + 50;
@@ -202,9 +214,9 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Determines whether the enemy should keep falling because no standable object is below it.
-    *
-    * @returns {boolean} `true` when the enemy has left a platform and should continue falling.
+   * Determines whether the enemy should keep falling because no standable object is below it.
+   *
+   * @returns {boolean} `true` when the enemy has left a platform and should continue falling.
    */
   shouldKeepFallingIntoAbyss() {
     if (this.isStandingOnPlatform()) return false;
@@ -214,9 +226,9 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Checks whether any standable object still exists below the current collision area.
-    *
-    * @returns {boolean} `true` when a standable object is found underneath the enemy.
+   * Checks whether any standable object still exists below the current collision area.
+   *
+   * @returns {boolean} `true` when a standable object is found underneath the enemy.
    */
   hasStandableObjectBelow() {
     let ownCollisionArea = this.getCollisionArea();
@@ -233,9 +245,9 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Decides whether the next platform in the patrol direction is a blocked platform type.
-    *
-    * @returns {boolean} `true` when the enemy should reverse instead of moving forward.
+   * Decides whether the next platform in the patrol direction is a blocked platform type.
+   *
+   * @returns {boolean} `true` when the enemy should reverse instead of moving forward.
    */
   shouldReverseAtBlockedPlatform() {
     let nextPlatform = this.getNextPlatform();
@@ -244,9 +256,9 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Finds the platform the enemy would land on after its next horizontal movement step.
-    *
-    * @returns {object|null} The matching platform object or `null` when no landing platform is ahead.
+   * Finds the platform the enemy would land on after its next horizontal movement step.
+   *
+   * @returns {object|null} The matching platform object or `null` when no landing platform is ahead.
    */
   getNextPlatform() {
     let nextCollisionArea = this.getNextCollisionArea();
@@ -261,13 +273,13 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Checks whether the next movement step would place the enemy on top of a platform.
-    *
-    * @param {{x: number, y: number, width: number, height: number}} nextCollisionArea Collision box after the next step.
-    * @param {number} nextFeet Projected y-position of the enemy feet.
-    * @param {number} landingTolerance Allowed vertical snap tolerance for landing.
-    * @param {{x: number, y: number, width: number, height: number}} platformArea Collision box of the platform.
-    * @returns {boolean} `true` when the next step should be treated as a landing.
+   * Checks whether the next movement step would place the enemy on top of a platform.
+   *
+   * @param {{x: number, y: number, width: number, height: number}} nextCollisionArea Collision box after the next step.
+   * @param {number} nextFeet Projected y-position of the enemy feet.
+   * @param {number} landingTolerance Allowed vertical snap tolerance for landing.
+   * @param {{x: number, y: number, width: number, height: number}} platformArea Collision box of the platform.
+   * @returns {boolean} `true` when the next step should be treated as a landing.
    */
   isLandingOnPlatform(nextCollisionArea, nextFeet, landingTolerance, platformArea) {
     return (
@@ -280,9 +292,9 @@ export class SkeletonEnemyBase extends MovableObject {
   }
 
   /**
-    * Builds the projected collision box for the next horizontal movement step.
-    *
-    * @returns {{x: number, y: number, width: number, height: number, offsetY: number}} Projected collision box.
+   * Builds the projected collision box for the next horizontal movement step.
+   *
+   * @returns {{x: number, y: number, width: number, height: number, offsetY: number}} Projected collision box.
    */
   getNextCollisionArea() {
     let collisionArea = this.getCollisionArea();
