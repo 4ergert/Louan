@@ -1,5 +1,5 @@
-import { createBloodSplatterParticles } from '../../js/world-effects.js';
-import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOverlay } from '../../js/world-renderer.js';
+import { createBloodSplatterParticles } from '../../world-effects.js';
+import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOverlay } from '../../world-renderer.js';
 
 /**
  * @typedef {Object} FlyingPickupFrame

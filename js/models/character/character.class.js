@@ -1,5 +1,5 @@
-import { CHARACTER_SPRITES } from '../../js/sprites-path/character-sprites.js';
-import { createJumpEffortAudios, createRunningFootstepAudios, playRandomVariantSound } from '../../js/audio.js';
+import { CHARACTER_SPRITES } from '../../sprites-path/character-sprites.js';
+import { createJumpEffortAudios, createRunningFootstepAudios, playRandomVariantSound } from '../../audio.js';
 import { MovableObject } from '../objects/movable-object.class.js';
 import { switchCharAnimation } from './switch-char-animation.js';
 import { charMovement } from './char-movements.js';

@@ -1,4 +1,4 @@
-import { isColliding } from '../../js/colliding-objects.js';
+import { isColliding } from '../../colliding-objects.js';
 
 /**
  * Base drawable game object with image, animation, and collision helpers.

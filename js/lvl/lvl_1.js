@@ -1,12 +1,12 @@
-import { LVL_1_Boss } from '../js/models/enemies/lvl-1-boss.class.js';
-import { SkeletonWarriorLVL1 } from '../js/models/enemies/skeleton_warrior_1.class.js';
-import { SkeletonWarrior2 } from '../js/models/enemies/skeleton_warrior_2.class.js';
-import { LVL } from '../js/models/lvl.class.js';
-import { Coins } from '../js/models/objects/coin-object.class.js';
-import { BackgroundObject } from '../js/models/objects/background-object.class.js';
-import { EnvironmentObject } from '../js/models/objects/environment-objects.class.js';
-import { PlatformObjects } from '../js/models/objects/platform-objects.class.js';
-import { ThrowableObject } from '../js/models/objects/throwable-objects.class.js';
+import { LVL_1_Boss } from '../models/enemies/lvl-1-boss.class.js';
+import { SkeletonWarriorLVL1 } from '../models/enemies/skeleton_warrior_1.class.js';
+import { SkeletonWarrior2 } from '../models/enemies/skeleton_warrior_2.class.js';
+import { LVL } from './lvl.class.js';
+import { Coins } from '../models/objects/coin-object.class.js';
+import { BackgroundObject } from '../models/objects/background-object.class.js';
+import { EnvironmentObject } from '../models/objects/environment-objects.class.js';
+import { PlatformObjects } from '../models/objects/platform-objects.class.js';
+import { ThrowableObject } from '../models/objects/throwable-objects.class.js';
 
 /** @typedef {SkeletonWarriorLVL1 | SkeletonWarrior2 | LVL_1_Boss} LevelEnemy */
 

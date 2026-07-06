@@ -1,4 +1,4 @@
-import { playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../../js/audio.js';
+import { playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '../../audio.js';
 import { isSpawning } from '../character/char-movements.js';
 import { startKnockback } from '../character/char-animation-actions.js';
 import { Alia } from '../Alia/alia.class.js';

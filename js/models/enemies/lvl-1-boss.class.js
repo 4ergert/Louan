@@ -1,5 +1,5 @@
-import { playSoundEffect } from '../../js/audio.js';
-import { LVL_1_BOSS_SPRITES } from '../../js/sprites-path/lvl-1-boss-sprites.js';
+import { playSoundEffect } from '../../audio.js';
+import { LVL_1_BOSS_SPRITES } from '../../sprites-path/lvl-1-boss-sprites.js';
 import { MovableObject } from '../objects/movable-object.class.js';
 
 /**

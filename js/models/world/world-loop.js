@@ -1,4 +1,4 @@
-import { isCharacterWithinBossSlashRange } from '../../js/colliding-objects.js';
+import { isCharacterWithinBossSlashRange } from '../../colliding-objects.js';
 
 /**
  * Main world loop and update orchestration methods.

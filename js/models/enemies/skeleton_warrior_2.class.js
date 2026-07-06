@@ -1,7 +1,7 @@
-import { playSoundEffect } from '../../js/audio.js';
+import { playSoundEffect } from '../../audio.js';
 import { startKnockback } from '../character/char-animation-actions.js';
 import { SkeletonEnemyBase } from './skeleton-enemy-base.class.js';
-import { SKELETON_WARRIOR_2_SPRITES } from '../../js/sprites-path/skeleton-warrior-2-sprite.js';
+import { SKELETON_WARRIOR_2_SPRITES } from '../../sprites-path/skeleton-warrior-2-sprite.js';
 
 /**
  * Skeleton enemy variant with the shared patrol behavior plus a close-range slash attack.

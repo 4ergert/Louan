@@ -1,4 +1,4 @@
-import { SKELETON_WARRIOR_1_SPRITES } from '../../js/sprites-path/skeleton-warrior-1-sprites.js';
+import { SKELETON_WARRIOR_1_SPRITES } from '../../sprites-path/skeleton-warrior-1-sprites.js';
 import { SkeletonEnemyBase } from './skeleton-enemy-base.class.js';
 
 /**

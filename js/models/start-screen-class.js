@@ -1,5 +1,5 @@
-import { CHARACTER_SPRITES } from '../js/sprites-path/character-sprites.js';
-import { createStartScreenAudio, playBackgroundAudio, stopBackgroundAudio } from '../js/audio.js';
+import { CHARACTER_SPRITES } from '../sprites-path/character-sprites.js';
+import { createStartScreenAudio, playBackgroundAudio, stopBackgroundAudio } from '../audio.js';
 
 /**
  * @typedef {Object} StartScreenSceneEffects

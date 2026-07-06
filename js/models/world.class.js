@@ -9,7 +9,7 @@ import {
   createSwordSlashingAudio,
   createThrowableObjectPickupAudio,
   createThrowingAudio,
-} from '../js/audio.js';
+} from '../audio.js';
 import { lvl_1 } from '../lvl/lvl_1.js';
 import { Character } from './character/character.class.js';
 import { CoinsBar } from './character/coins-bar.class.js';
@@ -78,7 +78,7 @@ export class World extends WorldIntros {
    * @param {HTMLCanvasElement} canvas - Canvas used for drawing the world.
    * @param {import('./keyboard.class.js').Keyboard} keyboard - Shared keyboard input state.
    * @param {HTMLAudioElement | null} [backgroundMusicAudio=null] - Background music used during gameplay.
-   * @param {import('./lvl.class.js').LVL} [lvl=lvl_1] - Initial level configuration.
+  * @param {import('../lvl/lvl.class.js').LVL} [lvl=lvl_1] - Initial level configuration.
    */
   constructor(canvas, keyboard, backgroundMusicAudio = null, lvl = lvl_1) {
     super();

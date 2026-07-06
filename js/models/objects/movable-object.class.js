@@ -1,4 +1,4 @@
-import { isLandingOn, landOn } from '../../js/colliding-objects.js';
+import { isLandingOn, landOn } from '../../colliding-objects.js';
 import { DrawableObject } from './drawable-objects.class.js';
 
 /**

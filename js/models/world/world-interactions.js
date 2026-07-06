@@ -1,5 +1,5 @@
-import { playBackgroundAudio, playSoundEffect, stopBackgroundAudio } from '../../js/audio.js';
-import { isCollidingWithCharacter } from '../../js/colliding-objects.js';
+import { playBackgroundAudio, playSoundEffect, stopBackgroundAudio } from '../../audio.js';
+import { isCollidingWithCharacter } from '../../colliding-objects.js';
 import { startKnockback, startThrowingAnimation } from '../character/char-animation-actions.js';
 import { Coins } from '../objects/coin-object.class.js';
 import { MushroomObject } from '../objects/mushroom-object.class.js';
@@ -143,18 +143,11 @@ export const worldInteractionMethods = {
    * @returns {void}
    */
   collectCoins() {
-    let collectedCoins = this.lvl.environmentObjects.filter((object) =>
-      object instanceof Coins && isCollidingWithCharacter(this.character, object)
+    this.collectPickupType(
+      (object) => object instanceof Coins,
+      (coin) => this.queueFlyingCoinPickup(coin),
+      this.coinPickupAudio
     );
-
-    if (collectedCoins.length === 0) return;
-
-    this.lvl.environmentObjects = this.lvl.environmentObjects.filter((object) =>
-      !(object instanceof Coins && isCollidingWithCharacter(this.character, object))
-    );
-
-    collectedCoins.forEach((coin) => this.queueFlyingCoinPickup(coin));
-    playSoundEffect(this.coinPickupAudio);
   },
 
   /**
@@ -163,18 +156,34 @@ export const worldInteractionMethods = {
    * @returns {void}
    */
   collectBones() {
-    let collectedBones = this.lvl.environmentObjects.filter((object) =>
-      object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object)
+    this.collectPickupType(
+      (object) => object instanceof ThrowableObject,
+      (bone) => this.queueFlyingBonePickup(bone),
+      this.bonePickupAudio
+    );
+  },
+
+  /**
+   * Collects all pickups of the provided type that currently collide with the character.
+   *
+   * @param {(object: *) => boolean} isMatchingPickup
+   * @param {(pickup: *) => void} onCollect
+   * @param {HTMLAudioElement | null | undefined} pickupAudio
+   * @returns {void}
+   */
+  collectPickupType(isMatchingPickup, onCollect, pickupAudio) {
+    let collectedPickups = this.lvl.environmentObjects.filter((object) =>
+      isMatchingPickup(object) && isCollidingWithCharacter(this.character, object)
     );
 
-    if (collectedBones.length === 0) return;
+    if (collectedPickups.length === 0) return;
 
     this.lvl.environmentObjects = this.lvl.environmentObjects.filter((object) =>
-      !(object instanceof ThrowableObject && isCollidingWithCharacter(this.character, object))
+      !(isMatchingPickup(object) && isCollidingWithCharacter(this.character, object))
     );
 
-    collectedBones.forEach((bone) => this.queueFlyingBonePickup(bone));
-    playSoundEffect(this.bonePickupAudio);
+    collectedPickups.forEach((pickup) => onCollect(pickup));
+    playSoundEffect(pickupAudio);
   },
 
   /**

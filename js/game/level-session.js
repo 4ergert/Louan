@@ -1,5 +1,5 @@
-import { lvl_1 } from '../../lvl/lvl_1.js';
-import { lvl_2 } from '../../lvl/lvl-2.js';
+import { lvl_1 } from '../lvl/lvl_1.js';
+import { lvl_2 } from '../lvl/lvl-2.js';
 
 /** Session storage key for the currently selected level id. */
 const currentLevelStorageKey = 'loco.currentLevel';
@@ -29,7 +29,7 @@ export function setSelectedLevelId(levelId) {
 /**
  * Resolves the selected level id to the corresponding level instance.
  *
- * @returns {import('../../models/lvl.class.js').LVL} The selected level configuration.
+ * @returns {import('../lvl/lvl.class.js').LVL} The selected level configuration.
  */
 export function getSelectedLevel() {
   return getSelectedLevelId() === 'lvl_2' ? lvl_2 : lvl_1;

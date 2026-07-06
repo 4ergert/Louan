@@ -1,0 +1,170 @@
+body.intro-mode #startScreen,
+body.intro-mode #startScreenCanvas {
+  display: none;
+}
+
+body.skip-start-screen h1,
+body.skip-start-screen #introPrompt,
+body.skip-start-screen #startScreen,
+body.skip-start-screen #startScreenControls,
+body.skip-start-screen #startScreenCanvas,
+body.skip-start-screen #startScreenMeta {
+  display: none;
+}
+
+body.game-active h1,
+body.game-active #introPrompt,
+body.game-active #startScreen,
+body.game-active #startScreenControls,
+body.game-active #startScreenCanvas,
+body.game-active #startScreenMeta {
+  display: none;
+}
+
+body.intro-transition #startScreen,
+body.intro-transition #startScreenCanvas,
+body.intro-transition #startScreenMeta {
+  display: none;
+}
+
+#startScreen {
+  text-align: center;
+  margin-top: 11px;
+}
+
+#startScreen p {
+  font-size: 24px;
+  font-family: "Cinzel Decorative", Georgia, serif;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 100  px;
+}
+
+#startScreenCanvas {
+  margin-top: 15px;
+  background-color: transparent;
+}
+
+#startScreenControls {
+  margin-top: 50px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 14px;
+}
+
+#musicToggleButton {
+  flex: 0 0 auto;
+  align-self: center;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 8px;
+  border: 1px solid rgba(255, 215, 149, 0.24);
+  border-radius: 999px;
+  background: rgba(17, 11, 6, 0.42);
+  color: rgba(255, 243, 210, 0.74);
+  font-size: 18px;
+  line-height: 1;
+  font-family: inherit;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.14);
+  cursor: pointer;
+}
+
+#musicToggleButton:hover,
+#musicToggleButton:focus-visible {
+  background: rgba(62, 46, 11, 0.62);
+  border-color: rgba(255, 215, 149, 0.48);
+  color: rgba(255, 243, 210, 0.92);
+  outline: none;
+}
+
+#musicToggleButton[data-muted="true"] {
+  background: rgba(74, 20, 20, 0.48);
+  border-color: rgba(255, 165, 149, 0.4);
+  color: rgba(255, 228, 228, 0.8);
+}
+
+#startScreenInstructionsButton {
+  margin: 0;
+  flex: 1 1 auto;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 215, 149, 0.35);
+  border-radius: 18px;
+  background: rgba(17, 11, 6, 0.58);
+  color: rgba(255, 243, 210, 0.94);
+  font-size: 16px;
+  line-height: 1.5;
+  font-family: inherit;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+#startScreenInstructionsButton:hover,
+#startScreenInstructionsButton:focus-visible {
+  background: rgba(62, 46, 11, 0.72);
+  border-color: rgba(255, 215, 149, 0.62);
+  outline: none;
+}
+
+body.intro-mode #startScreenControls,
+body.intro-transition #startScreenControls {
+  display: none;
+}
+
+#startScreenMeta {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(90vw, 720px);
+  z-index: 10;
+}
+
+#startScreenActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+body.intro-mode #startScreenActions {
+  display: none;
+}
+
+.startScreenActionButton {
+  list-style: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 215, 149, 0.38);
+  border-radius: 999px;
+  background: rgba(38, 28, 5, 0.42);
+  color: rgba(255, 243, 210, 0.88);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+}
+
+.startScreenActionButton:hover,
+.startScreenActionButton:focus-visible {
+  background: rgba(62, 46, 11, 0.72);
+  border-color: rgba(255, 215, 149, 0.72);
+  outline: none;
+}
+
+#startScreenCopyright {
+  margin: 0;
+  color: rgba(255, 243, 210, 0.9);
+  font-size: 13px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}

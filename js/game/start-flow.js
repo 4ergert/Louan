@@ -1,6 +1,6 @@
 import { playBackgroundAudio } from '../audio.js';
-import { StartScreen } from '../../models/start-screen-class.js';
-import { World } from '../../models/world.class.js';
+import { StartScreen } from '../models/start-screen-class.js';
+import { World } from '../models/world/world.class.js';
 import { baseCanvasHeight, baseCanvasWidth, introTransitionDuration } from './config.js';
 import { getSelectedLevel, getSelectedLevelId, setSelectedLevelId, setSkipStartScreen, shouldSkipStartScreen } from './level-session.js';
 import { gameState } from './state.js';
