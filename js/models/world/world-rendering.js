@@ -1,5 +1,5 @@
-import { createBloodSplatterParticles } from '../../world-effects.js';
-import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOverlay } from '../../world-renderer.js';
+import { createBloodSplatterParticles, createFireflyParticle, createFireflyParticles } from '../../world-effects.js';
+import { drawBloodSplatter, drawBossLifeBar, drawFireflies, drawGameOverOverlay, drawVictoryOverlay } from '../../world-render-effects.js';
 
 /**
  * @typedef {Object} FlyingPickupFrame
@@ -12,15 +12,26 @@ import { drawBloodSplatter, drawBossLifeBar, drawGameOverOverlay, drawVictoryOve
  * Rendering-related world mixin methods.
  */
 export const worldRenderingMethods = {
+  /**
+   * Renders one full world frame in layer order.
+   *
+   * @returns {void}
+   */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawBackgrounds();
     this.drawWorldLayer();
+    this.drawFireflies();
     this.drawHudLayer();
     this.drawOverlayLayer();
     this.drawBloodSplatter();
   },
 
+  /**
+   * Draws all world-space gameplay objects using the active camera offset.
+   *
+   * @returns {void}
+   */
   drawWorldLayer() {
     this.ctx.translate(this.camera_x, 0);
 
@@ -35,6 +46,11 @@ export const worldRenderingMethods = {
     this.ctx.translate(-this.camera_x, 0);
   },
 
+  /**
+   * Draws HUD elements and animated pickups in screen space.
+   *
+   * @returns {void}
+   */
   drawHudLayer() {
     this.addToMap(this.lifeBar);
     if (this.shouldShowBossLifeBar()) drawBossLifeBar(this.ctx, this.camera_x, this.bossLVL1, this.canvas);
@@ -44,6 +60,11 @@ export const worldRenderingMethods = {
     this.drawFlyingBonePickups();
   },
 
+  /**
+   * Draws full-screen overlays such as game over, victory, and intro prompts.
+   *
+   * @returns {void}
+   */
   drawOverlayLayer() {
     if (this.character.isDead) {
       this.bossLVL1?.setIdleState?.();
@@ -80,6 +101,11 @@ export const worldRenderingMethods = {
     return this[methodName]?.bind(this) ?? null;
   },
 
+  /**
+   * Draws parallax background objects for the current frame.
+   *
+   * @returns {void}
+   */
   drawBackgrounds() {
     this.lvl.backgroundObjects.forEach((background) => {
       const offsetX = this.camera_x * background.parallaxFactor;
@@ -91,6 +117,11 @@ export const worldRenderingMethods = {
     });
   },
 
+  /**
+   * Updates and draws the active blood splatter particles.
+   *
+   * @returns {void}
+   */
   drawBloodSplatter() {
     if (this.bloodSplatterParticles.length === 0) return;
 
@@ -102,6 +133,75 @@ export const worldRenderingMethods = {
     );
   },
 
+  /**
+   * Updates and draws ambient fireflies for the visible world area.
+   *
+   * @returns {void}
+   */
+  drawFireflies() {
+    let fireflyBoundaryY = this.getFireflyBoundaryY();
+
+    if (fireflyBoundaryY <= 32) return;
+
+    this.ensureFireflyParticles(fireflyBoundaryY);
+    this.updateFireflyParticles(fireflyBoundaryY);
+  },
+
+  /**
+   * Lazily creates the ambient firefly particle collection for the visible area.
+   *
+   * @param {number} fireflyBoundaryY
+   * @returns {void}
+   */
+  ensureFireflyParticles(fireflyBoundaryY) {
+    if (this.fireflyParticles.length > 0) return;
+
+    this.fireflyParticles = createFireflyParticles(
+      this.camera_x,
+      this.canvas.width,
+      fireflyBoundaryY,
+      22
+    );
+  },
+
+  /**
+   * Updates and redraws the active firefly particle collection.
+   *
+   * @param {number} fireflyBoundaryY
+   * @returns {void}
+   */
+  updateFireflyParticles(fireflyBoundaryY) {
+    this.fireflyParticles = drawFireflies(
+      this.ctx,
+      this.camera_x,
+      this.fireflyParticles,
+      Date.now(),
+      this.canvas.width,
+      fireflyBoundaryY,
+      createFireflyParticle
+    );
+  },
+
+  /**
+   * Computes the lower vertical spawn and movement boundary for fireflies.
+   *
+   * @returns {number}
+   */
+  getFireflyBoundaryY() {
+    let visiblePlatforms = this.lvl.platformObjects.filter((platform) =>
+      this.isHorizontallyVisible(platform.x, platform.width, 220)
+    );
+
+    if (visiblePlatforms.length === 0) return Math.floor(this.canvas.height * 0.72);
+
+    return Math.max(...visiblePlatforms.map((platform) => platform.y - 18));
+  },
+
+  /**
+   * Draws and advances coin pickups that fly toward the HUD counter.
+   *
+   * @returns {void}
+   */
   drawFlyingCoinPickups() {
     this.flyingCoinPickups = this.drawFlyingPickups(
       this.flyingCoinPickups,
@@ -111,6 +211,11 @@ export const worldRenderingMethods = {
     );
   },
 
+  /**
+   * Draws and advances bone pickups that fly toward the throwable HUD counter.
+   *
+   * @returns {void}
+   */
   drawFlyingBonePickups() {
     this.flyingBonePickups = this.drawFlyingPickups(
       this.flyingBonePickups,
@@ -171,10 +276,22 @@ export const worldRenderingMethods = {
     };
   },
 
+  /**
+   * Queues a bone pickup for HUD flight animation.
+   *
+   * @param {{ img: CanvasImageSource, x: number, y: number, width: number, height: number }} bone
+   * @returns {void}
+   */
   queueFlyingBonePickup(bone) {
     this.flyingBonePickups.push(this.createFlyingPickup(bone));
   },
 
+  /**
+   * Queues a coin pickup for HUD flight animation.
+   *
+   * @param {{ img: CanvasImageSource, x: number, y: number, width: number, height: number }} coin
+   * @returns {void}
+   */
   queueFlyingCoinPickup(coin) {
     this.flyingCoinPickups.push(this.createFlyingPickup(coin));
   },
@@ -197,6 +314,11 @@ export const worldRenderingMethods = {
     };
   },
 
+  /**
+   * Spawns a burst of blood particles near the character toward the boss.
+   *
+   * @returns {void}
+   */
   spawnBloodSplatter() {
     let characterArea = this.character.getCollisionArea();
     let originX = characterArea.x + characterArea.width / 2;
@@ -207,10 +329,21 @@ export const worldRenderingMethods = {
     this.bloodSplatterParticles.push(...particles);
   },
 
+  /**
+   * Determines whether the boss life bar should be visible.
+   *
+   * @returns {boolean}
+   */
   shouldShowBossLifeBar() {
     return this.bossIntroTriggered && !this.isBossIntroActive() && this.bossLVL1 && !this.bossLVL1.isDead;
   },
 
+  /**
+   * Draws each visible object from the provided collection.
+   *
+   * @param {Array<{ x: number, y: number, width: number, height: number }>} objects
+   * @returns {void}
+   */
   addObjectsToMap(objects) {
     objects.forEach((object) => {
       if (!this.isWorldObjectVisible(object)) return;
@@ -219,6 +352,12 @@ export const worldRenderingMethods = {
     });
   },
 
+  /**
+   * Checks whether a world object intersects the visible viewport bounds.
+   *
+   * @param {{ x: number, y: number, width: number, height: number }} object
+   * @returns {boolean}
+   */
   isWorldObjectVisible(object) {
     return this.isHorizontallyVisible(object.x, object.width) && this.isVerticallyVisible(object.y, object.height);
   },

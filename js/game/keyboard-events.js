@@ -52,6 +52,42 @@ export function initKeyboardEvents({
   });
 
   window.addEventListener('keyup', handleKeyUp);
+  initMobileTouchControls();
+}
+
+/**
+ * Registers touch handlers that map mobile control buttons to keyboard flags.
+ *
+ * @returns {void}
+ */
+function initMobileTouchControls() {
+  registerMobileTouchButton('mobileLeftButton', 'LEFT');
+  registerMobileTouchButton('mobileRightButton', 'RIGHT');
+  registerMobileTouchButton('mobileJumpButton', 'UP');
+  registerMobileTouchButton('mobileRunningButton', 'A');
+  registerMobileTouchButton('mobileThrowButton', 'F');
+}
+
+/**
+ * Wires one mobile control button to a keyboard state property via touch events.
+ *
+ * @param {string} buttonId - DOM id of the mobile control button.
+ * @param {'LEFT' | 'RIGHT' | 'UP' | 'DOWN' | 'SPACE' | 'CTRL' | 'A' | 'D' | 'F'} keyboardProperty - Keyboard flag to toggle.
+ * @returns {void}
+ */
+function registerMobileTouchButton(buttonId, keyboardProperty) {
+  const button = document.getElementById(buttonId);
+
+  if (!(button instanceof HTMLButtonElement)) return;
+
+  button.addEventListener('touchstart', (event) => {
+    event.preventDefault();
+    gameState.keyboard[keyboardProperty] = true;
+  }, { passive: false });
+
+  button.addEventListener('touchend', () => gameState.keyboard[keyboardProperty] = false);
+
+  button.addEventListener('touchcancel', () => gameState.keyboard[keyboardProperty] = false);
 }
 
 /**

@@ -4,6 +4,7 @@ import { initGameCanvasResizeHandling, isGameCanvasVisible, syncGameCanvasSize, 
 import { initKeyboardEvents } from './game/keyboard-events.js';
 import { initMusicToggle } from './game/music-toggle.js';
 import { gameState } from './game/state.js';
+import { initMobileOrientationPause } from './mobile.js';
 import { applyInitialBodyState, restartGame, showStartScreen, startGameTransition, startLevel, startSavedLevelIfNeeded } from './game/start-flow.js';
 import { renderCreditsDialog, renderDatenschutzDialog, renderGameMenuDialog, renderImpressumDialog, renderInstructionsDialog, renderSettingsDialog, renderStartScreen, renderStartScreenControls, renderStartScreenMeta } from './templates/dom-renderer.js';
 
@@ -45,6 +46,7 @@ function init() {
   dialogController.initStartScreenDialogs();
   initMusicToggle();
   initGameCanvasResizeHandling();
+  initMobileOrientationPause();
   startSavedLevelIfNeeded();
 }
 

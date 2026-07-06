@@ -53,7 +53,7 @@ body.game-transitioning #gameCanvasShell {
   top: 14px;
   right: 14px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 10px;
   z-index: 25;
   pointer-events: none;

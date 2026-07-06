@@ -1,11 +1,127 @@
-@media only screen and (max-width: 720px) {
-   #gameCanvas {
-     width: 100%;
-   }
- }
+#mobileControls {
+  display: none;
+}
 
- @media only screen and (max-height: 480px) {
-   #gameCanvas {
-     height: 100vh;
-   }
- }
+#mobileOrientationOverlay {
+  display: none;
+}
+
+@media only screen and (max-width: 720px), only screen and (max-height: 480px) {
+  #gameCanvas {
+    width: 100%;
+  }
+
+  #mobileOrientationOverlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 40;
+    background: #000;
+    color: rgb(255, 202, 103);
+    text-align: center;
+    pointer-events: none;
+  }
+
+  #mobileOrientationOverlay p {
+    margin: 0;
+    font-size: 42px;
+    font-weight: bold;
+    line-height: 1.3;
+    text-shadow: 2px 2px 4px rgba(199, 48, 2, 0.7);
+  }
+
+  body.mobile-portrait-active #mobileOrientationOverlay {
+    display: flex;
+  }
+
+  body.mobile-portrait-active #mobileControls,
+  body.mobile-portrait-active #gameCanvasOverlay {
+    display: none;
+  }
+
+  #mobileControls {
+    position: absolute;
+    inset: 0;
+    display: block;
+    z-index: 30;
+    pointer-events: none;
+  }
+
+  #gameCanvasOverlay {
+    display: none;
+  }
+
+  .mobileControlButton {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(255, 202, 103, 0.58);
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(110, 73, 19, 0.9), rgba(38, 28, 5, 0.88));
+    color: rgb(255, 202, 103);
+    font-family: inherit;
+    font-size: 24px;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 226, 168, 0.18);
+    pointer-events: auto;
+  }
+
+  .mobileControlButton:hover,
+  .mobileControlButton:focus-visible {
+    border-color: rgba(255, 223, 153, 0.82);
+    background: radial-gradient(circle at 30% 30%, rgba(145, 98, 28, 0.94), rgba(58, 41, 8, 0.92));
+    color: rgba(255, 243, 210, 0.96);
+    outline: none;
+  }
+
+  .mobileControlButton[data-muted="true"] {
+    border-color: rgba(255, 176, 140, 0.52);
+    color: rgba(255, 228, 228, 0.84);
+    background: radial-gradient(circle at 30% 30%, rgba(117, 52, 34, 0.88), rgba(52, 20, 16, 0.88));
+  }
+
+  #mobileMusicToggleButton {
+    top: 14px;
+    right: 14px;
+  }
+
+  #mobileMenuButton {
+    top: 14px;
+    right: 72px;
+  }
+
+  #mobileLeftButton {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  #mobileRightButton {
+    bottom: 16px;
+    left: 74px;
+  }
+
+  #mobileJumpButton {
+    right: 16px;
+    bottom: 74px;
+  }
+
+  #mobileRunningButton {
+    right: 74px;
+    bottom: 16px;
+  }
+
+  #mobileThrowButton {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  #gameCanvas {
+    height: 100vh;
+  }
+}

@@ -257,6 +257,39 @@ export function playBackgroundAudio(audio) {
 }
 
 /**
+ * Pauses all currently playing music tracks and returns the paused set.
+ *
+ * @returns {HTMLAudioElement[]} Music tracks that were actively playing.
+ */
+export function pauseActiveMusic() {
+	let pausedAudios = [];
+
+	managedAudios.forEach((audio) => {
+		if (audioCategories.get(audio) !== 'music' || audio.paused) return;
+
+		audio.pause();
+		pausedAudios.push(audio);
+	});
+
+	return pausedAudios;
+}
+
+/**
+ * Resumes a captured set of paused music tracks.
+ *
+ * @param {HTMLAudioElement[]} audios - Music tracks that should resume playback.
+ * @returns {void}
+ */
+export function resumePausedMusic(audios) {
+	audios.forEach((audio) => {
+		if (!audio || !audio.paused) return;
+
+		ensureAudioLoaded(audio);
+		audio.play().catch(() => {});
+	});
+}
+
+/**
  * Stops a looping background track and rewinds it to the start.
  *
  * @param {HTMLAudioElement | null | undefined} audio - The music track to stop.

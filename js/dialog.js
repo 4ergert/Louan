@@ -1,3 +1,5 @@
+import { resumeWorldIfAllowed } from './mobile.js';
+
 /**
  * @typedef {object} DialogControllerOptions
  * @property {string[]} gameMenuDialogIds
@@ -143,8 +145,7 @@ export function createDialogController({ gameMenuDialogIds, getWorld, isGameCanv
     }
 
     isGameMenuPauseActive = false;
-    world.isPaused = false;
-    world.resetKeyboard?.();
+    resumeWorldIfAllowed(world);
   }
 
   /**
@@ -233,12 +234,24 @@ export function createDialogController({ gameMenuDialogIds, getWorld, isGameCanv
    */
   function initGameMenu() {
     const gameMenuButton = document.getElementById("gameMenuButton");
+    const mobileMenuButton = document.getElementById("mobileMenuButton");
 
     initGameMenuDialogPause();
 
-    if (!(gameMenuButton instanceof HTMLButtonElement)) return;
+    registerGameMenuButton(gameMenuButton);
+    registerGameMenuButton(mobileMenuButton);
+  }
 
-    gameMenuButton.addEventListener("click", () => openDialogById("gameMenuDialog"));
+  /**
+   * Registers a game menu trigger button when present.
+   *
+   * @param {Element | null} button
+   * @returns {void}
+   */
+  function registerGameMenuButton(button) {
+    if (!(button instanceof HTMLButtonElement)) return;
+
+    button.addEventListener("click", () => openDialogById("gameMenuDialog"));
   }
 
   /**

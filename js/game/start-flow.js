@@ -4,6 +4,7 @@ import { World } from '../models/world/world.class.js';
 import { baseCanvasHeight, baseCanvasWidth, introTransitionDuration } from './config.js';
 import { getSelectedLevel, getSelectedLevelId, setSelectedLevelId, setSkipStartScreen, shouldSkipStartScreen } from './level-session.js';
 import { gameState } from './state.js';
+import { shouldPauseForMobilePortrait, syncMobileOrientationPause } from '../mobile.js';
 import { syncGameCanvasSize } from './canvas.js';
 
 /**
@@ -298,6 +299,8 @@ function finishGameReveal(body, gameCanvasShell, overlay) {
   gameState.isStartTransitionRunning = false;
   syncGameCanvasSize();
   body?.classList.remove('game-transitioning');
+  if (shouldPauseForMobilePortrait()) return;
+
   playBackgroundAudio(gameState.gameBackgroundAudio);
 }
 
@@ -315,6 +318,7 @@ function initWorld() {
     gameState.gameBackgroundAudio,
     getSelectedLevel()
   );
+  syncMobileOrientationPause();
 }
 
 /**

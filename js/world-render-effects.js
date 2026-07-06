@@ -23,6 +23,21 @@
  */
 
 /**
+ * @typedef {object} FireflyParticle
+ * @property {number} x
+ * @property {number} y
+ * @property {number} vx
+ * @property {number} vy
+ * @property {number} radius
+ * @property {number} glowRadius
+ * @property {number} alpha
+ * @property {number} twinkleSpeed
+ * @property {number} phase
+ * @property {string} coreColor
+ * @property {string} glowColor
+ */
+
+/**
  * @typedef {object} BossLifeSource
  * @property {number} energy
  * @property {number} maxEnergy
@@ -121,6 +136,90 @@ export function drawBloodSplatter(ctx, cameraX, particles, now) {
   });
 
   return activeParticles;
+}
+
+/**
+ * Updates and renders atmospheric firefly particles.
+ * @param {CanvasRenderingContext2D} ctx - The drawing context.
+ * @param {number} cameraX - Horizontal camera offset.
+ * @param {FireflyParticle[]} particles - All tracked fireflies.
+ * @param {number} now - Current timestamp used for motion and twinkle.
+ * @param {number} viewportWidth - Visible canvas width.
+ * @param {number} maxY - Lower vertical bound for the firefly area.
+ * @param {(minX: number, maxX: number, maxY: number) => FireflyParticle} createParticle - Factory used for respawning particles.
+ * @returns {FireflyParticle[]} Updated particle collection.
+ */
+export function drawFireflies(ctx, cameraX, particles, now, viewportWidth, maxY, createParticle) {
+  let viewportLeft = -cameraX - 120;
+  let viewportRight = -cameraX + viewportWidth + 120;
+  let spawnFloor = Math.max(56, maxY);
+
+  particles.forEach((particle, index) => {
+    let { nextParticle, time } = updateFireflyParticle(
+      particles,
+      index,
+      particle,
+      now,
+      viewportLeft,
+      viewportRight,
+      spawnFloor,
+      createParticle
+    );
+
+    drawFirefly(ctx, cameraX, nextParticle, time);
+  });
+
+  return particles;
+}
+
+/**
+ * Advances one firefly and respawns it when it leaves the active bounds.
+ * @param {FireflyParticle[]} particles - Shared particle array.
+ * @param {number} index - Index of the current particle.
+ * @param {FireflyParticle} particle - Current particle state.
+ * @param {number} now - Current timestamp used for motion.
+ * @param {number} minX - Left horizontal bound.
+ * @param {number} maxX - Right horizontal bound.
+ * @param {number} maxY - Lower vertical bound.
+ * @param {(minX: number, maxX: number, maxY: number) => FireflyParticle} createParticle - Factory used for respawning particles.
+ * @returns {{ nextParticle: FireflyParticle, time: number }} Updated particle reference and current animation time.
+ */
+function updateFireflyParticle(particles, index, particle, now, minX, maxX, maxY, createParticle) {
+  let time = now * particle.twinkleSpeed + particle.phase;
+
+  particle.x += particle.vx + Math.sin(time * 0.7) * 0.08;
+  particle.y += particle.vy + Math.cos(time * 0.55) * 0.06;
+
+  if (shouldRespawnFirefly(particle, minX, maxX, maxY)) {
+    particles[index] = createParticle(minX, maxX, maxY);
+    particle = particles[index];
+    time = now * particle.twinkleSpeed + particle.phase;
+  }
+
+  return { nextParticle: particle, time };
+}
+
+function shouldRespawnFirefly(particle, minX, maxX, maxY) {
+  return particle.x < minX || particle.x > maxX || particle.y < 6 || particle.y > maxY;
+}
+
+function drawFirefly(ctx, cameraX, particle, time) {
+  let pulse = 0.62 + (Math.sin(time * 2.2) + 1) * 0.19;
+  let drawX = particle.x + cameraX;
+
+  ctx.save();
+  ctx.globalAlpha = particle.alpha * pulse;
+  ctx.fillStyle = particle.glowColor;
+  ctx.beginPath();
+  ctx.arc(drawX, particle.y, particle.glowRadius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.globalAlpha = Math.min(1, 0.7 + pulse * 0.3);
+  ctx.fillStyle = particle.coreColor;
+  ctx.beginPath();
+  ctx.arc(drawX, particle.y, particle.radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
 /**

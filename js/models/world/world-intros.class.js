@@ -1,3 +1,5 @@
+import { resumeWorldIfAllowed } from '../../mobile.js';
+
 const INTRO_CONFIG = {
   opening: { duration: 6500, typeSpeed: 45, hasCompletedFlag: true },
   boss: { duration: 5000, typeSpeed: 55, hasCompletedFlag: false },
@@ -178,7 +180,7 @@ export class WorldIntros {
   finishOpeningIntro() {
     if (this.openingIntroTimeout) clearTimeout(this.openingIntroTimeout);
     this.openingIntroTimeout = null;
-    this.isPaused = false;
+    resumeWorldIfAllowed(this);
     this.openingIntroCompleted = true;
   }
 
@@ -190,7 +192,7 @@ export class WorldIntros {
   finishBossIntro() {
     if (this.bossIntroTimeout) clearTimeout(this.bossIntroTimeout);
     this.bossIntroTimeout = null;
-    this.isPaused = false;
+    resumeWorldIfAllowed(this);
     this.onBossIntroFinished?.();
   }
 
@@ -209,7 +211,7 @@ export class WorldIntros {
       return;
     }
 
-    this.isPaused = false;
+    resumeWorldIfAllowed(this);
   }
 
   /**
@@ -239,7 +241,7 @@ export class WorldIntros {
     if (this.characterResponseIntroTimeout) clearTimeout(this.characterResponseIntroTimeout);
     this.characterResponseIntroTimeout = null;
     this.characterResponseIntroTriggered = false;
-    this.isPaused = false;
+    resumeWorldIfAllowed(this);
     this.startEndingEscort?.();
   }
 

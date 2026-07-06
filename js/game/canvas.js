@@ -46,16 +46,9 @@ export function syncGameCanvasSize() {
 
   if (gameState.isStartTransitionRunning) return;
 
-  if (!isFullscreen) {
-    gameState.canvas.style.removeProperty('width');
-    gameState.canvas.style.removeProperty('height');
-    return;
-  }
+  if (!isFullscreen) return clearCanvasInlineSize(gameState.canvas);
 
-  const fullscreenDimensions = getFullscreenCanvasDimensions();
-
-  gameState.canvas.style.setProperty('width', `${fullscreenDimensions.width}px`);
-  gameState.canvas.style.setProperty('height', `${fullscreenDimensions.height}px`);
+  applyFullscreenCanvasSize(gameState.canvas);
 }
 
 /**
@@ -75,11 +68,35 @@ export function initGameCanvasResizeHandling() {
  */
 export function isGameCanvasVisible() {
   const gameCanvasShell = getGameCanvasShell();
-  return Boolean(gameCanvasShell && gameCanvasShell.style.display !== 'none');
+  return Boolean(gameCanvasShell && getComputedStyle(gameCanvasShell).display !== 'none');
 }
 
 function isGameCanvasFullscreen() {
   return document.fullscreenElement === getGameCanvasShell();
+}
+
+/**
+ * Clears inline canvas sizing so CSS can control the non-fullscreen layout.
+ *
+ * @param {HTMLCanvasElement} canvas - Canvas element whose inline size should be removed.
+ * @returns {void}
+ */
+function clearCanvasInlineSize(canvas) {
+  canvas.style.removeProperty('width');
+  canvas.style.removeProperty('height');
+}
+
+/**
+ * Applies the computed fullscreen CSS size to the active gameplay canvas.
+ *
+ * @param {HTMLCanvasElement} canvas - Canvas element to resize in fullscreen.
+ * @returns {void}
+ */
+function applyFullscreenCanvasSize(canvas) {
+  const fullscreenDimensions = getFullscreenCanvasDimensions();
+
+  canvas.style.setProperty('width', `${fullscreenDimensions.width}px`);
+  canvas.style.setProperty('height', `${fullscreenDimensions.height}px`);
 }
 
 /**

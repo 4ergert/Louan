@@ -41,6 +41,7 @@ export class World extends WorldIntros {
   camera_x = 0;
   throwInputLocked = false;
   bloodSplatterParticles = [];
+  fireflyParticles = [];
   flyingCoinPickups = [];
   flyingBonePickups = [];
   standableObjectsCache = [];
