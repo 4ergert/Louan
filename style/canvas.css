@@ -24,6 +24,7 @@ body.game-active #gameCanvasShell {
 
 #gameCanvas {
   border: 3px solid #261c05;
+  box-sizing: border-box;
   display: block;
 
 }

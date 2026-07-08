@@ -287,7 +287,7 @@ export class StartScreen {
 		ctx.fillText(promptConfig.lineTwoText, promptConfig.lineTwoX, promptConfig.lineTwoY);
 
 		ctx.shadowColor = 'rgba(255, 250, 220, 0.35)';
-		ctx.shadowBlur = 6;
+		ctx.shadowBlur = 20 + emberPulse * 12;
 		ctx.shadowOffsetX = 0;
 		ctx.shadowOffsetY = 0;
 		ctx.fillStyle = '#fff7de';

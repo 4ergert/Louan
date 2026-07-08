@@ -9,7 +9,7 @@ export function gameMenuDialogTemplate() {
 					</form>
 				</div>
 				<div class="metaDialogBody gameMenuActions">
-					<button type="button" class="dialogActionButton" data-dialog-target="settingsDialog">Einstellungen</button>
+					<button type="button" class="dialogActionButton" data-music-toggle data-music-toggle-label="Sound" aria-pressed="false" aria-label="Musik stummschalten">Sound</button>
 					<button type="button" class="dialogActionButton" data-dialog-target="instructionsDialog">Bedienungsanleitung</button>
 					<button type="button" class="dialogActionButton" data-dialog-target="impressumDialog">Impressum</button>
 					<button type="button" class="dialogActionButton" data-dialog-target="datenschutzDialog">Datenschutz</button>
@@ -151,7 +151,7 @@ export function startScreenMetaTemplate() {
 export function startScreenControlsTemplate() {
 	return `
 		<section id="startScreenControls" aria-label="Steuerung">
-			<button type="button" id="startScreenMenuButton" class="startScreenActionButton" aria-label="Menue">☰</button>
+			<button type="button" id="startScreenMenuButton" class="startScreenActionButton" aria-label="Menue">MENU</button>
 			<button type="button" id="musicToggleButton" aria-pressed="false" aria-label="Musik stummschalten">♪</button>
 			<button type="button" id="startScreenInstructionsButton" data-dialog-target="instructionsDialog">Steuerung</button>
 		</section>

@@ -67,6 +67,7 @@ only screen and (max-height: 480px) {
 
   #gameCanvas {
     width: 100%;
+    border: none;
   }
 
   #mobileOrientationOverlay {

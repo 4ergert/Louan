@@ -29,6 +29,16 @@ export function initMusicToggle() {
 function renderMusicToggleButton(button, isMuted) {
   if (!(button instanceof HTMLButtonElement)) return;
 
+  const buttonLabel = button.dataset.musicToggleLabel;
+
+  if (buttonLabel) {
+    button.textContent = isMuted ? `${buttonLabel} einschalten` : `${buttonLabel} stummschalten`;
+    button.setAttribute('aria-pressed', `${isMuted}`);
+    button.setAttribute('aria-label', isMuted ? 'Musik einschalten' : 'Musik stummschalten');
+    button.dataset.muted = `${isMuted}`;
+    return;
+  }
+
   button.textContent = isMuted ? '✕' : '♪';
   button.setAttribute('aria-pressed', `${isMuted}`);
   button.setAttribute('aria-label', isMuted ? 'Musik einschalten' : 'Musik stummschalten');
