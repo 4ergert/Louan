@@ -159,9 +159,9 @@ export function impressumDialogTemplate() {
 				</div>
 				<div class="metaDialogBody">
 					<p><strong>Angaben gemaess Paragraf 5 TMG</strong></p>
-					<p>Julian Hergert<br>Sandhoevelstrasse 32<br>48429 Rheine</p>
-					<p><strong>Kontakt</strong><br>E-Mail: julian.konken@gmx.net</p>
-					<p><strong>Verantwortlich fuer den Inhalt nach Paragraf 18 Abs. 2 MStV</strong><br>Julian Hergert<br>Sandhoevelstrasse 32<br>48429 Rheine</p>
+					<p>Julian Aergert<br>Sandstrasse 32<br>48429 Rhein</p>
+					<p><strong>Kontakt</strong><br>E-Mail: julian.aergert@gmx.net</p>
+					<p><strong>Verantwortlich fuer den Inhalt nach Paragraf 18 Abs. 2 MStV</strong><br>Julian Aergert<br>Sandstrasse 32<br>48429 Rhein</p>
 				</div>
 				<div class="metaDialogFooter">
 					<button type="button" class="dialogSecondaryButton backToMenuButton" data-return-dialog-target="gameMenuDialog" hidden>Zurueck zum Menue</button>
