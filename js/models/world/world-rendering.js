@@ -42,6 +42,7 @@ export const worldRenderingMethods = {
     this.addObjectsToMap(this.bossThrownSwords);
     this.addToMap(this.character);
     if (this.alia) this.addToMap(this.alia);
+    if (this.liam) this.addToMap(this.liam);
 
     this.ctx.translate(-this.camera_x, 0);
   },
@@ -73,7 +74,38 @@ export const worldRenderingMethods = {
       drawGameOverOverlay(this.ctx, this.canvas, this.isGameOverRetryReady());
     }
     if (this.victoryOverlayVisible) drawVictoryOverlay(this.ctx, this.canvas, this.isVictoryPromptReady());
+    if (this.endingLiamChaseActive) this.drawEndingLiamChaseBubble();
     this.drawActiveIntroBubble();
+  },
+
+  /**
+   * @returns {void}
+   */
+  drawEndingLiamChaseBubble() {
+    if (!this.liam) return;
+
+    let liamScreenX = this.liam.x + this.camera_x;
+    let bubbleX = Math.max(20, Math.min(this.canvas.width - 380, liamScreenX - 70));
+    let bubbleY = 35;
+    let textLines = this.getVisibleIntroLines(
+      this.endingLiamChaseLines,
+      this.endingLiamChaseStartedAt,
+      this.endingLiamChaseTypeSpeed
+    );
+
+    this.drawIntroBubble({
+      bubbleX,
+      bubbleY,
+      width: 360,
+      height: 86,
+      tailPoints: [
+        [bubbleX + 70, bubbleY + 86],
+        [bubbleX + 105, bubbleY + 86],
+        [bubbleX + 76, bubbleY + 122],
+      ],
+      font: 'bold 16px Cinzel Decorative',
+      textLines,
+    });
   },
 
   /**

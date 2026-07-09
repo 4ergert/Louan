@@ -12,7 +12,7 @@ export class Alia extends MovableObject {
   followTolerance = 8;
   hasLanded = false;
   animationElapsed = 0;
-  animationIntervalMs = 100;
+  animationIntervalMs = 60;
 
   IDLE = ALIA_SPRITES.IDLE_ANIMATION;
   WALK = ALIA_SPRITES.WALK_ANIMATION;
@@ -39,18 +39,102 @@ export class Alia extends MovableObject {
    */
   updateStep() {
     super.updateStep();
+    this.tryJumpOverConfiguredGap();
+    this.syncMovementSpeedWithCharacter();
     this.followCharacter();
     this.updateAnimationStep();
+  }
+
+  /**
+   * Mirrors the character walk and run speed for Alia's follow movement.
+   */
+  syncMovementSpeedWithCharacter() {
+    let character = this.world?.character;
+
+    if (!character) return;
+
+    if (character.currentAnimation === character.RUNNING) {
+      this.speed = 3.9;
+      return;
+    }
+
+    if (character.currentAnimation === character.WALKING) {
+      this.speed = 0.9;
+      return;
+    }
+
+    this.speed = 3;
+  }
+
+  /**
+   * Starts a jump when Alia reaches a configured gap jump zone.
+   */
+  tryJumpOverConfiguredGap() {
+    if (!this.world?.character) return;
+    if (this.isWorldPaused()) return;
+    if (this.isAboveGround()) return;
+
+    let gapJumpZone = this.getActiveGapJumpZone();
+
+    if (!gapJumpZone) return;
+
+    this.vcY = gapJumpZone.jumpStrength ?? 6.75;
+  }
+
+  /**
+   * @returns {{ jumpFromX: number, jumpToX: number, requiredCharacterX: number, jumpStrength?: number } | null}
+   */
+  getActiveGapJumpZone() {
+    let gapJumpZones = this.world?.aliaGapJumpZones;
+
+    if (!Array.isArray(gapJumpZones)) return null;
+
+    return gapJumpZones.find((zone) => this.isInsideGapJumpZone(zone)) ?? null;
+  }
+
+  /**
+   * @param {{ jumpFromX: number, jumpToX: number, requiredCharacterX: number }} zone
+   * @returns {boolean}
+   */
+  isInsideGapJumpZone(zone) {
+    let character = this.world?.character;
+
+    if (!character) return false;
+    if (character.x <= this.x) return false;
+    if (character.x < zone.requiredCharacterX) return false;
+
+    return this.x >= zone.jumpFromX && this.x <= zone.jumpToX;
   }
 
   /**
    * Advances the current animation on a timed cadence and updates the facing direction.
    */
   updateAnimationStep() {
-    if (!this.shouldAdvanceTimedStep('animationElapsed', this.animationIntervalMs)) return;
+    if (!this.shouldAdvanceTimedStep('animationElapsed', this.getAnimationIntervalMs())) return;
 
     this.lookAtCharacter();
-    this.playAnimation(this.isRunningToCharacter() ? this.RUN : this.IDLE);
+    this.playAnimation(this.getAnimationForCharacterMovement());
+  }
+
+  /**
+   * @returns {number}
+   */
+  getAnimationIntervalMs() {
+    return this.world?.character?.animationIntervalMs ?? this.animationIntervalMs;
+  }
+
+  /**
+   * @returns {string[]}
+   */
+  getAnimationForCharacterMovement() {
+    let character = this.world?.character;
+
+    if (!character) return this.IDLE;
+
+    if (character.currentAnimation === character.RUNNING) return this.RUN;
+    if (character.currentAnimation === character.WALKING) return this.WALK;
+
+    return this.isRunningToCharacter() ? this.RUN : this.IDLE;
   }
 
   /**

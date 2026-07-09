@@ -1,5 +1,10 @@
 import { creditsDialogTemplate, datenschutzDialogTemplate, gameMenuDialogTemplate, impressumDialogTemplate, instructionsDialogTemplate, settingsDialogTemplate, startScreenControlsTemplate, startScreenMetaTemplate, startScreenTemplate } from './templates.js';
 
+/**
+ * Inserts the game menu dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderGameMenuDialog() {
 	if (document.getElementById('gameMenuDialog')) return;
 
@@ -10,6 +15,11 @@ export function renderGameMenuDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', gameMenuDialogTemplate());
 }
 
+/**
+ * Inserts the instructions dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderInstructionsDialog() {
 	if (document.getElementById('instructionsDialog')) return;
 
@@ -20,6 +30,11 @@ export function renderInstructionsDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', instructionsDialogTemplate());
 }
 
+/**
+ * Inserts the settings dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderSettingsDialog() {
 	if (document.getElementById('settingsDialog')) return;
 
@@ -30,6 +45,11 @@ export function renderSettingsDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', settingsDialogTemplate());
 }
 
+/**
+ * Inserts the credits dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderCreditsDialog() {
 	if (document.getElementById('creditsDialog')) return;
 
@@ -40,6 +60,11 @@ export function renderCreditsDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', creditsDialogTemplate());
 }
 
+/**
+ * Inserts the privacy-policy dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderDatenschutzDialog() {
 	if (document.getElementById('datenschutzDialog')) return;
 
@@ -50,6 +75,11 @@ export function renderDatenschutzDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', datenschutzDialogTemplate());
 }
 
+/**
+ * Inserts the imprint dialog into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderImpressumDialog() {
 	if (document.getElementById('impressumDialog')) return;
 
@@ -60,6 +90,11 @@ export function renderImpressumDialog() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', impressumDialogTemplate());
 }
 
+/**
+ * Inserts the start-screen meta section into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderStartScreenMeta() {
 	if (document.getElementById('startScreenMeta')) return;
 
@@ -70,6 +105,11 @@ export function renderStartScreenMeta() {
 	gameCanvasShell.insertAdjacentHTML('beforebegin', startScreenMetaTemplate());
 }
 
+/**
+ * Inserts the start-screen controls into the DOM when they are not present yet.
+ *
+ * @returns {void}
+ */
 export function renderStartScreenControls() {
 	if (document.getElementById('startScreenControls')) return;
 
@@ -80,6 +120,11 @@ export function renderStartScreenControls() {
 	startScreenCanvas.insertAdjacentHTML('beforebegin', startScreenControlsTemplate());
 }
 
+/**
+ * Inserts the start-screen intro section into the DOM when it is not present yet.
+ *
+ * @returns {void}
+ */
 export function renderStartScreen() {
 	if (document.getElementById('startScreen')) return;
 

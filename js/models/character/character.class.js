@@ -5,6 +5,9 @@ import { switchCharAnimation } from './switch-char-animation.js';
 import { charMovement } from './char-movements.js';
 import { die } from './char-animation-actions.js';
 
+/**
+ * Player-controlled hero with movement, combat, audio, and animation state.
+ */
 export class Character extends MovableObject {
 
   x = -47;
@@ -80,6 +83,11 @@ export class Character extends MovableObject {
     this.updateAnimationStep();
   }
 
+  /**
+   * Advances the character animation state when its frame interval elapsed.
+   *
+   * @returns {void}
+   */
   updateAnimationStep() {
     if (!this.shouldAdvanceTimedStep('animationElapsed', this.animationIntervalMs)) return;
 
@@ -99,12 +107,18 @@ export class Character extends MovableObject {
     ctx.restore();
   }
 
+  /**
+   * @returns {boolean}
+   */
   isAboveGround() {
     if (this.shouldKeepFallingIntoAbyss()) return true;
 
     return super.isAboveGround();
   }
 
+  /**
+   * @returns {boolean}
+   */
   shouldKeepFallingIntoAbyss() {
     if (this.isStandingOnPlatform()) return false;
     if (!this.world) return false;
@@ -122,6 +136,9 @@ export class Character extends MovableObject {
     return this.y < deathY;
   }
 
+  /**
+   * @returns {boolean}
+   */
   hasStandableObjectBelow() {
     let ownCollisionArea = this.getCollisionArea();
     let feet = ownCollisionArea.y + ownCollisionArea.height;
@@ -200,6 +217,13 @@ export class Character extends MovableObject {
     this.playJumpEffort(sprites, i);
   }
 
+  /**
+   * Plays a running footstep sound on selected running frames.
+   *
+   * @param {string[]} sprites
+   * @param {number} frameIndex
+   * @returns {void}
+   */
   playRunningFootstep(sprites, frameIndex) {
     if (sprites !== this.RUNNING) return;
     if (![2, 8].includes(frameIndex)) return;
@@ -209,6 +233,13 @@ export class Character extends MovableObject {
     this.lastRunningFootstepFrame = frameIndex;
   }
 
+  /**
+   * Plays the jump effort sound once at the start of the jump animation.
+   *
+   * @param {string[]} sprites
+   * @param {number} frameIndex
+   * @returns {void}
+   */
   playJumpEffort(sprites, frameIndex) {
     if (sprites !== this.JUMPING) return;
     if (frameIndex !== 0) return;

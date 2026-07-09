@@ -149,7 +149,16 @@ export const worldInteractionMethods = {
    * @returns {void}
    */
   checkAliaIntroTrigger() {
-    if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
+    if (this.liam && this.LiamIntroLines?.length) {
+      if (this.aliaIntroTriggered || this.liamIntroCompleted) return;
+      if (!this.liam.isIdleForIntro?.()) return;
+
+      this.startAliaIntro();
+      return;
+    }
+
+    if (this.aliaIntroTriggered || this.aliaIntroCompleted) return;
+    if (!this.alia) return;
     if (!this.alia.isIdleForIntro()) return;
 
     this.startAliaIntro();

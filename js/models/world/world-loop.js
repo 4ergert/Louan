@@ -12,6 +12,8 @@ export const worldLoopMethods = {
   setWorld() {
     this.assignWorld(this.character);
     this.assignWorld(this.throwableObjects);
+    this.assignWorld(this.alia);
+    this.assignWorld(this.liam);
     this.assignWorldToAll(this.lvl.enemies);
     this.assignWorldToAll(this.lvl.environmentObjects);
   },
@@ -111,6 +113,7 @@ export const worldLoopMethods = {
   updateObjects() {
     this.character.updateStep();
     this.alia?.updateStep();
+    this.liam?.updateStep();
     this.throwableObjects.updateStep();
     this.updateObjectGroup(this.lvl.enemies);
     this.updateObjectGroup(this.lvl.environmentObjects);

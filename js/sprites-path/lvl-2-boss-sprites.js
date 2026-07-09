@@ -1,3 +1,12 @@
+/**
+ * @typedef {object} Level2BossSprites
+ * @property {string[]} IDLE_ANIMATION
+ * @property {string[]} WALK_ANIMATION
+ * @property {string[]} SLASHING_ANIMATION
+ * @property {string[]} DYING_ANIMATION
+ */
+
+/** @type {Level2BossSprites} */
 export const LVL_2_BOSS_SPRITES = {
   IDLE_ANIMATION: [
     './assets/img/Enemies/PNG/PNG Sequences/Idle Blinking/0_Fallen_Angels_Idle Blinking_000.png',
@@ -58,5 +67,22 @@ export const LVL_2_BOSS_SPRITES = {
     './assets/img/Enemies/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_009.png',
     './assets/img/Enemies/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_010.png',
     './assets/img/Enemies/PNG/PNG Sequences/Slashing/0_Fallen_Angels_Slashing_011.png'
+  ],
+  DYING_ANIMATION: [
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_000.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_001.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_002.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_003.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_004.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_005.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_006.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_007.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_008.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_009.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_010.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_011.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_012.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_013.png',
+    './assets/img/Enemies/PNG/PNG Sequences/Dying/0_Fallen_Angels_Dying_014.png'
   ]
 };

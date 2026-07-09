@@ -53,7 +53,7 @@ platformObjects.push(
   new PlatformObjects('./assets/img/lvl-2/Platfromer/Crystal_Caves_Forest_2D_Platformer_Tileset_Platformer - Ground 13.png', 3300, 450, 50, 50)
 );
 
-for (let index = 0; index < 20; index++) {
+for (let index = 0; index < 40; index++) {
   const x = index * 50 + 3550;
 
   platformObjects.push(
@@ -69,15 +69,15 @@ platformObjects.push(
 const coins = [
   new Coins(2400, 333),
   new Coins(2450, 333),
-  new Coins(2500, 333),
-  new Coins(2550, 333),
+
   new Coins(2600, 333),
   new Coins(2650, 333),
-  new Coins(2700, 333),
-  new Coins(2750, 333),
+
   new Coins(2800, 333),
   new Coins(2850, 333),
-  new Coins(2900, 333),
+
+  new Coins(3000, 333),
+  new Coins(3050, 333),
 ];
 
 const throwableObjects = [
@@ -92,6 +92,7 @@ const enemies = [
   new SkeletonWarrior1(900, 280),
   new SkeletonWarrior1(1300, 280),
   new SkeletonWarrior2(2000, 280),
+  new SkeletonWarrior1(2500, 280),
   new SkeletonWarrior2(3000, 280),
   new LVL_2_Boss()
 ];
@@ -106,8 +107,44 @@ const cleanupTriggerSignpost = new EnvironmentObject(
   './assets/img/lvl-2/Environment/Crystal_Caves_Forest_2D_Platformer_Tileset_Environment - Signpost 04.png', 3550, 333, 70, 70
 );
 
-cleanupTriggerSignpost.removeObjectsBeforeX = 3400;
-
+/** @type {LevelWorldSettings} */
+const worldSettings = {
+  openingIntroLines: [
+    'Alia, bleibe bei mir!',
+    'Ich glaube Liam ist hier,',
+    'Ich spüre ihn in der Nähe.',
+    'Gehen wir ihn suchen'
+  ],
+  bossIntroLines: [
+    'Arrrrr, ich bin der...,',
+    'der Schattenkönig,',
+    'raaaaaA!'
+  ],
+  LiamIntroLines: [
+    'Danke, kleiner Bruder Louan.',
+    'Du hast uns gerettet.',
+    'Jetzt müssen wir nur noch',
+    'aus diesen Alptraum entkommen.'
+  ],
+  characterResponseIntroLines: [
+    'Du hast vollkommen recht!',
+    'Endlich sind wir wieder zusammen.',
+    'Folgt mir.'
+  ],
+  bossArenaStartX: 3400,
+  aliaGapJumpZones: [
+    {
+      jumpFromX: 3240,
+      jumpToX: 3310,
+      requiredCharacterX: 3430,
+      jumpStrength: 6.75,
+    }
+  ],
+  startWithAlia: true,
+  startWithLiam: true,
+  aliaSpawnBehindCharacter: true,
+  spawnLiamAfterBoss: true,
+};
 
 // Combine all environment objects into a single array
 const environmentObjects = [
@@ -127,13 +164,6 @@ const environmentObjects = [
   cleanupTriggerSignpost,
   bossMusicTriggerSignpost,
 ];
-
-const worldSettings = {
-  openingIntroLines: [],
-  bossIntroLines: [],
-  aliaIntroLines: [],
-  characterResponseIntroLines: [],
-};
 
 export const lvl_2 = new LVL(
   enemies,

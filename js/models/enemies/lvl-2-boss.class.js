@@ -1,6 +1,10 @@
 import { MovableObject } from '../objects/movable-object.class.js';
 import { LVL_2_BOSS_SPRITES } from '../../sprites-path/lvl-2-boss-sprites.js';
+import { playSoundEffect } from '../../audio.js';
 
+/**
+ * Level 2 boss enemy with walking, slash attacks, and a timed death sequence.
+ */
 export class LVL_2_Boss extends MovableObject {
   height = 500;
   width = 500;
@@ -18,18 +22,24 @@ export class LVL_2_Boss extends MovableObject {
   slashHitTriggered = false;
   animationElapsed = 0;
   animationSpeed = 100;
-  deathDuration = 1200;
+  slashAttackElapsed = 0;
+  slashAttackInterval = 5000;
 
   IDLE = LVL_2_BOSS_SPRITES.IDLE_ANIMATION;
   WALKING = LVL_2_BOSS_SPRITES.WALK_ANIMATION;
   SLASHING = LVL_2_BOSS_SPRITES.SLASHING_ANIMATION;
+  DYING = LVL_2_BOSS_SPRITES.DYING_ANIMATION;
 
+  /**
+   * Creates the level 2 boss and preloads all animation frames.
+   */
   constructor() {
     super();
     this.loadImage(this.IDLE[0]);
     this.loadImages(this.IDLE);
     this.loadImages(this.WALKING);
     this.loadImages(this.SLASHING);
+    this.loadImages(this.DYING);
     this.animationFrames = this.IDLE;
   }
 
@@ -46,8 +56,40 @@ export class LVL_2_Boss extends MovableObject {
   updateStep() {
     if (this.isWorldPaused()) return;
 
+    this.updateSlashAttackStep();
     this.updateMovementStep();
     this.updateAnimationStep();
+  }
+
+  /**
+   * @returns {void}
+   */
+  updateSlashAttackStep() {
+    if (!this.world?.bossIntroTriggered || this.world.isBossIntroActive?.()) {
+      this.slashAttackElapsed = 0;
+      return;
+    }
+
+    this.slashAttackElapsed += this.world?.updateStepMs ?? 0;
+
+    if (this.slashAttackElapsed < this.slashAttackInterval) return;
+
+    this.slashAttackElapsed -= this.slashAttackInterval;
+    this.startSlashAnimation();
+  }
+
+  /**
+   * @returns {void}
+   */
+  updateSlashAnimationStep() {
+    let frameIndex = this.showAnimationFrame(this.SLASHING, false);
+
+    if (!this.slashHitTriggered && frameIndex >= 4) {
+      this.slashHitTriggered = true;
+      this.world?.spawnBossSlashFx?.();
+    }
+
+    if (this.currentImage >= this.SLASHING.length - 1) this.finishSlashAnimation();
   }
 
   /**
@@ -77,19 +119,12 @@ export class LVL_2_Boss extends MovableObject {
     if (!this.shouldAdvanceTimedStep('animationElapsed', this.animationSpeed)) return;
 
     if (this.isDying) {
-      this.showAnimationFrame(this.IDLE, false);
+      this.showAnimationFrame(this.DYING, false);
       return;
     }
 
     if (this.isSlashAnimationActive) {
-      let frameIndex = this.showAnimationFrame(this.SLASHING, false);
-
-      if (!this.slashHitTriggered && frameIndex >= 4) {
-        this.slashHitTriggered = true;
-        this.world?.handleBossSlashHit?.();
-      }
-
-      if (this.currentImage >= this.SLASHING.length - 1) this.finishSlashAnimation();
+      this.updateSlashAnimationStep();
       return;
     }
 
@@ -103,13 +138,9 @@ export class LVL_2_Boss extends MovableObject {
    */
   setSlashingState(isSlashing) {
     if (this.isDying || this.isDead) return;
-
-    if (isSlashing) {
-      this.startSlashAnimation();
-      return;
-    }
-
-    if (!this.isSlashing && !this.isSlashAnimationActive) return;
+    if (isSlashing) return this.startSlashAnimation();
+    if (this.isSlashAnimationActive) return;
+    if (!this.isSlashing) return;
 
     this.isSlashing = false;
     this.isSlashAnimationActive = false;
@@ -129,6 +160,7 @@ export class LVL_2_Boss extends MovableObject {
     this.slashHitTriggered = false;
     this.animationFrames = this.SLASHING;
     this.currentImage = 0;
+    playSoundEffect(this.world?.bossSlashingSwordAudio);
   }
 
   /**
@@ -175,15 +207,25 @@ export class LVL_2_Boss extends MovableObject {
    * @returns {number}
    */
   die() {
-    if (this.isDying || this.isDead) return this.deathDuration;
+    let dyingDuration = this.getDyingDuration();
+
+    if (this.isDying || this.isDead) return dyingDuration;
 
     this.isDying = true;
     this.isSlashing = false;
     this.isSlashAnimationActive = false;
     this.slashHitTriggered = false;
+    this.animationFrames = this.DYING;
     this.currentImage = 0;
-    setTimeout(() => this.isDead = true, this.deathDuration);
-    return this.deathDuration;
+    setTimeout(() => this.isDead = true, dyingDuration);
+    return dyingDuration;
+  }
+
+  /**
+   * @returns {number}
+   */
+  getDyingDuration() {
+    return this.DYING.length * this.animationSpeed + 50;
   }
 
   /**

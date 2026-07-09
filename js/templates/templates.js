@@ -1,3 +1,8 @@
+/**
+ * Returns the HTML template for the in-game menu dialog.
+ *
+ * @returns {string}
+ */
 export function gameMenuDialogTemplate() {
   return `
 		<dialog id="gameMenuDialog" class="metaDialog gameMenuDialog" aria-labelledby="gameMenuTitle">
@@ -21,6 +26,11 @@ export function gameMenuDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the HTML template for the instructions dialog.
+ *
+ * @returns {string}
+ */
 export function instructionsDialogTemplate() {
   return `
 		<dialog id="instructionsDialog" class="metaDialog" aria-labelledby="instructionsTitle">
@@ -47,6 +57,11 @@ export function instructionsDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the HTML template for the settings dialog.
+ *
+ * @returns {string}
+ */
 export function settingsDialogTemplate() {
   return `
 		<dialog id="settingsDialog" class="metaDialog" aria-labelledby="settingsTitle">
@@ -69,6 +84,11 @@ export function settingsDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the HTML template for the credits dialog.
+ *
+ * @returns {string}
+ */
 export function creditsDialogTemplate() {
   return `
 		<dialog id="creditsDialog" class="metaDialog" aria-labelledby="creditsTitle">
@@ -93,6 +113,11 @@ export function creditsDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the HTML template for the privacy-policy dialog.
+ *
+ * @returns {string}
+ */
 export function datenschutzDialogTemplate() {
   return `
 		<dialog id="datenschutzDialog" class="metaDialog" aria-labelledby="datenschutzTitle">
@@ -117,6 +142,11 @@ export function datenschutzDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the HTML template for the imprint dialog.
+ *
+ * @returns {string}
+ */
 export function impressumDialogTemplate() {
   return `
 		<dialog id="impressumDialog" class="metaDialog" aria-labelledby="impressumTitle">
@@ -141,6 +171,11 @@ export function impressumDialogTemplate() {
 	`;
 }
 
+/**
+ * Returns the legal-links section shown on the start screen.
+ *
+ * @returns {string}
+ */
 export function startScreenMetaTemplate() {
   return `
 		<section id="startScreenMeta" aria-label="Rechtliche Hinweise und Credits">
@@ -154,6 +189,11 @@ export function startScreenMetaTemplate() {
 	`;
 }
 
+/**
+ * Returns the control-button section shown on the start screen.
+ *
+ * @returns {string}
+ */
 export function startScreenControlsTemplate() {
   return `
 		<section id="startScreenControls" aria-label="Steuerung">
@@ -164,6 +204,11 @@ export function startScreenControlsTemplate() {
 	`;
 }
 
+/**
+ * Returns the intro text section for the start screen.
+ *
+ * @returns {string}
+ */
 export function startScreenTemplate() {
   return `
 		<section id="startScreen">

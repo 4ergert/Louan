@@ -14,6 +14,7 @@ export const worldCollisionMethods = {
     if (this.isPaused) return;
 
     this.updateEndingEscort();
+    this.updateEndingLiamChase();
     const standableObjects = this.getStandableObjects();
 
     this.updatePlatformLandings(standableObjects);
@@ -33,6 +34,7 @@ export const worldCollisionMethods = {
   updatePlatformLandings(standableObjects) {
     this.landOnNearbyPlatforms(this.character, standableObjects);
     this.landOnNearbyPlatforms(this.alia, standableObjects, (alia) => alia.hasLanded = true);
+    this.landOnNearbyPlatforms(this.liam, standableObjects, (liam) => liam.hasLanded = true);
     this.updateEnemyPlatformLandings(standableObjects);
 
     this.updateEnvironmentPlatformLandings(standableObjects);

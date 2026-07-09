@@ -1,3 +1,5 @@
+import { getSelectedLevelId } from './game/level-session.js';
+
 /**
  * @typedef {object} GameOverOverlay
  * @property {string} background
@@ -84,6 +86,11 @@ export function drawGameOverOverlay(ctx, canvas, showRetryPrompt = false) {
  * @returns {void}
  */
 export function drawVictoryOverlay(ctx, canvas, showNextLevelPrompt = false) {
+  let isLevel2 = getSelectedLevelId() === 'lvl_2';
+  let victoryText = isLevel2
+    ? 'du hast deine Geschwister gerettet'
+    : 'du hast Alia gerettet!';
+
   ctx.save();
   ctx.fillStyle = 'rgba(16, 10, 7, 0.68)';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -95,10 +102,10 @@ export function drawVictoryOverlay(ctx, canvas, showNextLevelPrompt = false) {
   ctx.fillStyle = '#d9a441';
   ctx.strokeText('Herzlichen Glückwunsch,', canvas.width / 2, canvas.height / 2 - 24);
   ctx.fillText('Herzlichen Glückwunsch,', canvas.width / 2, canvas.height / 2 - 24);
-  ctx.strokeText('du hast Alia gerettet!', canvas.width / 2, canvas.height / 2 + 28);
-  ctx.fillText('du hast Alia gerettet!', canvas.width / 2, canvas.height / 2 + 28);
+  ctx.strokeText(victoryText, canvas.width / 2, canvas.height / 2 + 28);
+  ctx.fillText(victoryText, canvas.width / 2, canvas.height / 2 + 28);
 
-  if (showNextLevelPrompt) {
+  if (showNextLevelPrompt && !isLevel2) {
     ctx.font = '24px Georgia';
     ctx.strokeText('press any key to find Liam', canvas.width / 2, canvas.height / 2 + 112);
     ctx.fillText('press any key to find Liam', canvas.width / 2, canvas.height / 2 + 112);

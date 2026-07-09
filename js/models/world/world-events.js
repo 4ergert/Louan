@@ -2,8 +2,10 @@ import { playRandomVariantSound, playSoundEffect, stopBackgroundAudio } from '..
 import { isSpawning } from '../character/char-movements.js';
 import { startKnockback } from '../character/char-animation-actions.js';
 import { Alia } from '../Alia/alia.class.js';
+import { Liam } from '../Liam/liam.class.js';
 import { SkeletonWarrior1 } from '../enemies/skeleton_warrior_1.class.js';
 import { SkeletonWarrior2 } from '../enemies/skeleton_warrior_2.class.js';
+import { BossSlashFxObject } from '../objects/boss-slash-fx-object.class.js';
 import { BossSwordObject } from '../objects/boss-sword-object.class.js';
 
 /**
@@ -46,6 +48,23 @@ export const worldEventMethods = {
 
     this.assignWorld(sword);
     this.bossThrownSwords.push(sword);
+  },
+
+  /**
+   * Spawns a ground-traveling slash effect aimed toward the character.
+   *
+   * @returns {void}
+   */
+  spawnBossSlashFx() {
+    if (!this.bossLVL1 || this.bossLVL1.isDying || this.bossLVL1.isDead) return;
+
+    const direction = this.character.x < this.bossLVL1.x ? -1 : 1;
+    const slashX = direction < 0 ? this.bossLVL1.x + 60 : this.bossLVL1.x + this.bossLVL1.width - 200;
+    const slashY = 275;
+    const slashFx = new BossSlashFxObject(slashX, slashY, direction);
+
+    this.assignWorld(slashFx);
+    this.bossThrownSwords.push(slashFx);
   },
 
   /**
@@ -151,6 +170,51 @@ export const worldEventMethods = {
 
     if (characterScreenX <= this.canvas.width + 80 || aliaScreenX <= this.canvas.width + 80) return;
 
+    if (this.canStartEndingLiamChase()) {
+      this.startEndingLiamChase();
+      return;
+    }
+
+    this.finishEndingSequence();
+  },
+
+
+  /**
+   * @returns {boolean}
+   */
+  canStartEndingLiamChase() {
+    return Boolean(this.liam && !this.endingLiamChaseActive);
+  },
+
+  /**
+   * @returns {void}
+   */
+  startEndingLiamChase() {
+    this.endingEscortActive = false;
+    this.endingLiamChaseActive = true;
+    this.endingLiamChaseStartedAt = Date.now();
+  },
+
+  /**
+   * @returns {void}
+   */
+  updateEndingLiamChase() {
+    if (!this.endingLiamChaseActive || !this.liam) return;
+
+    this.camera_x = this.endingEscortCameraX;
+
+    let liamScreenX = this.liam.x + this.camera_x;
+
+    if (liamScreenX <= this.canvas.width + 80) return;
+
+    this.endingLiamChaseActive = false;
+    this.finishEndingSequence();
+  },
+
+  /**
+   * @returns {void}
+   */
+  finishEndingSequence() {
     this.endingEscortActive = false;
     this.isPaused = true;
     this.victoryOverlayVisible = true;
@@ -265,7 +329,6 @@ export const worldEventMethods = {
    */
   handleBossSlashHit() {
     if (!this.bossLVL1 || this.bossLVL1.isDead) return;
-    if (!this.isCharacterWithinBossSlashRange()) return;
 
     if (this.character.isDead) {
       this.spawnBloodSplatter();
@@ -314,8 +377,12 @@ export const worldEventMethods = {
    * @returns {void}
    */
   removeEnemy(enemyToRemove) {
-    if (enemyToRemove.isBoss && !this.alia) {
-      this.spawnAliaAtBoss(enemyToRemove);
+    if (enemyToRemove.isBoss) {
+      if (this.lvl.worldSettings?.spawnLiamAfterBoss === true && !this.liam) {
+        this.spawnLiamAtBoss(enemyToRemove);
+      } else if (!this.alia) {
+        this.spawnAliaAtBoss(enemyToRemove);
+      }
     }
 
     this.lvl.enemies = this.lvl.enemies.filter((enemy) => enemy !== enemyToRemove);
@@ -328,11 +395,44 @@ export const worldEventMethods = {
    * @returns {void}
    */
   spawnAliaAtBoss(boss) {
-    let aliaX = boss.x + boss.width / 2 - 130;
-    let aliaY = boss.y + boss.height - 260;
+    let shouldSpawnBehindCharacter = this.lvl.worldSettings?.aliaSpawnBehindCharacter === true;
+    let aliaX = shouldSpawnBehindCharacter
+      ? this.character.x - 120
+      : boss.x + boss.width / 2 - 130;
+    let aliaY = shouldSpawnBehindCharacter
+      ? this.character.y
+      : boss.y + boss.height - 260;
 
     this.alia = new Alia(aliaX, aliaY);
     this.assignWorld(this.alia);
+  },
+
+  /**
+   * Spawns Alia at level start when the active level begins with her already accompanying the character.
+   *
+   * @returns {void}
+   */
+  spawnInitialAliaIfConfigured() {
+    if (this.alia) return;
+    if (this.lvl.worldSettings?.startWithAlia !== true) return;
+
+    this.alia = new Alia(this.character.x - 120, this.character.y);
+    this.assignWorld(this.alia);
+    this.aliaIntroCompleted = true;
+  },
+
+  /**
+   * Spawns Liam near the defeated boss.
+   *
+   * @param {{ x: number, y: number, width: number, height: number }} boss
+   * @returns {void}
+   */
+  spawnLiamAtBoss(boss) {
+    let liamX = boss.x + boss.width / 2 - 130;
+    let liamY = boss.y + boss.height - 260;
+
+    this.liam = new Liam(liamX, liamY);
+    this.assignWorld(this.liam);
   },
 
   /**
@@ -341,10 +441,18 @@ export const worldEventMethods = {
    * @returns {void}
    */
   startAliaIntro() {
-    if (!this.alia || this.aliaIntroTriggered || this.aliaIntroCompleted) return;
+    let isLiamIntro = Boolean(this.liam && this.LiamIntroLines?.length);
+
+    if ((!this.alia && !this.liam) || this.aliaIntroTriggered) return;
+    if (isLiamIntro && this.liamIntroCompleted) return;
+    if (!isLiamIntro && this.aliaIntroCompleted) return;
 
     this.aliaIntroTriggered = true;
-    this.aliaIntroCompleted = true;
+    if (isLiamIntro) {
+      this.liamIntroCompleted = true;
+    } else {
+      this.aliaIntroCompleted = true;
+    }
     this.isPaused = true;
     this.aliaIntroStartedAt = Date.now();
     this.resetKeyboard();

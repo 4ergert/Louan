@@ -11,6 +11,7 @@ import {
   createThrowingAudio,
 } from '../../audio.js';
 import { lvl_1 } from '../../lvl/lvl_1.js';
+import { Liam } from '../Liam/liam.class.js';
 import { Character } from '../character/character.class.js';
 import { CoinsBar } from '../character/coins-bar.class.js';
 import { LifeBar } from '../character/life-bar.class.js';
@@ -29,6 +30,7 @@ import { worldRenderingMethods } from './world-rendering.js';
 export class World extends WorldIntros {
   character = new Character();
   alia = null;
+  liam = null;
   lifeBar = new LifeBar();
   coinsBar = new CoinsBar();
   throwableObjects = new ThrowableObject(10, 100, true);
@@ -64,11 +66,16 @@ export class World extends WorldIntros {
   backgroundMusicAudio = null;
   bossMusicTriggered = false;
   bossIntroLaughPlayed = false;
+  liamIntroCompleted = false;
   gameOverAudioPlayed = false;
   gameOverStartedAt = 0;
   gameOverRetryDelay = 3000;
   endingEscortActive = false;
   endingEscortCameraX = 0;
+  endingLiamChaseActive = false;
+  endingLiamChaseStartedAt = 0;
+  endingLiamChaseLines = ['Wartet auf mich'];
+  endingLiamChaseTypeSpeed = 50;
   victoryOverlayVisible = false;
   victoryOverlayStartedAt = 0;
   victoryPromptDelay = 3000;
@@ -91,6 +98,7 @@ export class World extends WorldIntros {
     this.refreshStandableObjectsCache();
     this.applyLevelWorldSettings();
     this.setWorld();
+    this.spawnInitialAliaIfConfigured();
     this.startLoop();
   }
 

@@ -446,12 +446,17 @@ export class WorldIntros {
    * @returns {void}
    */
   drawAliaIntroBubble() {
-    if (!this.alia) return;
+    let companion = this.liam ?? this.alia;
 
-    let aliaScreenX = this.alia.x + this.camera_x;
-    let bubbleX = Math.max(20, Math.min(this.canvas.width - 430, aliaScreenX - 70));
+    if (!companion) return;
+
+    let companionScreenX = companion.x + this.camera_x;
+    let bubbleX = Math.max(20, Math.min(this.canvas.width - 430, companionScreenX - 70));
     let bubbleY = 35;
-    let textLines = this.getVisibleIntroLines(this.aliaIntroLines, this.aliaIntroStartedAt, this.aliaIntroTypeSpeed);
+    let introLines = this.liam && this.LiamIntroLines?.length
+      ? this.LiamIntroLines
+      : this.aliaIntroLines;
+    let textLines = this.getVisibleIntroLines(introLines, this.aliaIntroStartedAt, this.aliaIntroTypeSpeed);
 
     this.drawIntroBubble({
       bubbleX,
