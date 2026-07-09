@@ -55,7 +55,7 @@ export class Character extends MovableObject {
    */
   constructor() {
     super();
-    this.loadImage('./assets/img/Character/lvl_1/Idle/0_Dark_Oracle_Idle_000.png');
+    this.loadImage('./assets/img/Character/Louan/Idle/0_Dark_Oracle_Idle_000.png');
     this.loadImages(this.IDLE);
     this.loadImages(this.IDLE_BLINKING);
     this.loadImages(this.WALKING);
