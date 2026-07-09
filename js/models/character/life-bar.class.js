@@ -1,10 +1,13 @@
+import { getSelectedLevelId } from '../../game/level-session.js';
 import { DrawableObject } from '../objects/drawable-objects.class.js';
 
 /**
  * HUD element that displays the player's life as segmented bars with a blink effect.
  */
 export class LifeBar extends DrawableObject {
-  imgLife ='./assets/img/Collectable Object/Autumn_Forest_2D_Platformer_Tileset_Collectable Object - Life.png';
+  imgLife = getSelectedLevelId() === 'lvl_2'
+    ? './assets/img/lvl-2/Collectable Object/Crystal_Caves_Forest_2D_Platformer_Tileset_Collectable Object - Life.png'
+    : './assets/img/Collectable Object/Autumn_Forest_2D_Platformer_Tileset_Collectable Object - Life.png';
   percentage = 100;
   maxSegments = 5;
   segmentBlinkUntil = 0;

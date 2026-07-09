@@ -21,6 +21,7 @@ export const worldInteractionMethods = {
     this.collectCoins();
     this.collectChestRewards();
     this.collectBones();
+    this.checkRemoveObjectsTrigger();
     this.checkBossMusicTrigger();
     this.checkAliaIntroTrigger();
     this.handleCharacterFallDeath();
@@ -101,6 +102,23 @@ export const worldInteractionMethods = {
     this.lifeBar.triggerSegmentBlink();
     this.lifeBar.setPercentage(this.character.energy);
     playSoundEffect(this.mushroomPickupAudio);
+  },
+
+  /**
+   * Removes all level objects before a configured x-position once the character touches the trigger object.
+   *
+   * @returns {void}
+   */
+  checkRemoveObjectsTrigger() {
+    const triggerObject = this.lvl.environmentObjects.find((object) =>
+      typeof object.removeObjectsBeforeX === 'number' && !object.hasRemovedObjectsBeforeX
+    );
+
+    if (!triggerObject) return;
+    if (!isCollidingWithCharacter(this.character, triggerObject)) return;
+
+    triggerObject.hasRemovedObjectsBeforeX = true;
+    this.removeObjectsBeforeX(triggerObject.removeObjectsBeforeX);
   },
 
   /**

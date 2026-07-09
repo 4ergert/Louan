@@ -210,10 +210,23 @@ export const worldEventMethods = {
 
     if (typeof bossArenaStartX !== 'number') return;
 
-    this.lvl.platformObjects = this.filterObjectsBeforeX(this.lvl.platformObjects, bossArenaStartX);
-    this.lvl.solidObjects = this.filterObjectsBeforeX(this.lvl.solidObjects, bossArenaStartX);
-    this.lvl.environmentObjects = this.filterObjectsBeforeX(this.lvl.environmentObjects, bossArenaStartX);
-    this.lvl.enemies = this.filterObjectsBeforeX(this.lvl.enemies, bossArenaStartX, (enemy) => enemy.isBoss);
+    this.removeObjectsBeforeX(bossArenaStartX, (enemy) => enemy.isBoss);
+  },
+
+  /**
+   * Removes level objects positioned before the provided x-position.
+   *
+   * @param {number} minX
+   * @param {(enemy: *) => boolean} [keepEnemy=() => false]
+   * @returns {void}
+   */
+  removeObjectsBeforeX(minX, keepEnemy = () => false) {
+    if (typeof minX !== 'number') return;
+
+    this.lvl.platformObjects = this.filterObjectsBeforeX(this.lvl.platformObjects, minX);
+    this.lvl.solidObjects = this.filterObjectsBeforeX(this.lvl.solidObjects, minX);
+    this.lvl.environmentObjects = this.filterObjectsBeforeX(this.lvl.environmentObjects, minX);
+    this.lvl.enemies = this.filterObjectsBeforeX(this.lvl.enemies, minX, keepEnemy);
     this.refreshStandableObjectsCache();
   },
 
