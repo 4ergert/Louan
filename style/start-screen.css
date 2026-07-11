@@ -3,6 +3,7 @@ body.intro-mode #startScreenCanvas {
   display: none;
 }
 
+body.skip-start-screen #introHero,
 body.skip-start-screen h1,
 body.skip-start-screen #introPrompt,
 body.skip-start-screen #startScreen,
@@ -12,6 +13,7 @@ body.skip-start-screen #startScreenMeta {
   display: none;
 }
 
+body.game-active #introHero,
 body.game-active h1,
 body.game-active #introPrompt,
 body.game-active #startScreen,

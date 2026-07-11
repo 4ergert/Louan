@@ -16,13 +16,15 @@ only screen and (max-height: 480px) {
     overflow-y: hidden;
   }
 
-  body.intro-mode h1 {
+  body.intro-mode #introHero {
     position: fixed;
     top: 30%;
     left: 50%;
-    margin: 0;
-    text-align: center;
     transform: translate(-50%, -50%);
+  }
+
+  body.intro-mode h1 {
+    margin: 0;
   }
 
   body:not(.intro-mode):not(.game-active):not(.skip-start-screen) h1 {
@@ -50,6 +52,8 @@ only screen and (max-height: 480px) {
     bottom: 48px;
     right: 32px;
     display: flex;
+    flex-direction: column;
+    align-items: flex-end;
     justify-content: flex-end;
     z-index: 20;
   }
@@ -60,7 +64,13 @@ only screen and (max-height: 480px) {
     justify-content: center;
   }
 
-  body:not(.intro-mode):not(.game-active):not(.skip-start-screen) #musicToggleButton,
+  body:not(.intro-mode):not(.game-active):not(.skip-start-screen) #musicToggleButton {
+    display: inline-flex;
+    order: -1;
+    align-items: center;
+    justify-content: center;
+  }
+
   body:not(.intro-mode):not(.game-active):not(.skip-start-screen) #startScreenInstructionsButton {
     display: none;
   }
@@ -117,6 +127,7 @@ only screen and (max-height: 480px) {
     display: flex;
   }
 
+  body.mobile-portrait-active:not(.game-active):not(.skip-start-screen) #introHero,
   body.mobile-portrait-active:not(.game-active):not(.skip-start-screen) h1,
   body.mobile-portrait-active:not(.game-active):not(.skip-start-screen) #introPrompt,
   body.mobile-portrait-active:not(.game-active):not(.skip-start-screen) #introStartButton,
@@ -258,21 +269,8 @@ only screen and (max-height: 480px) {
     height: 100vh;
   }
 
-  body.intro-mode h1 {
-    position: fixed;
+  body.intro-mode #introHero {
     top: 40%;
-    left: 50%;
-    margin: 0;
-    text-align: center;
-    transform: translate(-50%, -50%);
-  }
-
-  body.intro-mode #introPrompt {
-    display: none;
-  }
-
-  body.intro-mode #introStartButton {
-    top: calc(50% + 140px);
   }
 }
 
