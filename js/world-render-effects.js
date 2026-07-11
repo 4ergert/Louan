@@ -65,17 +65,21 @@ export function drawGameOverOverlay(ctx, canvas, showRetryPrompt = false) {
   ctx.strokeText('GAME OVER', canvas.width / 2, canvas.height / 2);
   ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2);
 
-  if (showRetryPrompt) {
-    ctx.font = 'bold 28px Georgia';
-    ctx.strokeText('Try again', canvas.width / 2, canvas.height / 2 + 72);
-    ctx.fillText('Try again', canvas.width / 2, canvas.height / 2 + 72);
-
-    ctx.font = '24px Georgia';
-    ctx.strokeText('press any key', canvas.width / 2, canvas.height / 2 + 116);
-    ctx.fillText('press any key', canvas.width / 2, canvas.height / 2 + 116);
-  }
-
   ctx.restore();
+}
+
+/**
+ * Shows or hides the game-over action buttons above the game canvas.
+ *
+ * @param {boolean} isVisible - Whether the game-over actions should be visible.
+ * @returns {void}
+ */
+export function syncGameOverActions(isVisible) {
+  const gameOverActions = document.getElementById('gameOverActions');
+
+  if (!(gameOverActions instanceof HTMLDivElement)) return;
+
+  gameOverActions.hidden = !isVisible;
 }
 
 /**

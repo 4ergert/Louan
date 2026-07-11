@@ -1,5 +1,5 @@
 import { createBloodSplatterParticles, createFireflyParticle, createFireflyParticles } from '../../world-effects.js';
-import { drawBloodSplatter, drawBossLifeBar, drawFireflies, drawGameOverOverlay, drawVictoryOverlay } from '../../world-render-effects.js';
+import { drawBloodSplatter, drawBossLifeBar, drawFireflies, drawGameOverOverlay, drawVictoryOverlay, syncGameOverActions } from '../../world-render-effects.js';
 
 /**
  * @typedef {Object} FlyingPickupFrame
@@ -71,7 +71,12 @@ export const worldRenderingMethods = {
       this.bossLVL1?.setIdleState?.();
       if (!this.gameOverStartedAt) this.gameOverStartedAt = Date.now();
       this.playGameOverAudio();
-      drawGameOverOverlay(this.ctx, this.canvas, this.isGameOverRetryReady());
+      let showRetryPrompt = this.isGameOverRetryReady();
+
+      syncGameOverActions(showRetryPrompt);
+      drawGameOverOverlay(this.ctx, this.canvas, showRetryPrompt);
+    } else {
+      syncGameOverActions(false);
     }
     if (this.victoryOverlayVisible) drawVictoryOverlay(this.ctx, this.canvas, this.isVictoryPromptReady());
     if (this.endingLiamChaseActive) this.drawEndingLiamChaseBubble();

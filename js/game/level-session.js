@@ -7,6 +7,9 @@ const currentLevelStorageKey = 'loco.currentLevel';
 /** Session storage key controlling whether the intro/start screen should be skipped. */
 const skipStartScreenStorageKey = 'loco.skipStartScreen';
 
+/** Session storage key controlling whether a reload should stay covered by a loading overlay. */
+const reloadLoadingStorageKey = 'loco.reloadLoading';
+
 /**
  * Returns the persisted level id for the current browser session.
  *
@@ -57,4 +60,28 @@ export function setSkipStartScreen(shouldSkip) {
   }
 
   sessionStorage.removeItem(skipStartScreenStorageKey);
+}
+
+/**
+ * Indicates whether the current reload should remain covered by the loading overlay.
+ *
+ * @returns {boolean} True when the loading overlay should stay active across reload.
+ */
+export function hasPendingReloadLoading() {
+  return sessionStorage.getItem(reloadLoadingStorageKey) === 'true';
+}
+
+/**
+ * Persists whether a loading overlay should remain visible during the next reload.
+ *
+ * @param {boolean} shouldPersist - Whether the loading overlay should remain active.
+ * @returns {void}
+ */
+export function setPendingReloadLoading(shouldPersist) {
+  if (shouldPersist) {
+    sessionStorage.setItem(reloadLoadingStorageKey, 'true');
+    return;
+  }
+
+  sessionStorage.removeItem(reloadLoadingStorageKey);
 }

@@ -12,6 +12,7 @@ import { getSelectedLevelId } from './level-session.js';
  * @property {boolean} isIntroVisible - Whether the intro prompt is currently visible.
  * @property {boolean} isStartScreenVisible - Whether the start screen is currently visible.
  * @property {boolean} isStartTransitionRunning - Whether the start-to-game transition is currently running.
+ * @property {boolean} isBootingIntoGame - Whether the current page load should finish in gameplay instead of the start screen.
  */
 
 /** @type {GameState} */
@@ -24,4 +25,5 @@ export const gameState = {
   isIntroVisible: true,
   isStartScreenVisible: true,
   isStartTransitionRunning: false,
+  isBootingIntoGame: false,
 };

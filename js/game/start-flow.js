@@ -3,6 +3,7 @@ import { StartScreen } from '../models/start-screen-class.js';
 import { World } from '../models/world/world.class.js';
 import { baseCanvasHeight, baseCanvasWidth, introTransitionDuration } from './config.js';
 import { getSelectedLevel, getSelectedLevelId, setSelectedLevelId, setSkipStartScreen, shouldSkipStartScreen } from './level-session.js';
+import { clearReloadLoadingOverlay, reloadWithLoadingOverlay, shouldHoldLoadingOverlay, syncReloadLoadingOverlay } from './reload-loading.js';
 import { gameState } from './state.js';
 import { shouldPauseForMobilePortrait, syncMobileOrientationPause } from '../mobile.js';
 import { syncGameCanvasSize } from './canvas.js';
@@ -32,7 +33,9 @@ import { syncGameCanvasSize } from './canvas.js';
  * @returns {void}
  */
 export function applyInitialBodyState() {
-  if (!shouldBootIntoGame()) return;
+  gameState.isBootingIntoGame = shouldBootIntoGame();
+  syncReloadLoadingOverlay();
+  if (!gameState.isBootingIntoGame) return;
 
   document.body?.classList.remove('intro-mode', 'intro-transition');
   document.body?.classList.add('game-active', 'skip-start-screen');
@@ -44,7 +47,7 @@ export function applyInitialBodyState() {
  * @returns {void}
  */
 export function startSavedLevelIfNeeded() {
-  if (!shouldBootIntoGame()) return;
+  if (!gameState.isBootingIntoGame) return;
 
   setSkipStartScreen(false);
   document.body?.classList.remove('intro-mode', 'intro-transition');
@@ -82,7 +85,7 @@ export function showStartScreen() {
  */
 export function restartGame() {
   setSkipStartScreen(true);
-  window.location.reload();
+  reloadWithLoadingOverlay();
 }
 
 /**
@@ -93,7 +96,7 @@ export function restartGame() {
 export function resetToStartScreen() {
   setSelectedLevelId('lvl_1');
   setSkipStartScreen(false);
-  window.location.reload();
+  reloadWithLoadingOverlay();
 }
 
 /**
@@ -105,7 +108,18 @@ export function resetToStartScreen() {
 export function startLevel(levelId) {
   setSelectedLevelId(levelId);
   setSkipStartScreen(true);
-  window.location.reload();
+  reloadWithLoadingOverlay();
+}
+
+/**
+ * Clears the persisted loading overlay once the non-game boot target is fully ready.
+ *
+ * @returns {void}
+ */
+export function finalizeInitialLoadingState() {
+  if (gameState.isBootingIntoGame) return;
+
+  clearReloadLoadingOverlay();
 }
 
 /**
@@ -179,6 +193,8 @@ function finishIntroTransition(body) {
   }
 
   gameState.startScreen?.start();
+  gameState.isBootingIntoGame = false;
+  clearReloadLoadingOverlay();
 }
 
 /**
@@ -293,7 +309,7 @@ function renderGameRevealFrame(gameCanvasShell, overlay, easedProgress) {
   gameCanvasShell?.style.setProperty('opacity', `${easedProgress}`);
   gameState.canvas?.style.setProperty('width', `${baseCanvasWidth * easedProgress}px`);
   gameState.canvas?.style.setProperty('height', `${baseCanvasHeight * easedProgress}px`);
-  overlay?.style.setProperty('opacity', `${1 - easedProgress}`);
+  overlay?.style.setProperty('opacity', shouldHoldLoadingOverlay() ? '1' : `${1 - easedProgress}`);
 }
 
 /**
@@ -308,8 +324,10 @@ function finishGameReveal(body, gameCanvasShell, overlay) {
   overlay?.style.setProperty('opacity', '0');
   gameCanvasShell?.style.setProperty('opacity', '1');
   gameState.isStartTransitionRunning = false;
+  gameState.isBootingIntoGame = false;
   syncGameCanvasSize();
   body?.classList.remove('game-transitioning');
+  clearReloadLoadingOverlay();
   if (shouldPauseForMobilePortrait()) return;
 
   playBackgroundAudio(gameState.gameBackgroundAudio);

@@ -329,12 +329,7 @@ export const worldEventMethods = {
    */
   handleBossSlashHit() {
     if (!this.bossLVL1 || this.bossLVL1.isDead) return;
-
-    if (this.character.isDead) {
-      this.spawnBloodSplatter();
-      return;
-    }
-
+    if (this.character.isDead) return this.spawnBloodSplatter();
     if (this.character.isHurt()) return;
 
     startKnockback(this.character, this.bossLVL1.x + this.bossLVL1.width / 2);
@@ -448,11 +443,9 @@ export const worldEventMethods = {
     if (!isLiamIntro && this.aliaIntroCompleted) return;
 
     this.aliaIntroTriggered = true;
-    if (isLiamIntro) {
-      this.liamIntroCompleted = true;
-    } else {
-      this.aliaIntroCompleted = true;
-    }
+    const completedIntroKey = isLiamIntro ? 'liamIntroCompleted' : 'aliaIntroCompleted';
+
+    this[completedIntroKey] = true;
     this.isPaused = true;
     this.aliaIntroStartedAt = Date.now();
     this.resetKeyboard();

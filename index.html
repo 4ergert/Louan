@@ -8,6 +8,12 @@
   <link rel="icon" type="image/png" href="./assets/img/Character/lvl_3/Idle/0_Dark_Oracle_Idle_000.png">
   <title>Louan</title>
 
+  <script>
+    if (sessionStorage.getItem('loco.reloadLoading') === 'true') {
+      document.documentElement.classList.add('page-loading');
+    }
+  </script>
+
   <link rel="stylesheet" href="./style/font-style.css">
   <link rel="stylesheet" href="./style/base.css">
   <link rel="stylesheet" href="./style/start-screen.css">
@@ -20,37 +26,53 @@
 
 <body class="intro-mode">
 
-  <div id="transitionOverlay"></div>
+  <div id="transitionOverlay" aria-hidden="true">
+    <div id="transitionOverlayLoader" aria-live="polite">
+      <div id="transitionOverlaySpinner" aria-hidden="true"></div>
+      <p>Loading...</p>
+    </div>
+  </div>
 
-  <div id="introHero">
+  <section id="introHero">
     <h1>Louan der Krieger</h1>
     <button type="button" id="introStartButton" aria-label="Spiel starten">Drücke eine beliebige Taste</button>
-  </div>
-  <div id="startScreenOrientationPrompt" aria-live="polite" aria-hidden="true">
-    <p>Drehen Sie das Handy</p>
-  </div>
+  </section>
 
   <canvas id="startScreenCanvas" width="720" height="480"></canvas>
 
-  <div id="gameCanvasShell">
+  <section id="gameCanvasShell">
     <div id="gameCanvasOverlay" aria-label="Spielmenue und Audio">
       <button type="button" id="gameMenuButton" class="gameCanvasButton" aria-label="Menue">☰</button>
-      <button type="button" id="gameMusicToggleButton" class="gameCanvasButton" data-music-toggle aria-pressed="false" aria-label="Musik stummschalten">♪</button>
+      <button type="button" id="gameMusicToggleButton" class="gameCanvasButton" data-music-toggle aria-pressed="false"
+        aria-label="Musik stummschalten">♪</button>
     </div>
+    <div id="gameOverActions" hidden>
+      <button type="button" id="gameOverRetryButton" aria-label="Erneut versuchen">Try again</button>
+      <button type="button" id="gameOverStartScreenButton" aria-label="Zurück zum Startscreen">Back to startscreen</button>
+    </div>
+
     <div id="mobileOrientationOverlay" aria-live="polite" aria-hidden="true">
       <p>Drehen <br> Sie das <br> Handy</p>
     </div>
+
     <section id="mobileControls" aria-label="Steuerung">
       <button type="button" id="mobileLeftButton" class="mobileControlButton" aria-label="Links bewegen">←</button>
       <button type="button" id="mobileRightButton" class="mobileControlButton" aria-label="Rechts bewegen">→</button>
       <button type="button" id="mobileJumpButton" class="mobileControlButton" aria-label="Springen">Jump</button>
       <button type="button" id="mobileRunningButton" class="mobileControlButton" aria-label="running">RUN</button>
-      <button type="button" id="mobileThrowButton" class="mobileControlButton" aria-label="Waffe werfen"><img src="./assets/img/Enemies/Skeleton_Warrior_3/PNG/Vector Parts/Left Arm.png" alt="" aria-hidden="true"></button>
+      <button type="button" id="mobileThrowButton" class="mobileControlButton" aria-label="Waffe werfen"><img
+          src="./assets/img/Enemies/Skeleton_Warrior_3/PNG/Vector Parts/Left Arm.png" alt=""
+          aria-hidden="true"></button>
       <button type="button" id="mobileMenuButton" class="mobileControlButton" aria-label="Menue">☰</button>
-      <button type="button" id="mobileMusicToggleButton" class="mobileControlButton" data-music-toggle aria-pressed="false" aria-label="Musik stummschalten">♪</button>
+      <button type="button" id="mobileMusicToggleButton" class="mobileControlButton" data-music-toggle
+        aria-pressed="false" aria-label="Musik stummschalten">♪</button>
     </section>
     <canvas id="gameCanvas" width="720" height="480"></canvas>
-  </div>
+  </section>
+
+  <section id="startScreenOrientationPrompt" aria-live="polite" aria-hidden="true">
+    <p>Drehen Sie das Handy</p>
+  </section>
 
 </body>
 
