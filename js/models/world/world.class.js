@@ -20,10 +20,14 @@ import { WorldIntros } from './world-intros.class.js';
 import { worldBossEventMethods } from './world-boss-events.js';
 import { worldCollisionMethods } from './world-collisions.js';
 import { worldEventMethods } from './world-events.js';
+import { worldEffectRenderingMethods } from './world-effect-rendering.js';
 import { worldIntroRenderingMethods } from './world-intro-rendering.js';
 import { worldInteractionMethods } from './world-interactions.js';
 import { worldLoopMethods } from './world-loop.js';
+import { worldOverlayRenderingMethods } from './world-overlay-rendering.js';
+import { worldPickupRenderingMethods } from './world-pickup-rendering.js';
 import { worldRenderingMethods } from './world-rendering.js';
+import { worldViewportRenderingMethods } from './world-viewport-rendering.js';
 
 /**
  * Central gameplay runtime that owns the active level state, rendering loop,
@@ -122,6 +126,10 @@ Object.assign(
   World.prototype,
   worldLoopMethods,
   worldRenderingMethods,
+  worldOverlayRenderingMethods,
+  worldEffectRenderingMethods,
+  worldPickupRenderingMethods,
+  worldViewportRenderingMethods,
   worldIntroRenderingMethods,
   worldCollisionMethods,
   worldInteractionMethods,
