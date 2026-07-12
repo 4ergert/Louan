@@ -55,10 +55,10 @@ export function instructionsDialogTemplate() {
 					</form>
 				</div>
 				<div class="metaDialogBody">
-					<p>Pfeiltaste links = laufen links</p>
-					<p>Pfeiltaste rechts = laufen rechts</p>
+					<p>Pfeiltaste links = rennen links</p>
+					<p>Pfeiltaste rechts = rennen rechts</p>
 					<p>Pfeiltaste oben = springen</p>
-					<p>A + Pfeiltaste = rennen</p>
+					<p>A + Pfeiltaste = gehen</p>
 					<p>F = schmeißen</p>
 					<p>F11 = Vollbildmodus</p>
 				</div>

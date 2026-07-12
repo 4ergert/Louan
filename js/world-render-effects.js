@@ -227,10 +227,28 @@ function updateFireflyParticle(particles, index, particle, now, minX, maxX, maxY
   return { nextParticle: particle, time };
 }
 
+/**
+ * Checks whether a firefly particle has left the active scene bounds and should be recreated.
+ *
+ * @param {FireflyParticle} particle - The particle to validate.
+ * @param {number} minX - Left horizontal bound.
+ * @param {number} maxX - Right horizontal bound.
+ * @param {number} maxY - Lower vertical bound.
+ * @returns {boolean} True when the particle should respawn.
+ */
 function shouldRespawnFirefly(particle, minX, maxX, maxY) {
   return particle.x < minX || particle.x > maxX || particle.y < 6 || particle.y > maxY;
 }
 
+/**
+ * Draws one animated firefly particle with glow and core layers.
+ *
+ * @param {CanvasRenderingContext2D} ctx - The drawing context.
+ * @param {number} cameraX - Horizontal camera offset applied to world objects.
+ * @param {FireflyParticle} particle - The particle to render.
+ * @param {number} time - Animation time used for pulsing brightness.
+ * @returns {void}
+ */
 function drawFirefly(ctx, cameraX, particle, time) {
   let pulse = 0.62 + (Math.sin(time * 2.2) + 1) * 0.19;
   let drawX = particle.x + cameraX;

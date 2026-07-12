@@ -2,19 +2,23 @@
  * @typedef {'music' | 'effect'} ManagedAudioCategory
  */
 
-const musicMuteStorageKey = 'loco.audioMuted';
-
 /**
- * Registers an audio element for global mute and category-aware playback handling.
- *
- * @param {HTMLAudioElement} audio - The audio instance to manage.
- * @param {ManagedAudioCategory} category - The logical category used for mute behavior.
- * @returns {HTMLAudioElement} The same audio instance for fluent factory usage.
+ * @typedef {object} ManagedAudioOptions
+ * @property {number} [volume=1] - Playback volume between 0 and 1.
+ * @property {boolean} [loop=false] - Whether the audio should loop automatically.
+ * @property {PreloadValue} [preload='metadata'] - The browser preload strategy.
  */
+
+const musicMuteStorageKey = 'loco.audioMuted';
 const managedAudios = new Set();
 const audioCategories = new WeakMap();
 let isMusicMuted = readStoredMuteState();
 
+/**
+ * Reads the persisted global mute flag from local storage.
+ *
+ * @returns {boolean} True when the stored mute flag is enabled.
+ */
 function readStoredMuteState() {
 	try {
 		return localStorage.getItem(musicMuteStorageKey) === 'true';
@@ -23,12 +27,25 @@ function readStoredMuteState() {
 	}
 }
 
+/**
+ * Persists the global mute flag when storage access is available.
+ *
+ * @param {boolean} nextMuted - The next mute state to store.
+ * @returns {void}
+ */
 function persistMuteState(nextMuted) {
 	try {
 		localStorage.setItem(musicMuteStorageKey, `${nextMuted}`);
 	} catch {}
 }
 
+/**
+ * Registers an audio element for global mute and category-aware playback handling.
+ *
+ * @param {HTMLAudioElement} audio - The audio instance to manage.
+ * @param {ManagedAudioCategory} category - The logical category used for mute behavior.
+ * @returns {HTMLAudioElement} The same audio instance for fluent factory usage.
+ */
 function registerManagedAudio(audio, category) {
 	audioCategories.set(audio, category);
 	audio.muted = isMusicMuted;
@@ -36,6 +53,14 @@ function registerManagedAudio(audio, category) {
 	return audio;
 }
 
+/**
+ * Creates and registers an audio instance with the shared mute state.
+ *
+ * @param {string} src - The source path of the audio file.
+ * @param {ManagedAudioCategory} category - The logical category used for playback management.
+ * @param {ManagedAudioOptions} [options={}] - Audio configuration applied on creation.
+ * @returns {HTMLAudioElement} The configured managed audio element.
+ */
 function createManagedAudio(src, category, { volume = 1, loop = false, preload = 'metadata' } = {}) {
 	const audio = new Audio(src);
 	audio.loop = loop;
@@ -44,6 +69,12 @@ function createManagedAudio(src, category, { volume = 1, loop = false, preload =
 	return registerManagedAudio(audio, category);
 }
 
+/**
+ * Loads an audio element when it has not requested media data yet.
+ *
+ * @param {HTMLAudioElement | null | undefined} audio - The audio instance to prepare.
+ * @returns {void}
+ */
 function ensureAudioLoaded(audio) {
 	if (!audio) return;
 	if (audio.networkState !== HTMLMediaElement.NETWORK_EMPTY) return;
@@ -123,6 +154,18 @@ export function createEvilLaughAudio() {
 export function createGameOverAudio() {
 	return createManagedAudio('assets/audio/game-over.mp3', 'effect', {
 		volume: 0.9,
+		preload: 'none',
+	});
+}
+
+/**
+ * Creates the player hurt sound effect.
+ *
+ * @returns {HTMLAudioElement} The configured hurt sound effect.
+ */
+export function createHurtAudio() {
+	return createManagedAudio('assets/audio/hurt.mp3', 'effect', {
+		volume: 0.25,
 		preload: 'none',
 	});
 }

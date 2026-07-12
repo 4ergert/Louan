@@ -87,7 +87,7 @@ http://localhost:8000
 - `Pfeil links`: nach links laufen
 - `Pfeil rechts`: nach rechts laufen
 - `Pfeil oben`: springen
-- `A` + Pfeiltaste: rennen
+- `A` + Pfeiltaste: gehen
 - `F`: werfen
 - `Leertaste`: auf dem Startscreen Spiel starten
 - `F11`: Vollbildmodus
@@ -99,7 +99,7 @@ Zusaetzlich:
 
 ### Mobile
 
-- Touch-Buttons fuer links, rechts, springen, rennen und werfen
+- Touch-Buttons fuer links, rechts, springen, gehen und werfen
 - Extra Buttons fuer Menue und Musik
 - Hinweis bei unguenstiger Geraeteausrichtung
 

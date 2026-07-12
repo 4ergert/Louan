@@ -10,6 +10,11 @@ export function initMusicToggle() {
 
   if (!musicToggleButtons.length) return;
 
+  /**
+   * Re-renders all registered music toggle buttons from the current mute state.
+   *
+   * @returns {void}
+   */
   const renderButtonState = () => {
     const isMuted = getMusicMuted();
     musicToggleButtons.forEach((button) => renderMusicToggleButton(button, isMuted));
@@ -35,6 +40,7 @@ function renderMusicToggleButton(button, isMuted) {
     button.textContent = isMuted ? `${buttonLabel} einschalten` : `${buttonLabel} stummschalten`;
     button.setAttribute('aria-pressed', `${isMuted}`);
     button.setAttribute('aria-label', isMuted ? 'Musik einschalten' : 'Musik stummschalten');
+    button.title = isMuted ? 'Mute off' : 'Mute on';
     button.dataset.muted = `${isMuted}`;
     return;
   }
@@ -42,6 +48,7 @@ function renderMusicToggleButton(button, isMuted) {
   button.textContent = '♪';
   button.setAttribute('aria-pressed', `${isMuted}`);
   button.setAttribute('aria-label', isMuted ? 'Musik einschalten' : 'Musik stummschalten');
+  button.title = isMuted ? 'Mute off' : 'Mute on';
   button.dataset.muted = `${isMuted}`;
 }
 

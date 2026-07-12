@@ -414,6 +414,12 @@ export const worldRenderingMethods = {
     return y + height >= viewportTop && y <= viewportBottom;
   },
 
+  /**
+   * Draws one movable world object and applies horizontal flipping when needed.
+   *
+   * @param {{ imgDirectionChange?: boolean, x: number, width: number, draw: (ctx: CanvasRenderingContext2D) => void, drawCollisionArea: (ctx: CanvasRenderingContext2D) => void }} movableObject
+   * @returns {void}
+   */
   addToMap(movableObject) {
     if (movableObject.imgDirectionChange) this.flipImage(movableObject);
     movableObject.draw(this.ctx);
@@ -421,6 +427,12 @@ export const worldRenderingMethods = {
     if (movableObject.imgDirectionChange) this.ctx.restore();
   },
 
+  /**
+   * Mirrors the canvas context around the object's horizontal center.
+   *
+   * @param {{ x: number, width: number }} movableObject
+   * @returns {void}
+   */
   flipImage(movableObject) {
     this.ctx.save();
     this.ctx.translate(movableObject.x + movableObject.width / 2, 0);

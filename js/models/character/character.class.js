@@ -1,5 +1,5 @@
 import { CHARACTER_SPRITES } from '../../sprites-path/character-sprites.js';
-import { createJumpEffortAudios, createRunningFootstepAudios, playRandomVariantSound } from '../../audio.js';
+import { createHurtAudio, createJumpEffortAudios, createRunningFootstepAudios, playRandomVariantSound, playSoundEffect } from '../../audio.js';
 import { MovableObject } from '../objects/movable-object.class.js';
 import { switchCharAnimation } from './switch-char-animation.js';
 import { charMovement } from './char-movements.js';
@@ -27,6 +27,7 @@ export class Character extends MovableObject {
   knockbackUntil = 0;
   knockbackDirection = 0;
   knockbackSpeed = 0;
+  hurtAudio = createHurtAudio();
   runningFootstepAudios = createRunningFootstepAudios();
   jumpEffortAudios = createJumpEffortAudios();
   lastRunningFootstepIndex = -1;
@@ -182,6 +183,7 @@ export class Character extends MovableObject {
   hit(duration = 333) {
     this.energy = Math.max(0, this.energy - 20);
     this.world?.lifeBar.setPercentage(this.energy);
+    playSoundEffect(this.hurtAudio);
 
     if (this.energy === 0) {
       die(this);

@@ -58,6 +58,11 @@ export function startSavedLevelIfNeeded() {
   fadeIntoGame();
 }
 
+/**
+ * Determines whether the page should skip the intro flow and reveal gameplay immediately.
+ *
+ * @returns {boolean} True when persisted session state or the selected level requires booting into gameplay.
+ */
 function shouldBootIntoGame() {
   return shouldSkipStartScreen() || getSelectedLevelId() !== 'lvl_1';
 }
@@ -264,6 +269,12 @@ function revealGame(timestamp, animationState) {
  * @returns {void}
  */
 function fadeTransitionOverlay(overlay, startedAt, duration) {
+  /**
+   * Advances the overlay fade animation on each animation frame.
+   *
+   * @param {number} timestamp - Current animation frame timestamp.
+   * @returns {void}
+   */
   const fadeOverlay = (timestamp) => {
     const progress = getAnimationProgress(timestamp, startedAt, duration);
 

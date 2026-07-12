@@ -30,6 +30,7 @@ export function initMobileOrientationPause() {
  * @returns {void}
  */
 export function syncMobileOrientationPause() {
+	syncTouchMobileBodyClass();
 	updateMobileOrientationPause();
 }
 
@@ -49,6 +50,30 @@ export function shouldPauseForMobilePortrait() {
  */
 export function isMobilePortraitPauseActive() {
 	return portraitPauseState.active || shouldPauseForMobilePortrait();
+}
+
+/**
+ * Detects whether the current device should use touch-first mobile interactions.
+ *
+ * Covers phones, coarse-pointer tablets, and iPads that report a desktop-class user agent.
+ *
+ * @returns {boolean}
+ */
+export function isTouchMobileDevice() {
+	let hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(any-pointer: coarse)').matches;
+	let hasTouchInput = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
+	let isIPad = /iPad/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+	return hasTouchInput && (hasCoarsePointer || isIPad);
+}
+
+/**
+ * Mirrors touch-mobile device detection into the body class list for CSS hooks.
+ *
+ * @returns {void}
+ */
+function syncTouchMobileBodyClass() {
+	document.body?.classList.toggle('touch-mobile-device', isTouchMobileDevice());
 }
 
 /**
@@ -92,12 +117,10 @@ function updateMobileOrientationPause() {
  * @returns {boolean}
  */
 function shouldShowMobilePortraitOverlay() {
-	let hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(any-pointer: coarse)').matches;
-	let hasTouchInput = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
 	let isPortrait = window.matchMedia('(orientation: portrait)').matches;
 	let isPhoneViewport = Math.min(window.innerWidth, window.innerHeight) <= 900;
 
-	return isPortrait && isPhoneViewport && (hasCoarsePointer || hasTouchInput);
+	return isPortrait && isPhoneViewport && isTouchMobileDevice();
 }
 
 /**

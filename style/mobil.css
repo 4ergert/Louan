@@ -10,10 +10,136 @@
   display: none;
 }
 
+body.touch-mobile-device #mobileControls {
+  position: absolute;
+  inset: 0;
+  display: block;
+  z-index: 30;
+  pointer-events: none;
+}
+
+body.touch-mobile-device #gameCanvasOverlay {
+  top: 14px;
+  right: 130px;
+}
+
+body.touch-mobile-device #gameMenuButton,
+body.touch-mobile-device #gameFullscreenButton,
+body.touch-mobile-device #gameMusicToggleButton {
+  display: none;
+}
+
+body.touch-mobile-device .mobileControlButton {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 202, 103, 0.58);
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(110, 73, 19, 0.4), rgba(38, 28, 5, 0.88));
+  color: rgb(255, 202, 103);
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 226, 168, 0.18);
+  pointer-events: auto;
+}
+
+body.touch-mobile-device .mobileControlButton:hover,
+body.touch-mobile-device .mobileControlButton:focus-visible {
+  border-color: rgba(255, 223, 153, 0.82);
+  background: radial-gradient(circle at 30% 30%, rgba(145, 98, 28, 0.94), rgba(58, 41, 8, 0.92));
+  color: rgba(255, 243, 210, 0.96);
+  outline: none;
+}
+
+body.touch-mobile-device .mobileControlButton:active,
+body.touch-mobile-device .mobileControlButton[data-active="true"] {
+  border-color: rgba(255, 234, 184, 0.96);
+  background: radial-gradient(circle at 30% 30%, rgba(184, 126, 34, 0.55), rgba(88, 60, 11, 0.96));
+  color: rgba(255, 248, 228, 1);
+  box-shadow: 0 0 18px rgba(255, 202, 103, 0.78), 0 10px 22px rgba(0, 0, 0, 0.34), inset 0 1px 6px rgba(255, 241, 205, 0.34);
+}
+
+body.touch-mobile-device .mobileControlButton[data-muted="true"] {
+  border-color: rgba(255, 176, 140, 0.52);
+  color: rgba(255, 228, 228, 0.84);
+  background: radial-gradient(circle at 30% 30%, rgba(117, 52, 34, 0.88), rgba(52, 20, 16, 0.88));
+}
+
+body.touch-mobile-device #mobileMusicToggleButton[data-muted="true"]::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+  transform: rotate(35deg);
+}
+
+body.touch-mobile-device #mobileThrowButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.touch-mobile-device #mobileThrowButton img {
+  width: 37px;
+  height: 37px;
+  object-fit: contain;
+  pointer-events: none;
+  margin-bottom: 6px;
+}
+
+body.touch-mobile-device #mobileMusicToggleButton {
+  top: 14px;
+  right: 14px;
+}
+
+body.touch-mobile-device #mobileFullscreenButton {
+  top: 14px;
+  right: 72px;
+}
+
+body.touch-mobile-device #mobileMenuButton {
+  top: 14px;
+  right: 130px;
+}
+
+body.touch-mobile-device #mobileLeftButton {
+  bottom: 16px;
+  left: 16px;
+}
+
+body.touch-mobile-device #mobileRightButton {
+  bottom: 16px;
+  left: 74px;
+}
+
+body.touch-mobile-device #mobileJumpButton {
+  right: 60px;
+  bottom: 60px;
+  font-size: 14px;
+}
+
+body.touch-mobile-device #mobileRunningButton {
+  right: 90px;
+  bottom: 12px;
+  font-size: 14px;
+}
+
+body.touch-mobile-device #mobileThrowButton {
+  right: 12px;
+  bottom: 90px;
+}
+
 @media only screen and (max-width: 720px),
 only screen and (max-height: 480px) {
   body:not(.intro-mode):not(.game-active):not(.skip-start-screen) {
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
   }
 
   body.intro-mode #introHero {
@@ -234,9 +360,14 @@ only screen and (max-height: 480px) {
     right: 14px;
   }
 
-  #mobileMenuButton {
+  #mobileFullscreenButton {
     top: 14px;
     right: 72px;
+  }
+
+  #mobileMenuButton {
+    top: 14px;
+    right: 130px;
   }
 
   #mobileLeftButton {
@@ -341,5 +472,21 @@ only screen and (max-height: 480px) {
 @media only screen and (max-width: 650px) {
   #introHero h1 {
     font-size: 42px;
+  }
+}
+
+@media only screen and (max-width: 320px),
+only screen and (max-height: 568px) {
+  #gameOverActions {
+    top: calc(50% + 42px);
+    gap: 10px;
+  }
+
+  #gameOverRetryButton,
+  #gameOverStartScreenButton,
+  #victoryFindLiamButton {
+    min-width: 170px;
+    padding: 9px 16px;
+    font-size: 16px;
   }
 }

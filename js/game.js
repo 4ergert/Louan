@@ -45,6 +45,7 @@ function init() {
   renderDatenschutzDialog();
   renderImpressumDialog();
   gameState.canvas = document.getElementById('gameCanvas');
+  initGameCanvasFullscreenButton();
   initGameOverRetryButton();
   initVictoryActionButton();
   syncGameCanvasSize();
@@ -56,6 +57,21 @@ function init() {
   initMobileOrientationPause();
   startSavedLevelIfNeeded();
   finalizeInitialLoadingState();
+}
+
+/**
+ * Wires the in-game fullscreen button to the shared canvas fullscreen toggle.
+ *
+ * @returns {void}
+ */
+function initGameCanvasFullscreenButton() {
+  ['gameFullscreenButton', 'mobileFullscreenButton'].forEach((buttonId) => {
+    const fullscreenButton = document.getElementById(buttonId);
+
+    if (!(fullscreenButton instanceof HTMLButtonElement)) return;
+
+    fullscreenButton.addEventListener('click', () => toggleGameCanvasFullscreen());
+  });
 }
 
 /**

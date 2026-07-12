@@ -38,11 +38,12 @@
     <button type="button" id="introStartButton" aria-label="Spiel starten">Start</button>
   </section>
 
-  <canvas id="startScreenCanvas" width="720" height="400"></canvas>
+  <canvas id="startScreenCanvas" width="720" height="200"></canvas>
 
   <section id="gameCanvasShell">
     <div id="gameCanvasOverlay" aria-label="Spielmenue und Audio">
-      <button type="button" id="gameMenuButton" class="gameCanvasButton" aria-label="Menue">☰</button>
+      <button type="button" id="gameMenuButton" class="gameCanvasButton" aria-label="Menue" title="Menu">☰</button>
+      <button type="button" id="gameFullscreenButton" class="gameCanvasButton" aria-label="Vollbildmodus" title="Fullscreen">⛶</button>
       <button type="button" id="gameMusicToggleButton" class="gameCanvasButton" data-music-toggle aria-pressed="false"
         aria-label="Musik stummschalten">♪</button>
     </div>
@@ -63,11 +64,12 @@
       <button type="button" id="mobileLeftButton" class="mobileControlButton" aria-label="Links bewegen">←</button>
       <button type="button" id="mobileRightButton" class="mobileControlButton" aria-label="Rechts bewegen">→</button>
       <button type="button" id="mobileJumpButton" class="mobileControlButton" aria-label="Springen">Jump</button>
-      <button type="button" id="mobileRunningButton" class="mobileControlButton" aria-label="running">RUN</button>
+      <button type="button" id="mobileRunningButton" class="mobileControlButton" aria-label="Gehen">WALK</button>
       <button type="button" id="mobileThrowButton" class="mobileControlButton" aria-label="Waffe werfen"><img
           src="./assets/img/Enemies/Skeleton_Warrior_3/PNG/Vector Parts/Left Arm.png" alt=""
           aria-hidden="true"></button>
       <button type="button" id="mobileMenuButton" class="mobileControlButton" aria-label="Menue">☰</button>
+        <button type="button" id="mobileFullscreenButton" class="mobileControlButton" aria-label="Vollbildmodus">⛶</button>
       <button type="button" id="mobileMusicToggleButton" class="mobileControlButton" data-music-toggle
         aria-pressed="false" aria-label="Musik stummschalten">♪</button>
     </section>

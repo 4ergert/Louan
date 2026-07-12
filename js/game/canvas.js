@@ -71,6 +71,11 @@ export function isGameCanvasVisible() {
   return Boolean(gameCanvasShell && getComputedStyle(gameCanvasShell).display !== 'none');
 }
 
+/**
+ * Returns whether the game canvas shell currently owns the fullscreen element.
+ *
+ * @returns {boolean} True when the game canvas shell is in fullscreen mode.
+ */
 function isGameCanvasFullscreen() {
   return document.fullscreenElement === getGameCanvasShell();
 }

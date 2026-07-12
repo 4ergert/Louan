@@ -1,5 +1,6 @@
 import { gameState } from './state.js';
 import { getSelectedLevelId } from './level-session.js';
+import { isTouchMobileDevice } from '../mobile.js';
 
 /**
  * @typedef {object} KeyboardEventActions
@@ -74,7 +75,7 @@ function initIntroStartButton(showStartScreen) {
 }
 
 /**
- * Starts the game when a phone-sized touch device taps the start screen canvas.
+ * Starts the game when a touch-first mobile or tablet device taps the start screen canvas.
  *
  * @param {() => void} startGameTransition - Starts the transition from the start screen into gameplay.
  * @returns {void}
@@ -85,7 +86,7 @@ function initTouchStartScreenTransition(startGameTransition) {
   if (!(startScreenCanvas instanceof HTMLCanvasElement)) return;
 
   startScreenCanvas.addEventListener('click', () => {
-    if (!isMobileTouchDevice()) return;
+    if (!isTouchMobileDevice()) return;
 
     startGameTransition();
   });
@@ -161,19 +162,6 @@ function registerMobileToggleButton(buttonId, keyboardProperty) {
  */
 function setMobileButtonActiveState(button, isActive) {
   button.dataset.active = isActive ? 'true' : 'false';
-}
-
-/**
- * Detects whether the current device should use touch-first mobile interactions.
- *
- * @returns {boolean}
- */
-function isMobileTouchDevice() {
-  const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(any-pointer: coarse)').matches;
-  const hasTouchInput = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-  const isSmallViewport = Math.min(window.innerWidth, window.innerHeight) <= 900;
-
-  return isSmallViewport && (hasCoarsePointer || hasTouchInput);
 }
 
 /**

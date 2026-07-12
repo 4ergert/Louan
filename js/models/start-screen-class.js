@@ -1,5 +1,6 @@
 import { CHARACTER_SPRITES } from '../sprites-path/character-sprites.js';
 import { createStartScreenAudio, playBackgroundAudio, stopBackgroundAudio } from '../audio.js';
+import { isTouchMobileDevice } from '../mobile.js';
 
 /**
  * @typedef {Object} StartScreenSceneEffects
@@ -323,13 +324,13 @@ export class StartScreen {
 	 * @returns {{ fontSize: number, lineOneText: string, lineOneX: number, lineOneY: number, lineTwoText: string, lineTwoX: number, lineTwoY: number }}
 	 */
 	getStartPromptConfig() {
-		if (this.isMobileTouchDevice()) {
+		if (isTouchMobileDevice()) {
 			return {
 				fontSize: 32,
-				lineOneText: 'Berühre den Startbildschirm,',
+				lineOneText: 'Berühren Sie den Bildschirm,',
 				lineOneX: 111,
 				lineOneY: 54,
-				lineTwoText: "um Louan's Reise zu beginnen.",
+				lineTwoText: 'um Louans Reise zu beginnen.',
 				lineTwoX: 120,
 				lineTwoY: 92,
 			};
@@ -358,16 +359,4 @@ export class StartScreen {
 		ctx.fillText(promptConfig.lineTwoText, promptConfig.lineTwoX, promptConfig.lineTwoY);
 	}
 
-	/**
-	 * Detects whether the prompt should use the mobile touch copy.
-	 *
-	 * @returns {boolean}
-	 */
-	isMobileTouchDevice() {
-		let hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches || window.matchMedia('(any-pointer: coarse)').matches;
-		let hasTouchInput = navigator.maxTouchPoints > 0 || 'ontouchstart' in window;
-		let isSmallViewport = Math.min(window.innerWidth, window.innerHeight) <= 900;
-
-		return isSmallViewport && (hasCoarsePointer || hasTouchInput);
-	}
 }

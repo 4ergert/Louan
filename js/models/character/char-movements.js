@@ -157,12 +157,12 @@ export function isMoving(character) {
 }
 
 /**
- * Checks whether the character is sprinting.
+ * Checks whether the character should use the faster running state.
  * @param {Character} character - The active character instance.
- * @returns {boolean} True when sprint input and movement input are both active.
+ * @returns {boolean} True when movement input is active without the walk modifier.
  */
 export function isRunning(character) {
-  return character.world.endingEscortActive || (character.world.keyboard.A && isMoving(character));
+  return character.world.endingEscortActive || (isMoving(character) && !character.world.keyboard.A);
 }
 
 /**
